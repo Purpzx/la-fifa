@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC26 Picks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0A0E1A;
+    --card-bg: #141C2E;
+    --gold: #D4AF37;
+    --red: #E8003D;
+    --green: #00A86B;
+    --purple: #7C83FF;
+    --white: #F7F7F7;
+    --muted: #6B7280;
+    --border: rgba(212,175,55,0.18);
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .flare {
+    position: fixed; top: -40%; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 500px;
+    background: radial-gradient(ellipse at center, rgba(212,175,55,0.10) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+    animation: flare-pulse 6s ease-in-out infinite;
+  }
+  @keyframes flare-pulse {
+    0%,100% { opacity: 0.6; } 50% { opacity: 1; }
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    background: var(--red); overflow: hidden;
+    white-space: nowrap; padding: 6px 0; position: relative; z-index: 10;
+  }
+  .ticker-content {
+    display: inline-block;
+    animation: ticker 35s linear infinite;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+  /* HEADER */
+  header {
+    position: relative; z-index: 5;
+    padding: 36px 24px 24px; text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-eyebrow {
+    font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin-bottom: 8px;
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 100px);
+    line-height: 0.9; letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--white) 40%, var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .header-sub {
+    font-size: 13px; color: var(--muted); margin-top: 10px; letter-spacing: 0.06em;
+  }
+  .today-badge {
+    display: inline-block; margin-top: 14px;
+    background: var(--gold); color: var(--navy);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+    padding: 4px 14px; border-radius: 2px; text-transform: uppercase;
+  }
+
+  /* MAIN */
+  main {
+    position: relative; z-index: 5;
+    max-width: 860px; margin: 0 auto;
+    padding: 32px 16px 80px;
+  }
+
+  /* STATUS STATES */
+  .status-box {
+    text-align: center; padding: 64px 24px;
+  }
+  .status-icon { font-size: 52px; margin-bottom: 18px; }
+  .status-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 0.08em;
+    color: var(--white); margin-bottom: 10px;
+  }
+  .status-sub { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 380px; margin: 0 auto; }
+  .status-time {
+    margin-top: 20px; font-size: 12px;
+    color: var(--gold); letter-spacing: 0.1em;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* MATCH CARD */
+  .match-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px; margin-bottom: 28px; overflow: hidden;
+  }
+  .match-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px;
+    background: linear-gradient(90deg, rgba(212,175,55,0.06), transparent);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  .match-teams {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 0.06em;
+  }
+  .match-teams span { color: var(--gold); margin: 0 10px; font-size: 18px; }
+  .match-meta { text-align: right; font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .match-time { font-weight: 600; color: var(--white); font-size: 13px; }
+  .toggle-icon { margin-left: 16px; font-size: 18px; color: var(--gold); transition: transform 0.3s; }
+  .match-card.open .toggle-icon { transform: rotate(180deg); }
+
+  .picks-body { display: none; padding: 20px 22px 24px; }
+  .match-card.open .picks-body { display: block; }
+
+  /* PICKS */
+  .picks-section-title {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 10px; margin-top: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .picks-section-title:first-child { margin-top: 0; }
+  .cat-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .cat-player .cat-dot { background: var(--green); }
+  .cat-game .cat-dot { background: var(--purple); }
+  .cat-team .cat-dot { background: var(--gold); }
+
+  .picks-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px;
+  }
+  @media (max-width: 560px) { .picks-grid { grid-template-columns: 1fr; } }
+
+  .pick-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 5px; padding: 14px 16px;
+    position: relative; overflow: hidden;
+  }
+  .pick-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .cat-player .pick-card::before { background: var(--green); }
+  .cat-game .pick-card::before { background: var(--purple); }
+  .cat-team .pick-card::before { background: var(--gold); }
+
+  .pick-title { font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
+  .pick-line { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); letter-spacing: 0.04em; margin-bottom: 8px; }
+  .pick-reasoning { font-size: 11px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+
+  .book-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .book-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+  .book-fanduel { background: #1493FF; color: white; }
+  .book-draftkings { background: #53D337; color: #0d1b00; }
+  .book-betmgm { background: #D4AF37; color: #0A0E1A; }
+  .book-bet365 { background: #027B5B; color: white; }
+  .book-fanatics { background: #E8003D; color: white; }
+
+  .edge-badge {
+    font-size: 9px; font-weight: 700; color: var(--green);
+    border: 1px solid var(--green); padding: 2px 7px; border-radius: 2px; letter-spacing: 0.08em;
+  }
+  .conf-dots { display: flex; gap: 3px; align-items: center; margin-left: auto; }
+  .conf-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); }
+  .conf-dot.on { background: var(--gold); }
+
+  /* SPINNER */
+  .spinner-wrap { text-align: center; padding: 80px 20px; }
+  .spinner {
+    width: 44px; height: 44px; border: 3px solid var(--border);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-txt { font-size: 13px; color: var(--muted); letter-spacing: 0.08em; }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    text-align: center; font-size: 10px; color: var(--muted);
+    margin-top: 48px; line-height: 1.6; max-width: 500px; margin-inline: auto;
+  }
+
+  /* LAST UPDATED */
+  .last-updated {
+    text-align: center; font-size: 10px; color: var(--muted);
+    margin-bottom: 24px; letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<div class="flare"></div>
+
+<div class="ticker-wrap">
+  <span class="ticker-content">
+    ⚽ 2026 FIFA WORLD CUP &nbsp;•&nbsp; USA · CANADA · MEXICO &nbsp;•&nbsp; 48 TEAMS · 104 MATCHES &nbsp;•&nbsp; SHARP PROPS DAILY &nbsp;•&nbsp; FANDUEL · DRAFTKINGS · BETMGM · BET365 · FANATICS &nbsp;•&nbsp; WC26 PICKS &nbsp;•&nbsp; 2026 FIFA WORLD CUP &nbsp;•&nbsp; USA · CANADA · MEXICO &nbsp;•&nbsp; 48 TEAMS · 104 MATCHES &nbsp;•&nbsp; SHARP PROPS DAILY &nbsp;•&nbsp;
+  </span>
+</div>
+
+<header>
+  <div class="header-eyebrow">2026 FIFA World Cup · Betting Intelligence</div>
+  <div class="header-title">WC26<br>PICKS</div>
+  <div class="header-sub">AI-powered props · Lineups · Injuries · Best lines across 5 books</div>
+  <div class="today-badge" id="today-badge">Loading...</div>
+</header>
+
+<main>
+  <div id="output">
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <div class="spinner-txt">Loading today's picks...</div>
+    </div>
+  </div>
+  <div class="disclaimer">
+    ⚠️ For entertainment purposes only. Gambling involves risk. Must be 21+ and in a legal betting state. Please gamble responsibly.
+  </div>
+</main>
+
+<script>
+  const today = new Date();
+  document.getElementById('today-badge').textContent = today.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const BOOKS = {
+    fanduel:    { label: 'FanDuel',    cls: 'book-fanduel' },
+    draftkings: { label: 'DraftKings', cls: 'book-draftkings' },
+    betmgm:     { label: 'BetMGM',     cls: 'book-betmgm' },
+    bet365:     { label: 'Bet365',     cls: 'book-bet365' },
+    fanatics:   { label: 'Fanatics',   cls: 'book-fanatics' },
+  };
+
+  function confDots(n) {
+    let d = '';
+    for (let i = 1; i <= 5; i++) d += `<div class="conf-dot${i <= n ? ' on' : ''}"></div>`;
+    return `<div class="conf-dots">${d}</div>`;
+  }
+
+  function renderPick(pick) {
+    const book = BOOKS[pick.book] || BOOKS['fanduel'];
+    return `
+      <div class="pick-card">
+        <div class="pick-title">${pick.title}</div>
+        <div class="pick-line">${pick.line}</div>
+        <div class="pick-reasoning">${pick.reasoning}</div>
+        <div class="book-row">
+          <span class="book-badge ${book.cls}">${book.label}</span>
+          <span class="edge-badge">${pick.edge}</span>
+          ${confDots(pick.confidence)}
+        </div>
+      </div>`;
+  }
+
+  function renderMatch(match, index) {
+    const id = 'mc-' + index;
+    const playerPicks = (match.player_props || []).map(renderPick).join('');
+    const gamePicks   = (match.game_props   || []).map(renderPick).join('');
+    const teamPicks   = (match.team_props   || []).map(renderPick).join('');
+
+    return `
+    <div class="match-card${index === 0 ? ' open' : ''}" id="${id}">
+      <div class="match-header" onclick="toggleCard('${id}')">
+        <div>
+          <div class="match-teams">${match.home} <span>vs</span> ${match.away}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${match.venue || ''} · ${match.stage || 'Group Stage'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="match-meta">
+            <div class="match-time">${match.kickoff || ''}</div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+      </div>
+      <div class="picks-body">
+        <div class="picks-section-title cat-player"><span class="cat-dot"></span> Player Props</div>
+        <div class="picks-grid cat-player">${playerPicks}</div>
+        <div class="picks-section-title cat-game"><span class="cat-dot"></span> Game Props</div>
+        <div class="picks-grid cat-game">${gamePicks}</div>
+        <div class="picks-section-title cat-team"><span class="cat-dot"></span> Team Props</div>
+        <div class="picks-grid cat-team">${teamPicks}</div>
+      </div>
+    </div>`;
+  }
+
+  function toggleCard(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  async function loadPicks() {
+    const out = document.getElementById('output');
+    try {
+      const res = await fetch('/api/picks');
+      const data = await res.json();
+
+      if (data.status === 'pending') {
+        out.innerHTML = `
+          <div class="status-box">
+            <div class="status-icon">⏳</div>
+            <div class="status-title">Picks Dropping Soon</div>
+            <div class="status-sub">Our system generates picks automatically once lineups are confirmed — roughly 75 minutes before the first kickoff.</div>
+            <div class="status-time">Check back closer to match time.</div>
+          </div>`;
+        // Auto-refresh every 5 min while pending
+        setTimeout(loadPicks, 5 * 60 * 1000);
+        return;
+      }
+
+      if (data.status === 'error') {
+        out.innerHTML = `
+          <div class="status-box">
+            <div class="status-icon">⚠️</div>
+            <div class="status-title">Something Went Wrong</div>
+            <div class="status-sub">${data.message}</div>
+          </div>`;
+        return;
+      }
+
+      if (!data.picks || data.picks.length === 0) {
+        out.innerHTML = `
+          <div class="status-box">
+            <div class="status-icon">📅</div>
+            <div class="status-title">No Matches Today</div>
+            <div class="status-sub">No World Cup 2026 matches are scheduled today. Come back on the next match day.</div>
+          </div>`;
+        return;
+      }
+
+      const genTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const dateLabel = `<div class="section-label">Today's Picks</div><div class="last-updated">Auto-generated at ${genTime} · Lineups confirmed</div>`;
+      const cards = data.picks.map((m, i) => renderMatch(m, i)).join('');
+      out.innerHTML = dateLabel + cards;
+
+    } catch (err) {
+      out.innerHTML = `
+        <div class="status-box">
+          <div class="status-icon">⚠️</div>
+          <div class="status-title">Connection Error</div>
+          <div class="status-sub">Could not load picks. Please refresh the page.</div>
+        </div>`;
+    }
+  }
+
+  loadPicks();
+</script>
+</body>
+</html>
