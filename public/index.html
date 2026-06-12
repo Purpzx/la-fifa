@@ -438,86 +438,42 @@
     el.innerHTML = `<div class="h2h-loading">Loading historical data...</div>`;
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          model:'claude-sonnet-4-6',
-          max_tokens:800,
-          tools:[{type:'web_search_20250305',name:'web_search'}],
-          system:`You are a football history analyst. Search for World Cup and major tournament history for the two teams provided. Return ONLY valid JSON, no markdown, no backticks:
-{
-  "home": {
-    "name": "Country",
-    "wc_appearances": 12,
-    "best_result": "Winner 1998",
-    "recent_wc": "Round of 16 (2022)",
-    "wc_record": "W24 D8 L12",
-    "fifa_rank": 3
-  },
-  "away": { same structure },
-  "h2h": {
-    "total_meetings": 8,
-    "home_wins": 4,
-    "draws": 2,
-    "away_wins": 2,
-    "last_meetings": [
-      { "year": 2022, "competition": "World Cup Group Stage", "score": "2-1", "winner": "home" },
-      { "year": 2018, "competition": "Friendly", "score": "1-1", "winner": "draw" }
-    ]
-  }
-}`,
-          messages:[{role:'user',content:`Get World Cup history and head to head record for ${home} vs ${away} for the 2026 FIFA World Cup. Return only JSON.`}]
-        })
-      });
-      const data = await res.json();
-      const text = (data.content||[]).map(i=>i.type==='text'?i.text:'').join('');
-      const clean = text.replace(/```json|```/g,'').trim();
-      const jsonMatch = clean.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('No JSON');
-      const d = JSON.parse(jsonMatch[0]);
+      const res = await fetch(`/api/h2h?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}`);
+      const d = await res.json();
+      if (d.error) throw new Error(d.error);
 
       const html = `
         <div class="h2h-grid">
           <div class="h2h-team-card">
             <div class="h2h-team-name">${d.home?.name || home}</div>
-            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.home?.fifa_rank||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.home?.wc_appearances||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.home?.best_result||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.home?.recent_wc||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.home?.wc_record||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.home?.fifa_rank || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.home?.wc_appearances || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.home?.best_result || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.home?.recent_wc || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.home?.wc_record || '—'}</span></div>
           </div>
           <div class="h2h-team-card">
             <div class="h2h-team-name">${d.away?.name || away}</div>
-            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.away?.fifa_rank||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.away?.wc_appearances||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.away?.best_result||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.away?.recent_wc||'—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.away?.wc_record||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.away?.fifa_rank || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.away?.wc_appearances || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.away?.best_result || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.away?.recent_wc || '—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.away?.wc_record || '—'}</span></div>
           </div>
         </div>
         <div class="h2h-record">
-          <div class="h2h-record-title">Head to Head · ${d.h2h?.total_meetings||0} meetings</div>
+          <div class="h2h-record-title">Head to Head · ${d.h2h?.total_meetings || 0} meetings</div>
           <div style="display:flex;gap:16px;margin-bottom:12px;">
-            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.home_wins||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${home} Wins</div></div>
-            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.draws||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Draws</div></div>
-            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.away_wins||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${away} Wins</div></div>
-          </div>
-          <div class="h2h-meetings">
-            ${(d.h2h?.last_meetings||[]).map(m=>`
-              <div class="h2h-meeting">
-                <span>${m.year} · ${m.competition}</span>
-                <span class="h2h-meeting-score">${m.score}</span>
-              </div>`).join('')}
-          </div>
-        </div>`;
-
-      h2hCache[key] = html;
-      el.innerHTML = html;
-    } catch(e) {
-      el.innerHTML = `<div class="h2h-loading">Could not load historical data.</div>`;
-    }
-  }
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.home_wins || 0}</div>
+              <div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${home} Wins</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.draws || 0}</div>
+              <div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Draws</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-famil
 
   // ── LIVE SCORES ──────────────────────────────────────────────
   let liveData = {};
