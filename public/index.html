@@ -15,12 +15,10 @@
   }
   body { background: var(--bg); color: var(--warm); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-  /* TICKER */
   .ticker-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow: hidden; white-space: nowrap; padding: 9px 0; }
   .ticker-content { display: inline-block; animation: ticker 40s linear infinite; font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
   @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
-  /* HEADER */
   header { padding: 48px 24px 36px; text-align: center; border-bottom: 1px solid var(--border); }
   .flag-bar { display: flex; height: 3px; width: 72px; margin: 0 auto 24px; border-radius: 2px; overflow: hidden; }
   .flag-bar span { flex: 1; }
@@ -32,50 +30,28 @@
   .header-sub { font-size: 13px; color: var(--muted); margin-top: 14px; letter-spacing: 0.04em; }
   .today-badge { display: inline-block; margin-top: 18px; border: 1px solid var(--faint); color: var(--muted); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; padding: 6px 16px; border-radius: 100px; text-transform: uppercase; }
 
-  /* MAIN */
   main { max-width: 860px; margin: 0 auto; padding: 36px 16px 80px; }
 
-  /* SECTION LABEL */
   .section-label { font-size: 9px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* ── MINCHIA SPECIAL ─────────────────────────────────────── */
+  /* MINCHIA SPECIAL */
   .special-wrap { margin-bottom: 40px; }
-  .special-card {
-    background: linear-gradient(135deg, #1a1400 0%, #0f0f0f 60%);
-    border: 1px solid rgba(200,168,75,0.35);
-    border-radius: 10px; padding: 24px 26px;
-    position: relative; overflow: hidden;
-  }
-  .special-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  }
-  .special-glow {
-    position: absolute; top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(200,168,75,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .special-eyebrow {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
-  }
-  .special-star { font-size: 14px; }
+  .special-card { background: linear-gradient(135deg, #1a1400 0%, #0f0f0f 60%); border: 1px solid rgba(200,168,75,0.35); border-radius: 10px; padding: 24px 26px; position: relative; overflow: hidden; }
+  .special-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .special-glow { position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(200,168,75,0.08) 0%, transparent 70%); pointer-events: none; }
+  .special-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 9px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
   .special-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--warm); line-height: 1.3; margin-bottom: 6px; }
   .special-line { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--gold); letter-spacing: -0.01em; margin-bottom: 12px; }
   .special-reasoning { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; max-width: 560px; }
   .special-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .special-match { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
-  .special-pending {
-    text-align: center; padding: 32px;
-  }
+  .special-pending { text-align: center; padding: 32px; }
   .special-pending-icon { font-size: 32px; margin-bottom: 10px; }
   .special-pending-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--warm); margin-bottom: 6px; }
   .special-pending-sub { font-size: 12px; color: var(--muted); }
 
-  /* ── LIVE SCORES ─────────────────────────────────────────── */
+  /* LIVE SCORES */
   .live-section { margin-bottom: 40px; }
   .live-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 10px; }
   .live-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; position: relative; overflow: hidden; }
@@ -90,7 +66,6 @@
   .score-team { font-size: 13px; font-weight: 600; color: var(--warm); max-width: 85px; line-height: 1.2; }
   .score-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--warm); min-width: 28px; text-align: center; line-height: 1; }
   .score-sep { font-size: 16px; color: var(--muted); margin: 0 2px; }
-  .score-center { text-align: center; }
   .stats-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 4px 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .stat-home { font-size: 11px; font-weight: 600; color: var(--warm); text-align: right; }
   .stat-lbl { font-size: 9px; color: var(--muted); text-align: center; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
@@ -102,43 +77,37 @@
   .poss-labels { display: flex; justify-content: space-between; margin-top: 4px; }
   .poss-lbl { font-size: 9px; color: var(--muted); }
 
-  /* ── COUNTDOWN ───────────────────────────────────────────── */
-  .countdown-wrap {
-    display: flex; align-items: center; gap: 6px;
-    margin-top: 6px;
-  }
+  /* COUNTDOWN */
+  .countdown-wrap { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
   .countdown-label { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
   .countdown-timer { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gold); font-weight: 700; letter-spacing: 0.04em; }
   .countdown-timer.urgent { color: var(--red); }
 
-  /* ── H2H PANEL ───────────────────────────────────────────── */
+  /* H2H */
   .h2h-wrap { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .h2h-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; margin-bottom: 0; }
+  .h2h-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
   .h2h-toggle-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
   .h2h-toggle-icon { font-size: 10px; color: var(--muted); margin-left: auto; transition: transform 0.2s; }
   .h2h-toggle.open .h2h-toggle-icon { transform: rotate(180deg); }
   .h2h-body { display: none; margin-top: 14px; }
   .h2h-toggle.open + .h2h-body { display: block; }
-
-  .h2h-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .h2h-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   @media (max-width: 540px) { .h2h-grid { grid-template-columns: 1fr; } }
-
   .h2h-team-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
   .h2h-team-name { font-size: 12px; font-weight: 600; color: var(--warm); margin-bottom: 10px; }
   .h2h-stat { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border); }
   .h2h-stat:last-child { border-bottom: none; }
   .h2h-stat-label { font-size: 10px; color: var(--muted); }
   .h2h-stat-value { font-size: 11px; font-weight: 600; color: var(--warm); }
-
-  .h2h-record { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-top: 0; }
+  .h2h-record { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
   .h2h-record-title { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .h2h-meetings { display: flex; flex-direction: column; gap: 6px; }
+  .h2h-meetings { display: flex; flex-direction: column; gap: 0; }
   .h2h-meeting { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); }
   .h2h-meeting:last-child { border-bottom: none; }
   .h2h-meeting-score { font-weight: 600; color: var(--warm); }
   .h2h-loading { font-size: 11px; color: var(--muted); text-align: center; padding: 16px; }
 
-  /* ── PICKS SECTION ───────────────────────────────────────── */
+  /* PICKS */
   .last-updated { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 20px; letter-spacing: 0.06em; }
   .match-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
   .match-card:hover { border-color: rgba(255,255,255,0.11); }
@@ -168,10 +137,8 @@
   .cat-game .cat-pip { background: var(--blue); }
   .cat-team .cat-pip { background: var(--gold); }
   .cat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
-
   .picks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
   @media (max-width: 540px) { .picks-grid { grid-template-columns: 1fr; } }
-
   .pick-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; position: relative; overflow: hidden; }
   .pick-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .cat-player .pick-accent { background: var(--green); }
@@ -181,7 +148,6 @@
   .pick-line { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
   .pick-reasoning { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
   .pick-footer { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-
   .book-badge { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; }
   .book-fanduel    { background: #1493FF18; color: #5DB8FF; border: 1px solid #1493FF33; }
   .book-draftkings { background: #53D33718; color: #7EE85F; border: 1px solid #53D33733; }
@@ -197,7 +163,6 @@
   .status-icon { font-size: 38px; margin-bottom: 18px; }
   .status-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--warm); margin-bottom: 10px; }
   .status-sub { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 320px; margin: 0 auto; }
-
   .spinner-wrap { text-align: center; padding: 60px 20px; }
   .spinner { width: 32px; height: 32px; border: 2px solid var(--faint); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 14px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -221,7 +186,6 @@
 </header>
 
 <main>
-  <!-- MINCHIA SPECIAL -->
   <div class="special-wrap">
     <div class="section-label">⭐ Minchia Special</div>
     <div class="special-card" id="special-card">
@@ -234,287 +198,264 @@
     </div>
   </div>
 
-  <!-- LIVE SCORES -->
   <div class="live-section" id="live-section" style="display:none;">
     <div class="section-label">Live Scores & Stats</div>
     <div class="live-grid" id="live-grid"></div>
   </div>
 
-  <!-- PICKS -->
   <div id="picks-section"></div>
 
   <div class="disclaimer">For entertainment purposes only. Gambling involves risk. Must be 21+ and located in a legal betting state. Please gamble responsibly.</div>
 </main>
 
 <script>
-  // ── DATE ─────────────────────────────────────────────────────
   const todayDate = new Date();
   document.getElementById('today-badge').textContent = todayDate.toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
   const todayKey = todayDate.toISOString().split('T')[0];
 
-  // ── SCHEDULE ─────────────────────────────────────────────────
   const SCHEDULE = {
-    "2026-06-11": [
-      { home:"Mexico", away:"South Africa", kickoff_et:"15:00", venue:"Estadio Azteca, Mexico City", stage:"Group A" },
-      { home:"South Korea", away:"Czechia", kickoff_et:"22:00", venue:"Estadio Akron, Zapopan", stage:"Group A" },
+    "2026-06-11":[
+      {home:"Mexico",away:"South Africa",kickoff_et:"15:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
+      {home:"South Korea",away:"Czechia",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group A"},
     ],
-    "2026-06-12": [
-      { home:"Canada", away:"Bosnia & Herzegovina", kickoff_et:"15:00", venue:"BMO Field, Toronto", stage:"Group B" },
-      { home:"USA", away:"Paraguay", kickoff_et:"21:00", venue:"SoFi Stadium, Inglewood", stage:"Group D" },
+    "2026-06-12":[
+      {home:"Canada",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group B"},
+      {home:"USA",away:"Paraguay",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"},
     ],
-    "2026-06-13": [
-      { home:"Qatar", away:"Switzerland", kickoff_et:"15:00", venue:"Levi's Stadium, Santa Clara", stage:"Group B" },
-      { home:"Brazil", away:"Morocco", kickoff_et:"18:00", venue:"MetLife Stadium, East Rutherford", stage:"Group C" },
-      { home:"Haiti", away:"Scotland", kickoff_et:"21:00", venue:"Gillette Stadium, Foxborough", stage:"Group C" },
+    "2026-06-13":[
+      {home:"Qatar",away:"Switzerland",kickoff_et:"15:00",venue:"Levi's Stadium, Santa Clara",stage:"Group B"},
+      {home:"Brazil",away:"Morocco",kickoff_et:"18:00",venue:"MetLife Stadium, East Rutherford",stage:"Group C"},
+      {home:"Haiti",away:"Scotland",kickoff_et:"21:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"},
     ],
-    "2026-06-14": [
-      { home:"Australia", away:"Türkiye", kickoff_et:"00:00", venue:"BC Place, Vancouver", stage:"Group D" },
-      { home:"Germany", away:"Curaçao", kickoff_et:"13:00", venue:"NRG Stadium, Houston", stage:"Group E" },
-      { home:"Netherlands", away:"Japan", kickoff_et:"16:00", venue:"AT&T Stadium, Arlington", stage:"Group F" },
-      { home:"Ivory Coast", away:"Ecuador", kickoff_et:"19:00", venue:"Lincoln Financial Field, Philadelphia", stage:"Group E" },
-      { home:"Sweden", away:"Tunisia", kickoff_et:"22:00", venue:"Estadio BBVA, Monterrey", stage:"Group F" },
+    "2026-06-14":[
+      {home:"Australia",away:"Türkiye",kickoff_et:"00:00",venue:"BC Place, Vancouver",stage:"Group D"},
+      {home:"Germany",away:"Curaçao",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group E"},
+      {home:"Netherlands",away:"Japan",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},
+      {home:"Ivory Coast",away:"Ecuador",kickoff_et:"19:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},
+      {home:"Sweden",away:"Tunisia",kickoff_et:"22:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"},
     ],
-    "2026-06-15": [
-      { home:"Spain", away:"Cape Verde", kickoff_et:"12:00", venue:"Mercedes-Benz Stadium, Atlanta", stage:"Group H" },
-      { home:"Belgium", away:"Egypt", kickoff_et:"15:00", venue:"Lumen Field, Seattle", stage:"Group G" },
-      { home:"Saudi Arabia", away:"Uruguay", kickoff_et:"18:00", venue:"Hard Rock Stadium, Miami Gardens", stage:"Group H" },
-      { home:"Iran", away:"New Zealand", kickoff_et:"21:00", venue:"SoFi Stadium, Inglewood", stage:"Group G" },
+    "2026-06-15":[
+      {home:"Spain",away:"Cape Verde",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},
+      {home:"Belgium",away:"Egypt",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group G"},
+      {home:"Saudi Arabia",away:"Uruguay",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},
+      {home:"Iran",away:"New Zealand",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"},
     ],
-    "2026-06-16": [
-      { home:"France", away:"Senegal", kickoff_et:"15:00", venue:"MetLife Stadium, East Rutherford", stage:"Group I" },
-      { home:"Iraq", away:"Norway", kickoff_et:"18:00", venue:"Gillette Stadium, Foxborough", stage:"Group I" },
-      { home:"Argentina", away:"Algeria", kickoff_et:"21:00", venue:"Arrowhead Stadium, Kansas City", stage:"Group J" },
+    "2026-06-16":[
+      {home:"France",away:"Senegal",kickoff_et:"15:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},
+      {home:"Iraq",away:"Norway",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},
+      {home:"Argentina",away:"Algeria",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},
     ],
-    "2026-06-17": [
-      { home:"Austria", away:"Jordan", kickoff_et:"00:00", venue:"Levi's Stadium, Santa Clara", stage:"Group J" },
-      { home:"Portugal", away:"DR Congo", kickoff_et:"13:00", venue:"NRG Stadium, Houston", stage:"Group K" },
-      { home:"England", away:"Croatia", kickoff_et:"16:00", venue:"AT&T Stadium, Arlington", stage:"Group L" },
-      { home:"Ghana", away:"Panama", kickoff_et:"19:00", venue:"BMO Field, Toronto", stage:"Group L" },
-      { home:"Uzbekistan", away:"Colombia", kickoff_et:"22:00", venue:"Estadio Azteca, Mexico City", stage:"Group K" },
+    "2026-06-17":[
+      {home:"Austria",away:"Jordan",kickoff_et:"00:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"},
+      {home:"Portugal",away:"DR Congo",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},
+      {home:"England",away:"Croatia",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group L"},
+      {home:"Ghana",away:"Panama",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},
+      {home:"Uzbekistan",away:"Colombia",kickoff_et:"22:00",venue:"Estadio Azteca, Mexico City",stage:"Group K"},
     ],
-    "2026-06-18": [
-      { home:"Czechia", away:"South Africa", kickoff_et:"12:00", venue:"Mercedes-Benz Stadium, Atlanta", stage:"Group A" },
-      { home:"Switzerland", away:"Bosnia & Herzegovina", kickoff_et:"15:00", venue:"SoFi Stadium, Inglewood", stage:"Group B" },
-      { home:"Canada", away:"Qatar", kickoff_et:"18:00", venue:"BC Place, Vancouver", stage:"Group B" },
-      { home:"Mexico", away:"South Korea", kickoff_et:"21:00", venue:"Estadio Akron, Zapopan", stage:"Group A" },
+    "2026-06-18":[
+      {home:"Czechia",away:"South Africa",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group A"},
+      {home:"Switzerland",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group B"},
+      {home:"Canada",away:"Qatar",kickoff_et:"18:00",venue:"BC Place, Vancouver",stage:"Group B"},
+      {home:"Mexico",away:"South Korea",kickoff_et:"21:00",venue:"Estadio Akron, Zapopan",stage:"Group A"},
     ],
-    "2026-06-19": [
-      { home:"USA", away:"Australia", kickoff_et:"15:00", venue:"Lumen Field, Seattle", stage:"Group D" },
-      { home:"Scotland", away:"Morocco", kickoff_et:"18:00", venue:"Gillette Stadium, Foxborough", stage:"Group C" },
-      { home:"Brazil", away:"Haiti", kickoff_et:"20:30", venue:"Lincoln Financial Field, Philadelphia", stage:"Group C" },
-      { home:"Türkiye", away:"Paraguay", kickoff_et:"23:00", venue:"Levi's Stadium, Santa Clara", stage:"Group D" },
+    "2026-06-19":[
+      {home:"USA",away:"Australia",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group D"},
+      {home:"Scotland",away:"Morocco",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"},
+      {home:"Brazil",away:"Haiti",kickoff_et:"20:30",venue:"Lincoln Financial Field, Philadelphia",stage:"Group C"},
+      {home:"Türkiye",away:"Paraguay",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"},
     ],
-    "2026-06-20": [
-      { home:"Netherlands", away:"Sweden", kickoff_et:"13:00", venue:"NRG Stadium, Houston", stage:"Group F" },
-      { home:"Germany", away:"Ivory Coast", kickoff_et:"16:00", venue:"BMO Field, Toronto", stage:"Group E" },
-      { home:"Ecuador", away:"Curaçao", kickoff_et:"20:00", venue:"Arrowhead Stadium, Kansas City", stage:"Group E" },
+    "2026-06-20":[
+      {home:"Netherlands",away:"Sweden",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group F"},
+      {home:"Germany",away:"Ivory Coast",kickoff_et:"16:00",venue:"BMO Field, Toronto",stage:"Group E"},
+      {home:"Ecuador",away:"Curaçao",kickoff_et:"20:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group E"},
     ],
-    "2026-06-21": [
-      { home:"Tunisia", away:"Japan", kickoff_et:"00:00", venue:"Estadio BBVA, Monterrey", stage:"Group F" },
-      { home:"Spain", away:"Saudi Arabia", kickoff_et:"12:00", venue:"Mercedes-Benz Stadium, Atlanta", stage:"Group H" },
-      { home:"Belgium", away:"Iran", kickoff_et:"15:00", venue:"SoFi Stadium, Inglewood", stage:"Group G" },
-      { home:"Uruguay", away:"Cape Verde", kickoff_et:"18:00", venue:"Hard Rock Stadium, Miami Gardens", stage:"Group H" },
-      { home:"New Zealand", away:"Egypt", kickoff_et:"21:00", venue:"BC Place, Vancouver", stage:"Group G" },
+    "2026-06-21":[
+      {home:"Tunisia",away:"Japan",kickoff_et:"00:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"},
+      {home:"Spain",away:"Saudi Arabia",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},
+      {home:"Belgium",away:"Iran",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"},
+      {home:"Uruguay",away:"Cape Verde",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},
+      {home:"New Zealand",away:"Egypt",kickoff_et:"21:00",venue:"BC Place, Vancouver",stage:"Group G"},
     ],
-    "2026-06-22": [
-      { home:"Argentina", away:"Austria", kickoff_et:"13:00", venue:"AT&T Stadium, Arlington", stage:"Group J" },
-      { home:"France", away:"Iraq", kickoff_et:"17:00", venue:"Lincoln Financial Field, Philadelphia", stage:"Group I" },
-      { home:"Norway", away:"Senegal", kickoff_et:"20:00", venue:"MetLife Stadium, East Rutherford", stage:"Group I" },
-      { home:"Jordan", away:"Algeria", kickoff_et:"23:00", venue:"Levi's Stadium, Santa Clara", stage:"Group J" },
+    "2026-06-22":[
+      {home:"Argentina",away:"Austria",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},
+      {home:"France",away:"Iraq",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group I"},
+      {home:"Norway",away:"Senegal",kickoff_et:"20:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},
+      {home:"Jordan",away:"Algeria",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"},
     ],
-    "2026-06-23": [
-      { home:"Portugal", away:"Uzbekistan", kickoff_et:"13:00", venue:"NRG Stadium, Houston", stage:"Group K" },
-      { home:"England", away:"Ghana", kickoff_et:"16:00", venue:"Gillette Stadium, Foxborough", stage:"Group L" },
-      { home:"Panama", away:"Croatia", kickoff_et:"19:00", venue:"BMO Field, Toronto", stage:"Group L" },
-      { home:"Colombia", away:"DR Congo", kickoff_et:"22:00", venue:"Estadio Akron, Zapopan", stage:"Group K" },
+    "2026-06-23":[
+      {home:"Portugal",away:"Uzbekistan",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},
+      {home:"England",away:"Ghana",kickoff_et:"16:00",venue:"Gillette Stadium, Foxborough",stage:"Group L"},
+      {home:"Panama",away:"Croatia",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},
+      {home:"Colombia",away:"DR Congo",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group K"},
     ],
-    "2026-06-24": [
-      { home:"Switzerland", away:"Canada", kickoff_et:"15:00", venue:"BC Place, Vancouver", stage:"Group B" },
-      { home:"Bosnia & Herzegovina", away:"Qatar", kickoff_et:"15:00", venue:"Lumen Field, Seattle", stage:"Group B" },
-      { home:"Scotland", away:"Brazil", kickoff_et:"18:00", venue:"Hard Rock Stadium, Miami Gardens", stage:"Group C" },
-      { home:"Morocco", away:"Haiti", kickoff_et:"18:00", venue:"Mercedes-Benz Stadium, Atlanta", stage:"Group C" },
-      { home:"Czechia", away:"Mexico", kickoff_et:"21:00", venue:"Estadio Azteca, Mexico City", stage:"Group A" },
-      { home:"South Africa", away:"South Korea", kickoff_et:"21:00", venue:"Estadio BBVA, Monterrey", stage:"Group A" },
+    "2026-06-24":[
+      {home:"Switzerland",away:"Canada",kickoff_et:"15:00",venue:"BC Place, Vancouver",stage:"Group B"},
+      {home:"Bosnia & Herzegovina",away:"Qatar",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group B"},
+      {home:"Scotland",away:"Brazil",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group C"},
+      {home:"Morocco",away:"Haiti",kickoff_et:"18:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group C"},
+      {home:"Czechia",away:"Mexico",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
+      {home:"South Africa",away:"South Korea",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Group A"},
     ],
-    "2026-06-25": [
-      { home:"Curaçao", away:"Ivory Coast", kickoff_et:"16:00", venue:"Lincoln Financial Field, Philadelphia", stage:"Group E" },
-      { home:"Ecuador", away:"Germany", kickoff_et:"16:00", venue:"MetLife Stadium, East Rutherford", stage:"Group E" },
-      { home:"Japan", away:"Sweden", kickoff_et:"19:00", venue:"AT&T Stadium, Arlington", stage:"Group F" },
-      { home:"Tunisia", away:"Netherlands", kickoff_et:"19:00", venue:"Arrowhead Stadium, Kansas City", stage:"Group F" },
-      { home:"Türkiye", away:"USA", kickoff_et:"22:00", venue:"SoFi Stadium, Inglewood", stage:"Group D" },
-      { home:"Paraguay", away:"Australia", kickoff_et:"22:00", venue:"Levi's Stadium, Santa Clara", stage:"Group D" },
+    "2026-06-25":[
+      {home:"Curaçao",away:"Ivory Coast",kickoff_et:"16:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},
+      {home:"Ecuador",away:"Germany",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Group E"},
+      {home:"Japan",away:"Sweden",kickoff_et:"19:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},
+      {home:"Tunisia",away:"Netherlands",kickoff_et:"19:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group F"},
+      {home:"Türkiye",away:"USA",kickoff_et:"22:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"},
+      {home:"Paraguay",away:"Australia",kickoff_et:"22:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"},
     ],
-    "2026-06-26": [
-      { home:"Norway", away:"France", kickoff_et:"15:00", venue:"Gillette Stadium, Foxborough", stage:"Group I" },
-      { home:"Senegal", away:"Iraq", kickoff_et:"15:00", venue:"BMO Field, Toronto", stage:"Group I" },
-      { home:"Cape Verde", away:"Saudi Arabia", kickoff_et:"20:00", venue:"NRG Stadium, Houston", stage:"Group H" },
-      { home:"Uruguay", away:"Spain", kickoff_et:"20:00", venue:"Estadio Akron, Zapopan", stage:"Group H" },
-      { home:"Egypt", away:"Iran", kickoff_et:"23:00", venue:"Lumen Field, Seattle", stage:"Group G" },
-      { home:"New Zealand", away:"Belgium", kickoff_et:"23:00", venue:"BC Place, Vancouver", stage:"Group G" },
+    "2026-06-26":[
+      {home:"Norway",away:"France",kickoff_et:"15:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},
+      {home:"Senegal",away:"Iraq",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group I"},
+      {home:"Cape Verde",away:"Saudi Arabia",kickoff_et:"20:00",venue:"NRG Stadium, Houston",stage:"Group H"},
+      {home:"Uruguay",away:"Spain",kickoff_et:"20:00",venue:"Estadio Akron, Zapopan",stage:"Group H"},
+      {home:"Egypt",away:"Iran",kickoff_et:"23:00",venue:"Lumen Field, Seattle",stage:"Group G"},
+      {home:"New Zealand",away:"Belgium",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Group G"},
     ],
-    "2026-06-27": [
-      { home:"Panama", away:"England", kickoff_et:"17:00", venue:"MetLife Stadium, East Rutherford", stage:"Group L" },
-      { home:"Croatia", away:"Ghana", kickoff_et:"17:00", venue:"Lincoln Financial Field, Philadelphia", stage:"Group L" },
-      { home:"Colombia", away:"Portugal", kickoff_et:"19:30", venue:"Hard Rock Stadium, Miami Gardens", stage:"Group K" },
-      { home:"DR Congo", away:"Uzbekistan", kickoff_et:"19:30", venue:"Mercedes-Benz Stadium, Atlanta", stage:"Group K" },
-      { home:"Algeria", away:"Austria", kickoff_et:"22:00", venue:"Arrowhead Stadium, Kansas City", stage:"Group J" },
-      { home:"Jordan", away:"Argentina", kickoff_et:"22:00", venue:"AT&T Stadium, Arlington", stage:"Group J" },
+    "2026-06-27":[
+      {home:"Panama",away:"England",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Group L"},
+      {home:"Croatia",away:"Ghana",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group L"},
+      {home:"Colombia",away:"Portugal",kickoff_et:"19:30",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group K"},
+      {home:"DR Congo",away:"Uzbekistan",kickoff_et:"19:30",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group K"},
+      {home:"Algeria",away:"Austria",kickoff_et:"22:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},
+      {home:"Jordan",away:"Argentina",kickoff_et:"22:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},
     ],
   };
 
   const todayMatches = SCHEDULE[todayKey] || [];
 
   const BOOKS = {
-    fanduel:    { label:'FanDuel',    cls:'book-fanduel' },
-    draftkings: { label:'DraftKings', cls:'book-draftkings' },
-    betmgm:     { label:'BetMGM',     cls:'book-betmgm' },
-    bet365:     { label:'Bet365',     cls:'book-bet365' },
-    fanatics:   { label:'Fanatics',   cls:'book-fanatics' },
+    fanduel:    {label:'FanDuel',    cls:'book-fanduel'},
+    draftkings: {label:'DraftKings', cls:'book-draftkings'},
+    betmgm:     {label:'BetMGM',     cls:'book-betmgm'},
+    bet365:     {label:'Bet365',     cls:'book-bet365'},
+    fanatics:   {label:'Fanatics',   cls:'book-fanatics'},
   };
 
-  // ── HELPERS ──────────────────────────────────────────────────
   function confDots(n) {
-    let d = '';
-    for (let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
+    let d='';
+    for(let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
     return `<div class="conf-dots">${d}</div>`;
   }
 
   function fmtKickoff(kt) {
-    const [h,m] = kt.split(':').map(Number);
-    const ampm = h>=12?'PM':'AM';
-    const h12 = h%12||12;
+    const [h,m]=kt.split(':').map(Number);
+    const ampm=h>=12?'PM':'AM';
+    const h12=h%12||12;
     return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;
   }
 
   function kickoffDate(kt) {
-    const [h,m] = kt.split(':').map(Number);
-    const d = new Date(new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'}));
+    const [h,m]=kt.split(':').map(Number);
+    const d=new Date(new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'}));
     d.setHours(h,m,0,0);
     return d;
   }
 
   function matchStatus(kt) {
-    const now = Date.now();
-    const ko = kickoffDate(kt).getTime();
-    const diff = now - ko;
-    if (diff < 0) return 'pre';
-    if (diff < 115*60*1000) return 'live';
+    const now=Date.now(), ko=kickoffDate(kt).getTime(), diff=now-ko;
+    if(diff<0) return 'pre';
+    if(diff<115*60*1000) return 'live';
     return 'ft';
   }
 
-  // ── COUNTDOWN ────────────────────────────────────────────────
-  const countdownTimers = {};
-
-  function startCountdown(kt, elId) {
-    if (countdownTimers[elId]) clearInterval(countdownTimers[elId]);
+  // COUNTDOWNS
+  const countdownTimers={};
+  function startCountdown(kt,elId) {
+    if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
     function tick() {
-      const el = document.getElementById(elId);
-      if (!el) { clearInterval(countdownTimers[elId]); return; }
-      const ko = kickoffDate(kt).getTime();
-      const diff = ko - Date.now();
-      if (diff <= 0) { el.textContent = 'LIVE'; el.classList.add('urgent'); clearInterval(countdownTimers[elId]); return; }
-      const h = Math.floor(diff/3600000);
-      const m = Math.floor((diff%3600000)/60000);
-      const s = Math.floor((diff%60000)/1000);
-      const str = h>0 ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}m ${String(s).padStart(2,'0')}s`;
-      el.textContent = str;
-      if (diff < 30*60*1000) el.classList.add('urgent');
+      const el=document.getElementById(elId);
+      if(!el){clearInterval(countdownTimers[elId]);return;}
+      const diff=kickoffDate(kt).getTime()-Date.now();
+      if(diff<=0){el.textContent='LIVE';el.classList.add('urgent');clearInterval(countdownTimers[elId]);return;}
+      const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+      el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`;
+      if(diff<30*60*1000) el.classList.add('urgent');
     }
     tick();
-    countdownTimers[elId] = setInterval(tick, 1000);
+    countdownTimers[elId]=setInterval(tick,1000);
   }
 
-  // ── H2H DATA ─────────────────────────────────────────────────
-  const h2hCache = {};
-
-  async function fetchH2H(home, away, containerId) {
-    const key = `${home}|${away}`;
-    const el = document.getElementById(containerId);
-    if (!el) return;
-
-    if (h2hCache[key]) { el.innerHTML = h2hCache[key]; return; }
-    el.innerHTML = `<div class="h2h-loading">Loading historical data...</div>`;
-
+  // H2H
+  const h2hCache={};
+  async function fetchH2H(home,away,containerId) {
+    const key=`${home}|${away}`;
+    const el=document.getElementById(containerId);
+    if(!el) return;
+    if(h2hCache[key]){el.innerHTML=h2hCache[key];return;}
+    el.innerHTML=`<div class="h2h-loading">Loading historical data...</div>`;
     try {
-      const res = await fetch(`/api/h2h?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}`);
-      const d = await res.json();
-      if (d.error) throw new Error(d.error);
-
-      const html = `
+      const res=await fetch(`/api/h2h?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}`);
+      const d=await res.json();
+      if(d.error) throw new Error(d.error);
+      const html=`
         <div class="h2h-grid">
           <div class="h2h-team-card">
-            <div class="h2h-team-name">${d.home?.name || home}</div>
-            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.home?.fifa_rank || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.home?.wc_appearances || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.home?.best_result || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.home?.recent_wc || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.home?.wc_record || '—'}</span></div>
+            <div class="h2h-team-name">${d.home?.name||home}</div>
+            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.home?.fifa_rank||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.home?.wc_appearances||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.home?.best_result||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.home?.recent_wc||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.home?.wc_record||'—'}</span></div>
           </div>
           <div class="h2h-team-card">
-            <div class="h2h-team-name">${d.away?.name || away}</div>
-            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.away?.fifa_rank || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.away?.wc_appearances || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.away?.best_result || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.away?.recent_wc || '—'}</span></div>
-            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.away?.wc_record || '—'}</span></div>
+            <div class="h2h-team-name">${d.away?.name||away}</div>
+            <div class="h2h-stat"><span class="h2h-stat-label">FIFA Rank</span><span class="h2h-stat-value">#${d.away?.fifa_rank||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Appearances</span><span class="h2h-stat-value">${d.away?.wc_appearances||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Best Result</span><span class="h2h-stat-value">${d.away?.best_result||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">Last WC</span><span class="h2h-stat-value">${d.away?.recent_wc||'—'}</span></div>
+            <div class="h2h-stat"><span class="h2h-stat-label">WC Record</span><span class="h2h-stat-value">${d.away?.wc_record||'—'}</span></div>
           </div>
         </div>
         <div class="h2h-record">
-          <div class="h2h-record-title">Head to Head · ${d.h2h?.total_meetings || 0} meetings</div>
+          <div class="h2h-record-title">Head to Head · ${d.h2h?.total_meetings||0} meetings</div>
           <div style="display:flex;gap:16px;margin-bottom:12px;">
-            <div style="text-align:center;flex:1;">
-              <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.home_wins || 0}</div>
-              <div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${home} Wins</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.draws || 0}</div>
-              <div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Draws</div>
-            </div>
-            <div style="text-align:center;flex:1;">
-              <div style="font-famil
-
-  // ── LIVE SCORES ──────────────────────────────────────────────
-  let liveData = {};
-
-  async function fetchLiveScores() {
-    if (!todayMatches.length) return;
-    const matchList = todayMatches.map(m=>`${m.home} vs ${m.away}`).join(', ');
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-6', max_tokens:1000,
-          tools:[{type:'web_search_20250305',name:'web_search'}],
-          system:`You are a live football score reporter. Search for current FIFA World Cup 2026 scores. Return ONLY valid JSON array, no markdown:
-[{"home":"Country","away":"Country","home_score":0,"away_score":0,"minute":"45","status":"live|pre|ft","home_shots":0,"away_shots":0,"home_shots_ot":0,"away_shots_ot":0,"home_possession":50,"away_possession":50,"home_corners":0,"away_corners":0,"home_cards":"0","away_cards":"0"}]`,
-          messages:[{role:'user',content:`Current scores for WC2026: ${matchList}. Return JSON array only.`}]
-        })
-      });
-      const data = await res.json();
-      const text = (data.content||[]).map(i=>i.type==='text'?i.text:'').join('');
-      const clean = text.replace(/```json|```/g,'').trim();
-      const jm = clean.match(/\[[\s\S]*\]/);
-      if (!jm) return;
-      const scores = JSON.parse(jm[0]);
-      scores.forEach(s=>{ liveData[`${s.home}|${s.away}`]=s; });
-      renderLiveSection();
-    } catch(e) { console.log('Live score error:',e); }
+            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.home_wins||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${home} Wins</div></div>
+            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.draws||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Draws</div></div>
+            <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.away_wins||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${away} Wins</div></div>
+          </div>
+          <div class="h2h-meetings">
+            ${(d.h2h?.last_meetings||[]).map(m=>`
+              <div class="h2h-meeting">
+                <span>${m.year} · ${m.competition}</span>
+                <span class="h2h-meeting-score">${m.score}</span>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      h2hCache[key]=html;
+      el.innerHTML=html;
+    } catch(e) {
+      el.innerHTML=`<div class="h2h-loading">Could not load historical data. Try again.</div>`;
+    }
   }
 
-  function renderLiveCard(match, score) {
-    const status = score ? score.status : matchStatus(match.kickoff_et);
-    const isLive = status==='live', isFt = status==='ft';
-    let badge = isLive
-      ? `<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}' </div>`
-      : isFt ? `<div class="ft-badge">Full Time</div>`
-      : `<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
-    const hs = score?.home_score ?? (isLive||isFt?0:'–');
-    const as = score?.away_score ?? (isLive||isFt?0:'–');
-    let stats = '';
-    if ((isLive||isFt)&&score) {
-      const hp=score.home_possession||50, ap=score.away_possession||50;
+  // LIVE SCORES
+  let liveData={};
+  async function fetchLiveScores() {
+    if(!todayMatches.length) return;
+    const matchList=todayMatches.map(m=>`${m.home} vs ${m.away}`).join(', ');
+    try {
+      const res=await fetch(`/api/live?matches=${encodeURIComponent(matchList)}`);
+      const scores=await res.json();
+      if(Array.isArray(scores)) scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
+      renderLiveSection();
+    } catch(e){console.log('Live score error:',e);}
+  }
+
+  function renderLiveCard(match,score) {
+    const status=score?score.status:matchStatus(match.kickoff_et);
+    const isLive=status==='live', isFt=status==='ft';
+    let badge=isLive
+      ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
+      :isFt?`<div class="ft-badge">Full Time</div>`
+      :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
+    const hs=score?.home_score??(isLive||isFt?0:'–');
+    const as=score?.away_score??(isLive||isFt?0:'–');
+    let stats='';
+    if((isLive||isFt)&&score){
+      const hp=score.home_possession||50,ap=score.away_possession||50;
       stats=`<div class="stats-grid">
         <div class="stat-home">${score.home_shots??0}</div><div class="stat-lbl">Shots</div><div class="stat-away">${score.away_shots??0}</div>
         <div class="stat-home">${score.home_shots_ot??0}</div><div class="stat-lbl">On Target</div><div class="stat-away">${score.away_shots_ot??0}</div>
@@ -528,9 +469,7 @@
       ${badge}
       <div class="score-row">
         <div class="score-team">${match.home}</div>
-        <div class="score-center" style="display:flex;align-items:center;gap:4px;">
-          <div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div>
-        </div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div></div>
         <div class="score-team" style="text-align:right">${match.away}</div>
       </div>
       <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:-4px;margin-bottom:4px;">${match.stage} · ${match.venue}</div>
@@ -539,25 +478,25 @@
   }
 
   function renderLiveSection() {
-    if (!todayMatches.length) return;
+    if(!todayMatches.length) return;
     document.getElementById('live-section').style.display='block';
-    document.getElementById('live-grid').innerHTML = todayMatches.map(m=>renderLiveCard(m,liveData[`${m.home}|${m.away}`])).join('');
+    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m,liveData[`${m.home}|${m.away}`])).join('');
   }
 
-  // ── SPECIAL ──────────────────────────────────────────────────
+  // SPECIAL
   function renderSpecial(picks) {
-    if (!picks) return;
-    let best = null;
-    picks.forEach(match => {
-      [...(match.player_props||[]),...(match.game_props||[]),...(match.team_props||[])].forEach(p => {
-        if (!best || p.confidence > best.confidence) best = { ...p, matchHome: match.home, matchAway: match.away };
+    if(!picks) return;
+    let best=null;
+    picks.forEach(match=>{
+      [...(match.player_props||[]),...(match.game_props||[]),...(match.team_props||[])].forEach(p=>{
+        if(!best||p.confidence>best.confidence) best={...p,matchHome:match.home,matchAway:match.away};
       });
     });
-    if (!best) return;
-    const book = BOOKS[best.book]||BOOKS['fanduel'];
-    document.getElementById('special-card').innerHTML = `
+    if(!best) return;
+    const book=BOOKS[best.book]||BOOKS['fanduel'];
+    document.getElementById('special-card').innerHTML=`
       <div class="special-glow"></div>
-      <div class="special-eyebrow"><span class="special-star">⭐</span> Minchia Special · Best Pick of the Day</div>
+      <div class="special-eyebrow"><span>⭐</span> Minchia Special · Best Pick of the Day</div>
       <div class="special-title">${best.title}</div>
       <div class="special-line">${best.line}</div>
       <div class="special-reasoning">${best.reasoning}</div>
@@ -569,9 +508,9 @@
       </div>`;
   }
 
-  // ── PICKS ────────────────────────────────────────────────────
+  // PICKS
   function renderPick(pick) {
-    const book = BOOKS[pick.book]||BOOKS['fanduel'];
+    const book=BOOKS[pick.book]||BOOKS['fanduel'];
     return `<div class="pick-card">
       <div class="pick-accent"></div>
       <div class="pick-title">${pick.title}</div>
@@ -585,16 +524,16 @@
     </div>`;
   }
 
-  function renderMatchCard(match, index, picksData) {
-    const id = 'mc-'+index;
-    const h2hId = 'h2h-body-'+index;
-    const h2hToggleId = 'h2h-toggle-'+index;
-    const cdId = 'cd-'+index;
-    const status = matchStatus(match.kickoff_et);
-    const matchPicks = picksData ? picksData.find(p=>p.home===match.home&&p.away===match.away) : null;
+  function renderMatchCard(match,index,picksData) {
+    const id='mc-'+index;
+    const h2hBodyId='h2h-body-'+index;
+    const h2hToggleId='h2h-toggle-'+index;
+    const cdId='cd-'+index;
+    const status=matchStatus(match.kickoff_et);
+    const matchPicks=picksData?picksData.find(p=>p.home===match.home&&p.away===match.away):null;
 
-    let bodyHtml = '';
-    if (matchPicks) {
+    let bodyHtml='';
+    if(matchPicks){
       const pp=(matchPicks.player_props||[]).map(p=>`<div class="cat-player">${renderPick(p)}</div>`).join('');
       const gp=(matchPicks.game_props||[]).map(p=>`<div class="cat-game">${renderPick(p)}</div>`).join('');
       const tp=(matchPicks.team_props||[]).map(p=>`<div class="cat-team">${renderPick(p)}</div>`).join('');
@@ -613,18 +552,18 @@
       </div>`;
     }
 
-    const countdownHtml = status==='pre' ? `
-      <div class="countdown-wrap">
-        <span class="countdown-label">Kickoff in</span>
-        <span class="countdown-timer" id="${cdId}">—</span>
-      </div>` : status==='live' ? `<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>` : `<div class="countdown-wrap"><span class="countdown-timer" style="font-size:11px;color:var(--muted);">Full Time</span></div>`;
+    const cdHtml=status==='pre'
+      ?`<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
+      :status==='live'
+      ?`<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>`
+      :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
 
     return `<div class="match-card${index===0?' open':''}" id="${id}">
       <div class="match-header" onclick="toggleCard('${id}')">
         <div>
           <div class="match-teams">${match.home}<span class="match-vs">vs</span>${match.away}</div>
           <div class="match-venue">${match.venue}</div>
-          ${countdownHtml}
+          ${cdHtml}
         </div>
         <div class="match-right">
           <div class="match-meta">
@@ -638,62 +577,55 @@
       <div class="picks-body">
         ${bodyHtml}
         <div class="h2h-wrap">
-          <div class="h2h-toggle" id="${h2hToggleId}" onclick="toggleH2H('${h2hToggleId}','${h2hId}','${match.home}','${match.away}')">
+          <div class="h2h-toggle" id="${h2hToggleId}" onclick="toggleH2H('${h2hToggleId}','${h2hBodyId}','${match.home}','${match.away}')">
             <div class="h2h-toggle-label">📊 Historical Results & H2H</div>
             <div class="h2h-toggle-icon">▾</div>
           </div>
-          <div class="h2h-body" id="${h2hId}"></div>
+          <div class="h2h-body" id="${h2hBodyId}"></div>
         </div>
       </div>
     </div>`;
   }
 
-  function toggleCard(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
+  function toggleCard(id){document.getElementById(id).classList.toggle('open');}
 
-  function toggleH2H(toggleId, bodyId, home, away) {
-    const toggle = document.getElementById(toggleId);
+  function toggleH2H(toggleId,bodyId,home,away){
+    const toggle=document.getElementById(toggleId);
     toggle.classList.toggle('open');
-    if (toggle.classList.contains('open')) fetchH2H(home, away, bodyId);
+    if(toggle.classList.contains('open')) fetchH2H(home,away,bodyId);
   }
 
   async function loadPicks() {
-    const section = document.getElementById('picks-section');
-    if (!todayMatches.length) {
+    const section=document.getElementById('picks-section');
+    if(!todayMatches.length){
       section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches today</div><div class="status-sub">No World Cup 2026 matches scheduled today.</div></div>`;
       return;
     }
     try {
-      const res = await fetch('/api/picks');
-      const data = await res.json();
-      const picks = data.status==='ready' ? data.picks : null;
-      const genTime = picks ? new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : null;
-      const label = picks
-        ? `<div class="section-label">Today's Picks</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
-        : `<div class="section-label">Today's Matches</div>`;
-      const cards = todayMatches.map((m,i)=>renderMatchCard(m,i,picks)).join('');
-      section.innerHTML = label + cards;
-
-      // start countdowns
-      todayMatches.forEach((m,i) => {
-        if (matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i);
-      });
-
-      if (picks) renderSpecial(picks);
-      if (data.status==='pending') setTimeout(loadPicks, 5*60*1000);
-    } catch(e) {
-      const cards = todayMatches.map((m,i)=>renderMatchCard(m,i,null)).join('');
+      const res=await fetch('/api/picks');
+      const data=await res.json();
+      const picks=data.status==='ready'?data.picks:null;
+      const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
+      const label=picks
+        ?`<div class="section-label">Today's Picks</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
+        :`<div class="section-label">Today's Matches</div>`;
+      const cards=todayMatches.map((m,i)=>renderMatchCard(m,i,picks)).join('');
+      section.innerHTML=label+cards;
+      todayMatches.forEach((m,i)=>{if(matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i);});
+      if(picks) renderSpecial(picks);
+      if(data.status==='pending') setTimeout(loadPicks,5*60*1000);
+    } catch(e){
+      const cards=todayMatches.map((m,i)=>renderMatchCard(m,i,null)).join('');
       section.innerHTML=`<div class="section-label">Today's Matches</div>`+cards;
-      todayMatches.forEach((m,i)=>{ if(matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i); });
+      todayMatches.forEach((m,i)=>{if(matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i);});
     }
   }
 
-  // ── INIT ─────────────────────────────────────────────────────
+  // Also need a live scores backend endpoint
   renderLiveSection();
   loadPicks();
   fetchLiveScores();
-  setInterval(fetchLiveScores, 90*1000);
+  setInterval(fetchLiveScores,90*1000);
 </script>
 </body>
 </html>
