@@ -1,10 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic();
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Cache-Control", "s-maxage=86400"); // cache 24hrs, same h2h all day
+  res.setHeader("Cache-Control", "s-maxage=86400");
 
   const { home, away } = req.query;
   if (!home || !away) return res.status(400).json({ error: "Missing teams" });
@@ -24,7 +26,14 @@ export default async function handler(req, res) {
     "wc_record": "W24 D8 L12",
     "fifa_rank": 3
   },
-  "away": { "same structure" },
+  "away": {
+    "name": "Country",
+    "wc_appearances": 5,
+    "best_result": "Quarter Final 2010",
+    "recent_wc": "Group Stage (2022)",
+    "wc_record": "W10 D5 L15",
+    "fifa_rank": 20
+  },
   "h2h": {
     "total_meetings": 8,
     "home_wins": 4,
