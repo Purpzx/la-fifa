@@ -5,8 +5,12 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
-function todayKey() {
-  return new Date().toISOString().split("T")[0];
+function todayKeyET() {
+  const etDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const y = etDate.getFullYear();
+  const m = String(etDate.getMonth() + 1).padStart(2, "0");
+  const d = String(etDate.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 export default async function handler(req, res) {
@@ -14,7 +18,7 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
 
   try {
-    const key = todayKey();
+    const key = todayKeyET();
     const raw = await redis.get(`picks:${key}`);
 
     if (!raw) {
