@@ -1,58 +1,80 @@
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Cache-Control", "s-maxage=60");
+  res.setHeader("Cache-Control", "s-maxage=30");
 
-  const apiKey = process.env.ODDS_API_KEY;
+  const apiKey = process.env.API_FOOTBALL_KEY;
 
   try {
-    const response = await fetch(
-      `https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${apiKey}&daysFrom=1`
+    // Get today's World Cup fixtures
+    const fixturesRes = await fetch(
+      "https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all",
+      { headers: { "x-apisports-key": apiKey } }
     );
 
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Odds API error ${response.status}: ${errText}`);
+    const fixturesData = await fixturesRes.json();
+    const fixtures = fixturesData.response || [];
+
+    // If no live games, get today's fixtures
+    let allFixtures = fixtures;
+    if (!fixtures.length) {
+      const todayRes = await fetch(
+        `https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" })}`,
+        { headers: { "x-apisports-key": apiKey } }
+      );
+      const todayData = await todayRes.json();
+      allFixtures = todayData.response || [];
     }
 
-    const games = await response.json();
-    if (!games.length) return res.status(200).json([]);
+    const scores = allFixtures.map((fixture) => {
+      const f = fixture.fixture;
+      const teams = fixture.teams;
+      const goals = fixture.goals;
+      const stats = fixture.statistics || [];
+      const events = fixture.events || [];
 
-    const nowET = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-    const todayET = nowET.toISOString().split("T")[0];
+      const status = f.status?.short;
+      let matchStatus = "pre";
+      if (["1H", "HT", "2H", "ET", "P"].includes(status)) matchStatus = "live";
+      else if (["FT", "AET", "PEN"].includes(status)) matchStatus = "ft";
 
-    const todayGames = games.filter((game) => {
-      const d = new Date(game.commence_time).toLocaleDateString("en-US", { timeZone: "America/New_York" }).split("/");
-      const gameDateStr = `${d[2]}-${String(d[0]).padStart(2,"0")}-${String(d[1]).padStart(2,"0")}`;
-      return gameDateStr === todayET;
-    });
+      // Extract stats
+      const homeStats = stats.find(s => s.team?.id === teams.home?.id)?.statistics || [];
+      const awayStats = stats.find(s => s.team?.id === teams.away?.id)?.statistics || [];
 
-    const scores = todayGames.map((game) => {
-      const home = game.home_team;
-      const away = game.away_team;
-      const completed = game.completed;
-      const commenced = new Date(game.commence_time).getTime();
-      const now = Date.now();
-      const diff = now - commenced;
+      const getStat = (statsArr, type) => {
+        const s = statsArr.find(s => s.type === type);
+        return s?.value ?? 0;
+      };
 
-      let status = "pre";
-      if (completed) status = "ft";
-      else if (diff > 0 && diff < 115 * 60 * 1000) status = "live";
-
-      const homeScore = game.scores?.find((s) => s.name === home)?.score ?? null;
-      const awayScore = game.scores?.find((s) => s.name === away)?.score ?? null;
+      // Extract goalscorers
+      const goalEvents = events.filter(e => e.type === "Goal");
+      const goalscorers = goalEvents.map(e => ({
+        team: e.team?.name,
+        player: e.player?.name,
+        minute: e.time?.elapsed,
+        extra: e.time?.extra,
+        type: e.detail,
+      }));
 
       return {
-        home,
-        away,
-        home_score: homeScore !== null ? parseInt(homeScore) : null,
-        away_score: awayScore !== null ? parseInt(awayScore) : null,
-        minute: status === "live" ? Math.min(Math.floor(diff / 60000), 90).toString() : null,
-        status,
-        home_shots: null, away_shots: null,
-        home_shots_ot: null, away_shots_ot: null,
-        home_possession: null, away_possession: null,
-        home_corners: null, away_corners: null,
-        home_cards: null, away_cards: null,
+        fixture_id: f.id,
+        home: teams.home?.name,
+        away: teams.away?.name,
+        home_score: goals?.home ?? null,
+        away_score: goals?.away ?? null,
+        minute: f.status?.elapsed?.toString() || null,
+        status: matchStatus,
+        home_shots: getStat(homeStats, "Total Shots"),
+        away_shots: getStat(awayStats, "Total Shots"),
+        home_shots_ot: getStat(homeStats, "Shots on Goal"),
+        away_shots_ot: getStat(awayStats, "Shots on Goal"),
+        home_possession: parseInt(getStat(homeStats, "Ball Possession")) || 50,
+        away_possession: parseInt(getStat(awayStats, "Ball Possession")) || 50,
+        home_corners: getStat(homeStats, "Corner Kicks"),
+        away_corners: getStat(awayStats, "Corner Kicks"),
+        home_cards: `${getStat(homeStats, "Yellow Cards")}Y ${getStat(homeStats, "Red Cards")}R`,
+        away_cards: `${getStat(awayStats, "Yellow Cards")}Y ${getStat(awayStats, "Red Cards")}R`,
+        goalscorers,
       };
     });
 
