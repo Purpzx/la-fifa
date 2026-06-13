@@ -288,7 +288,7 @@ export default async function handler(req, res) {
   }
 
   const minsUntil = minutesUntilFirstKickoff(todayMatches);
-  if (minsUntil > 90 || minsUntil < 0) {
+  if (minsUntil > 90 || minsUntil < -30) {
     return res.status(200).json({ skipped: true, reason: `Not in window. Mins until kickoff: ${minsUntil}` });
   }
 
