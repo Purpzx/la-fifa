@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
 
   try {
-    const key = todayKeyET();
+    const key = req.query.date || todayKeyET();
     const raw = await redis.get(`picks:${key}`);
 
     if (!raw) {
