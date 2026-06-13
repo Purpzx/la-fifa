@@ -5,35 +5,37 @@ export default async function handler(req, res) {
   const apiKey = process.env.API_FOOTBALL_KEY;
 
   try {
-    // Search for today's FIFA World Cup fixtures
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
-    // Try multiple known World Cup league IDs
-    const leagueIds = [1, 16, 777];
-    let allFixtures = [];
+    // Fetch live games and today's games in parallel
+    const [liveRes, todayRes] = await Promise.all([
+      fetch("https://v3.football.api-sports.io/fixtures?live=all", {
+        headers: { "x-apisports-key": apiKey }
+      }),
+      fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
+        headers: { "x-apisports-key": apiKey }
+      })
+    ]);
 
-    for (const leagueId of leagueIds) {
-      const r = await fetch(
-        `https://v3.football.api-sports.io/fixtures?date=${today}&league=${leagueId}&season=2026`,
-        { headers: { "x-apisports-key": apiKey } }
-      );
-      const d = await r.json();
-      if (d.response?.length) {
-        allFixtures = [...allFixtures, ...d.response];
+    const [liveData, todayData] = await Promise.all([
+      liveRes.json(),
+      todayRes.json()
+    ]);
+
+    // Combine and deduplicate by fixture id
+    const seen = new Set();
+    const allFixtures = [];
+
+    for (const f of [...(liveData.response || []), ...(todayData.response || [])]) {
+      const id = f.fixture?.id;
+      if (!seen.has(id)) {
+        seen.add(id);
+        // Only World Cup fixtures
+        const leagueName = f.league?.name?.toLowerCase() || '';
+        if (leagueName.includes('world cup') || leagueName.includes('fifa') || f.league?.id === 1) {
+          allFixtures.push(f);
+        }
       }
-    }
-
-    // If still nothing, search by date only and filter for World Cup
-    if (!allFixtures.length) {
-      const r = await fetch(
-        `https://v3.football.api-sports.io/fixtures?date=${today}`,
-        { headers: { "x-apisports-key": apiKey } }
-      );
-      const d = await r.json();
-      allFixtures = (d.response || []).filter(f =>
-        f.league?.name?.toLowerCase().includes('world cup') ||
-        f.league?.name?.toLowerCase().includes('fifa')
-      );
     }
 
     if (!allFixtures.length) {
@@ -44,18 +46,12 @@ export default async function handler(req, res) {
       const f = fixture.fixture;
       const teams = fixture.teams;
       const goals = fixture.goals;
-      const stats = fixture.statistics || [];
       const events = fixture.events || [];
 
       const status = f.status?.short;
       let matchStatus = "pre";
       if (["1H", "HT", "2H", "ET", "P"].includes(status)) matchStatus = "live";
       else if (["FT", "AET", "PEN"].includes(status)) matchStatus = "ft";
-
-      const homeStats = stats.find(s => s.team?.id === teams.home?.id)?.statistics || [];
-      const awayStats = stats.find(s => s.team?.id === teams.away?.id)?.statistics || [];
-
-      const getStat = (arr, type) => arr.find(s => s.type === type)?.value ?? 0;
 
       const goalEvents = events.filter(e => e.type === "Goal");
       const goalscorers = goalEvents.map(e => ({
@@ -73,16 +69,16 @@ export default async function handler(req, res) {
         away_score: goals?.away ?? null,
         minute: f.status?.elapsed?.toString() || null,
         status: matchStatus,
-        home_shots: getStat(homeStats, "Total Shots"),
-        away_shots: getStat(awayStats, "Total Shots"),
-        home_shots_ot: getStat(homeStats, "Shots on Goal"),
-        away_shots_ot: getStat(awayStats, "Shots on Goal"),
-        home_possession: parseInt(getStat(homeStats, "Ball Possession")) || 50,
-        away_possession: parseInt(getStat(awayStats, "Ball Possession")) || 50,
-        home_corners: getStat(homeStats, "Corner Kicks"),
-        away_corners: getStat(awayStats, "Corner Kicks"),
-        home_cards: `${getStat(homeStats, "Yellow Cards")}Y ${getStat(homeStats, "Red Cards")}R`,
-        away_cards: `${getStat(awayStats, "Yellow Cards")}Y ${getStat(awayStats, "Red Cards")}R`,
+        home_shots: null,
+        away_shots: null,
+        home_shots_ot: null,
+        away_shots_ot: null,
+        home_possession: null,
+        away_possession: null,
+        home_corners: null,
+        away_corners: null,
+        home_cards: null,
+        away_cards: null,
         goalscorers,
       };
     });
