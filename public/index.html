@@ -35,6 +35,29 @@
   .section-label { font-size: 9px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+  /* TRACKER */
+  .tracker-wrap { margin-bottom: 40px; }
+  .tracker-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; }
+  .tracker-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .tracker-stat { text-align: center; }
+  .tracker-stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .tracker-stat-value.green { color: var(--green); }
+  .tracker-stat-value.red { color: var(--red); }
+  .tracker-stat-value.gold { color: var(--gold); }
+  .tracker-stat-value.warm { color: var(--warm); }
+  .tracker-stat-label { font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+  .tracker-divider { height: 1px; background: var(--border); margin-bottom: 16px; }
+  .tracker-picks { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+  .tracker-pick { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface2); border-radius: 5px; }
+  .tracker-pick-title { font-size: 11px; color: var(--warm); flex: 1; line-height: 1.3; }
+  .tracker-pick-date { font-size: 9px; color: var(--muted); }
+  .result-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.1em; flex-shrink: 0; }
+  .result-W { background: rgba(0,146,70,0.15); color: var(--green); border: 1px solid rgba(0,146,70,0.3); }
+  .result-L { background: rgba(232,0,61,0.15); color: #ff6b8a; border: 1px solid rgba(232,0,61,0.3); }
+  .result-P { background: rgba(200,168,75,0.15); color: var(--gold); border: 1px solid rgba(200,168,75,0.3); }
+  .result-pending { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+  .tracker-empty { text-align: center; padding: 20px; font-size: 12px; color: var(--muted); }
+
   /* SPECIAL */
   .special-wrap { margin-bottom: 40px; }
   .special-card { background: linear-gradient(135deg, #1a1400 0%, #0f0f0f 60%); border: 1px solid rgba(200,168,75,0.35); border-radius: 10px; padding: 24px 26px; position: relative; overflow: hidden; }
@@ -50,6 +73,22 @@
   .special-pending-icon { font-size: 32px; margin-bottom: 10px; }
   .special-pending-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--warm); margin-bottom: 6px; }
   .special-pending-sub { font-size: 12px; color: var(--muted); }
+
+  /* 3-DAY SLATE */
+  .slate-wrap { margin-bottom: 40px; }
+  .slate-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .slate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; user-select: none; }
+  .slate-card:hover { border-color: rgba(255,255,255,0.12); }
+  .slate-card.active { border-color: var(--gold); background: rgba(200,168,75,0.06); }
+  .slate-card-label { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .slate-card.active .slate-card-label { color: var(--gold); }
+  .slate-card-date { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--warm); margin-bottom: 4px; }
+  .slate-card-count { font-size: 10px; color: var(--muted); }
+  .slate-card-status { display: inline-block; margin-top: 6px; font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+  .slate-status-live { background: rgba(232,0,61,0.15); color: var(--red); border: 1px solid rgba(232,0,61,0.3); }
+  .slate-status-done { background: rgba(0,146,70,0.1); color: var(--green); border: 1px solid rgba(0,146,70,0.2); }
+  .slate-status-upcoming { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+  .slate-status-today { background: rgba(200,168,75,0.15); color: var(--gold); border: 1px solid rgba(200,168,75,0.3); }
 
   /* LIVE SCORES */
   .live-section { margin-bottom: 40px; }
@@ -173,6 +212,25 @@
 </header>
 
 <main>
+
+  <!-- TRACKER -->
+  <div class="tracker-wrap">
+    <div class="section-label">📊 Pick Tracker</div>
+    <div class="tracker-card">
+      <div class="tracker-stats" id="tracker-stats">
+        <div class="tracker-stat"><div class="tracker-stat-value green" id="t-wins">—</div><div class="tracker-stat-label">Wins</div></div>
+        <div class="tracker-stat"><div class="tracker-stat-value red" id="t-losses">—</div><div class="tracker-stat-label">Losses</div></div>
+        <div class="tracker-stat"><div class="tracker-stat-value gold" id="t-pushes">—</div><div class="tracker-stat-label">Pushes</div></div>
+        <div class="tracker-stat"><div class="tracker-stat-value" id="t-units" style="color:var(--warm)">—</div><div class="tracker-stat-label">Units</div></div>
+      </div>
+      <div class="tracker-divider"></div>
+      <div class="tracker-picks" id="tracker-picks">
+        <div class="tracker-empty">No results tracked yet. Check back after matches.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPECIAL -->
   <div class="special-wrap">
     <div class="section-label">⭐ Minchia Special</div>
     <div class="special-card" id="special-card">
@@ -185,24 +243,49 @@
     </div>
   </div>
 
+  <!-- LIVE SCORES -->
   <div class="live-section" id="live-section" style="display:none;">
     <div class="section-label">Live Scores</div>
     <div class="live-grid" id="live-grid"></div>
   </div>
 
+  <!-- 3-DAY SLATE -->
+  <div class="slate-wrap">
+    <div class="section-label">3-Day Slate</div>
+    <div class="slate-strip" id="slate-strip"></div>
+  </div>
+
+  <!-- PICKS -->
   <div id="picks-section"></div>
 
   <div class="disclaimer">For entertainment purposes only. Gambling involves risk. Must be 21+ and located in a legal betting state. Please gamble responsibly.</div>
 </main>
 
 <script>
-  const todayDate = new Date();
-  document.getElementById('today-badge').textContent = todayDate.toLocaleDateString('en-US', {
+  // ── DATE SETUP ───────────────────────────────────────────────
+  const nowDate = new Date();
+  const etDate = new Date(nowDate.toLocaleString('en-US', {timeZone:'America/New_York'}));
+  document.getElementById('today-badge').textContent = etDate.toLocaleDateString('en-US', {
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
-  const etDate = new Date(todayDate.toLocaleString('en-US', {timeZone:'America/New_York'}));
-  const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart(2,'0')}-${String(etDate.getDate()).padStart(2,'0')}`;
 
+  function makeKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function addDays(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  const todayET = etDate;
+  const yesterdayET = addDays(etDate, -1);
+  const tomorrowET = addDays(etDate, 1);
+  const todayKey = makeKey(todayET);
+
+  let activeDay = todayKey;
+
+  // ── SCHEDULE ─────────────────────────────────────────────────
   const SCHEDULE = {
     "2026-06-11":[
       {home:"Mexico",away:"South Africa",kickoff_et:"15:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
@@ -312,8 +395,6 @@
     ],
   };
 
-  const todayMatches = SCHEDULE[todayKey] || [];
-
   const BOOKS = {
     fanduel:    {label:'FanDuel',    cls:'book-fanduel'},
     draftkings: {label:'DraftKings', cls:'book-draftkings'},
@@ -322,6 +403,7 @@
     fanatics:   {label:'Fanatics',   cls:'book-fanatics'},
   };
 
+  // ── HELPERS ──────────────────────────────────────────────────
   function confDots(n) {
     let d='';
     for(let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
@@ -335,27 +417,30 @@
     return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;
   }
 
-  function kickoffDate(kt) {
-    const [h,m]=kt.split(':').map(Number);
-    const d=new Date(new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'}));
-    d.setHours(h,m,0,0);
-    return d;
+  function kickoffDate(kt, dateKey) {
+    const [y,mo,d] = dateKey.split('-').map(Number);
+    const [h,m] = kt.split(':').map(Number);
+    const date = new Date(y, mo-1, d, h, m, 0);
+    return date;
   }
 
-  function matchStatus(kt) {
-    const now=Date.now(), ko=kickoffDate(kt).getTime(), diff=now-ko;
-    if(diff<0) return 'pre';
-    if(diff<115*60*1000) return 'live';
+  function matchStatusForDay(kt, dateKey) {
+    const now = Date.now();
+    const ko = kickoffDate(kt, dateKey).getTime();
+    const diff = now - ko;
+    if(diff < 0) return 'pre';
+    if(diff < 115*60*1000) return 'live';
     return 'ft';
   }
 
+  // ── COUNTDOWNS ───────────────────────────────────────────────
   const countdownTimers={};
-  function startCountdown(kt,elId) {
+  function startCountdown(kt, dateKey, elId) {
     if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
     function tick() {
       const el=document.getElementById(elId);
       if(!el){clearInterval(countdownTimers[elId]);return;}
-      const diff=kickoffDate(kt).getTime()-Date.now();
+      const diff=kickoffDate(kt, dateKey).getTime()-Date.now();
       if(diff<=0){el.textContent='LIVE';el.classList.add('urgent');clearInterval(countdownTimers[elId]);return;}
       const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
       el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`;
@@ -365,6 +450,88 @@
     countdownTimers[elId]=setInterval(tick,1000);
   }
 
+  // ── 3-DAY SLATE ──────────────────────────────────────────────
+  function renderSlate() {
+    const days = [
+      { date: yesterdayET, key: makeKey(yesterdayET), label: 'Yesterday' },
+      { date: todayET,     key: makeKey(todayET),     label: 'Today' },
+      { date: tomorrowET,  key: makeKey(tomorrowET),  label: 'Tomorrow' },
+    ];
+
+    const strip = document.getElementById('slate-strip');
+    strip.innerHTML = days.map(day => {
+      const matches = SCHEDULE[day.key] || [];
+      const count = matches.length;
+      const isToday = day.key === todayKey;
+      const isPast = day.date < todayET && !isToday;
+      const isFuture = day.date > todayET && !isToday;
+
+      let statusHtml = '';
+      if(isToday) statusHtml = `<span class="slate-card-status slate-status-today">Today</span>`;
+      else if(isPast) statusHtml = `<span class="slate-card-status slate-status-done">Completed</span>`;
+      else statusHtml = `<span class="slate-card-status slate-status-upcoming">Upcoming</span>`;
+
+      const dateStr = day.date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+      const isActive = day.key === activeDay;
+
+      return `<div class="slate-card${isActive?' active':''}" onclick="switchDay('${day.key}')">
+        <div class="slate-card-label">${day.label}</div>
+        <div class="slate-card-date">${dateStr}</div>
+        <div class="slate-card-count">${count} ${count===1?'match':'matches'}</div>
+        ${statusHtml}
+      </div>`;
+    }).join('');
+  }
+
+  function switchDay(key) {
+    activeDay = key;
+    renderSlate();
+    loadPicksForDay(key);
+    if(key === todayKey) {
+      fetchLiveScores();
+      document.getElementById('live-section').style.display = 'block';
+    } else {
+      document.getElementById('live-section').style.display = 'none';
+    }
+  }
+
+  // ── TRACKER ──────────────────────────────────────────────────
+  async function loadTracker() {
+    try {
+      const res = await fetch('/api/results');
+      const data = await res.json();
+      const { record, units, results } = data;
+
+      document.getElementById('t-wins').textContent = record.wins;
+      document.getElementById('t-losses').textContent = record.losses;
+      document.getElementById('t-pushes').textContent = record.pushes;
+
+      const unitsEl = document.getElementById('t-units');
+      unitsEl.textContent = (units >= 0 ? '+' : '') + units + 'u';
+      unitsEl.style.color = units >= 0 ? 'var(--green)' : 'var(--red)';
+
+      const picksEl = document.getElementById('tracker-picks');
+      const keys = Object.keys(results);
+      if(!keys.length) {
+        picksEl.innerHTML = `<div class="tracker-empty">No results tracked yet. Check back after matches.</div>`;
+        return;
+      }
+
+      picksEl.innerHTML = keys.sort().reverse().map(key => {
+        const r = results[key];
+        const badge = `<span class="result-badge result-${r.result}">${r.result}</span>`;
+        return `<div class="tracker-pick">
+          <div class="tracker-pick-title">${r.pick}</div>
+          <div class="tracker-pick-date">${r.date}</div>
+          ${badge}
+        </div>`;
+      }).join('');
+    } catch(e) {
+      console.log('Tracker error:', e);
+    }
+  }
+
+  // ── H2H ──────────────────────────────────────────────────────
   const h2hCache={};
   async function fetchH2H(home,away,containerId) {
     const key=`${home}|${away}`;
@@ -417,6 +584,7 @@
     }
   }
 
+  // ── LIVE SCORES ──────────────────────────────────────────────
   let liveData={};
 
   function fuzzyMatch(sh,sa,ah,aa) {
@@ -435,7 +603,8 @@
   }
 
   async function fetchLiveScores() {
-    if(!todayMatches.length) return;
+    const matches = SCHEDULE[todayKey] || [];
+    if(!matches.length) return;
     try {
       const res=await fetch('/api/live');
       const scores=await res.json();
@@ -448,7 +617,7 @@
   }
 
   function renderLiveCard(match,score) {
-    const status=score?score.status:matchStatus(match.kickoff_et);
+    const status=score?score.status:matchStatusForDay(match.kickoff_et, todayKey);
     const isLive=status==='live', isFt=status==='ft';
     let badge=isLive
       ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
@@ -456,7 +625,6 @@
       :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
     const hs=score?.home_score??'–';
     const as=score?.away_score??'–';
-
     let goalHtml='';
     if((isLive||isFt)&&score?.goalscorers?.length) {
       const goals=score.goalscorers.map(g=>{
@@ -469,7 +637,6 @@
       }).join('');
       goalHtml=`<div class="goalscorers">${goals}</div>`;
     }
-
     return `<div class="live-card${isLive?' is-live':''}">
       ${badge}
       <div class="score-row">
@@ -487,11 +654,13 @@
   }
 
   function renderLiveSection() {
-    if(!todayMatches.length) return;
+    const matches = SCHEDULE[todayKey] || [];
+    if(!matches.length) return;
     document.getElementById('live-section').style.display='block';
-    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
+    document.getElementById('live-grid').innerHTML=matches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
   }
 
+  // ── SPECIAL ──────────────────────────────────────────────────
   function renderSpecial(picks) {
     if(!picks) return;
     let best=null;
@@ -516,6 +685,7 @@
       </div>`;
   }
 
+  // ── PICKS ────────────────────────────────────────────────────
   function renderPick(pick) {
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
     return `<div class="pick-card">
@@ -531,12 +701,12 @@
     </div>`;
   }
 
-  function renderMatchCard(match,index,picksData) {
+  function renderMatchCard(match, index, picksData, dateKey) {
     const id='mc-'+index;
     const h2hBodyId='h2h-body-'+index;
     const h2hToggleId='h2h-toggle-'+index;
     const cdId='cd-'+index;
-    const status=matchStatus(match.kickoff_et);
+    const status=matchStatusForDay(match.kickoff_et, dateKey);
     const matchPicks=picksData?picksData.find(p=>p.home===match.home&&p.away===match.away):null;
     let bodyHtml='';
     if(matchPicks){
@@ -551,17 +721,23 @@
         <div class="cat-header cat-team"><div class="cat-pip"></div><div class="cat-label">Team Props</div></div>
         <div class="picks-grid cat-team">${tp}</div>`;
     } else {
+      const isPast = dateKey < todayKey;
       bodyHtml=`<div class="pick-pending">
-        <div class="pick-pending-icon">⏳</div>
-        <div class="pick-pending-title">Picks dropping soon</div>
-        <div class="pick-pending-sub">Auto-generated once lineups are confirmed — roughly 75 min before kickoff.</div>
+        <div class="pick-pending-icon">${isPast ? '📭' : '⏳'}</div>
+        <div class="pick-pending-title">${isPast ? 'No picks recorded' : 'Picks dropping soon'}</div>
+        <div class="pick-pending-sub">${isPast ? 'Picks were not generated for this match.' : 'Auto-generated once lineups are confirmed — roughly 75 min before kickoff.'}</div>
       </div>`;
     }
-    const cdHtml=status==='pre'
-      ?`<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
-      :status==='live'
-      ?`<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>`
-      :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
+    const cdHtml = dateKey === todayKey
+      ? status==='pre'
+        ?`<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
+        :status==='live'
+        ?`<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>`
+        :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`
+      : dateKey > todayKey
+        ? `<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
+        : `<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
+
     return `<div class="match-card${index===0?' open':''}" id="${id}">
       <div class="match-header" onclick="toggleCard('${id}')">
         <div>
@@ -592,43 +768,65 @@
   }
 
   function toggleCard(id){document.getElementById(id).classList.toggle('open');}
-
   function toggleH2H(toggleId,bodyId,home,away){
     const toggle=document.getElementById(toggleId);
     toggle.classList.toggle('open');
     if(toggle.classList.contains('open')) fetchH2H(home,away,bodyId);
   }
 
-  async function loadPicks() {
+  async function loadPicksForDay(dateKey) {
     const section=document.getElementById('picks-section');
-    if(!todayMatches.length){
-      section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches today</div><div class="status-sub">No World Cup 2026 matches scheduled today.</div></div>`;
+    const matches = SCHEDULE[dateKey] || [];
+
+    if(!matches.length){
+      section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled for this day.</div></div>`;
       return;
     }
+
     try {
-      const res=await fetch('/api/picks');
+      const res=await fetch(`/api/picks?date=${dateKey}`);
       const data=await res.json();
       const picks=data.status==='ready'?data.picks:null;
       const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
-      const label=picks
-        ?`<div class="section-label">Today's Picks</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
-        :`<div class="section-label">Today's Matches</div>`;
-      const cards=todayMatches.map((m,i)=>renderMatchCard(m,i,picks)).join('');
+      const isPast = dateKey < todayKey;
+      const isFuture = dateKey > todayKey;
+
+      let label = '';
+      if(picks) label=`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`;
+      else if(isFuture) label=`<div class="section-label">Upcoming Matches</div>`;
+      else label=`<div class="section-label">Matches</div>`;
+
+      const cards=matches.map((m,i)=>renderMatchCard(m,i,picks,dateKey)).join('');
       section.innerHTML=label+cards;
-      todayMatches.forEach((m,i)=>{if(matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i);});
-      if(picks) renderSpecial(picks);
-      if(data.status==='pending') setTimeout(loadPicks,5*60*1000);
+
+      // Start countdowns for future/today pre-match games
+      matches.forEach((m,i)=>{
+        if(dateKey >= todayKey && matchStatusForDay(m.kickoff_et, dateKey)==='pre') {
+          startCountdown(m.kickoff_et, dateKey, 'cd-'+i);
+        }
+      });
+
+      if(picks && dateKey === todayKey) renderSpecial(picks);
+      if(data.status==='pending' && dateKey === todayKey) setTimeout(()=>loadPicksForDay(todayKey), 5*60*1000);
     } catch(e){
-      const cards=todayMatches.map((m,i)=>renderMatchCard(m,i,null)).join('');
-      section.innerHTML=`<div class="section-label">Today's Matches</div>`+cards;
-      todayMatches.forEach((m,i)=>{if(matchStatus(m.kickoff_et)==='pre') startCountdown(m.kickoff_et,'cd-'+i);});
+      const cards=matches.map((m,i)=>renderMatchCard(m,i,null,dateKey)).join('');
+      section.innerHTML=`<div class="section-label">Matches</div>`+cards;
+      matches.forEach((m,i)=>{
+        if(dateKey >= todayKey && matchStatusForDay(m.kickoff_et, dateKey)==='pre') {
+          startCountdown(m.kickoff_et, dateKey, 'cd-'+i);
+        }
+      });
     }
   }
 
+  // ── INIT ─────────────────────────────────────────────────────
+  renderSlate();
+  loadTracker();
   renderLiveSection();
-  loadPicks();
+  loadPicksForDay(todayKey);
   fetchLiveScores();
   setInterval(fetchLiveScores, 30*1000);
+  setInterval(loadTracker, 60*1000);
 </script>
 </body>
 </html>
