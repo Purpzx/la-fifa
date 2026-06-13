@@ -5,7 +5,6 @@ export default async function handler(req, res) {
   const apiKey = process.env.ODDS_API_KEY;
 
   try {
-    // First try FIFA World Cup specific endpoint
     const response = await fetch(
       `https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${apiKey}&daysFrom=1`
     );
@@ -16,23 +15,14 @@ export default async function handler(req, res) {
     }
 
     const games = await response.json();
+    if (!games.length) return res.status(200).json([]);
 
-    if (!games.length) {
-      return res.status(200).json([]);
-    }
-
-    // Filter to only today's games (ET timezone)
     const nowET = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
     const todayET = nowET.toISOString().split("T")[0];
 
     const todayGames = games.filter((game) => {
-      const gameDate = new Date(game.commence_time)
-        .toLocaleDateString("en-US", { timeZone: "America/New_York" })
-        .split("/");
-      const year = gameDate[2];
-      const month = String(gameDate[0]).padStart(2, "0");
-      const day = String(gameDate[1]).padStart(2, "0");
-      const gameDateStr = `${year}-${month}-${day}`;
+      const d = new Date(game.commence_time).toLocaleDateString("en-US", { timeZone: "America/New_York" }).split("/");
+      const gameDateStr = `${d[2]}-${String(d[0]).padStart(2,"0")}-${String(d[1]).padStart(2,"0")}`;
       return gameDateStr === todayET;
     });
 
@@ -51,27 +41,18 @@ export default async function handler(req, res) {
       const homeScore = game.scores?.find((s) => s.name === home)?.score ?? null;
       const awayScore = game.scores?.find((s) => s.name === away)?.score ?? null;
 
-      const minute = status === "live"
-        ? Math.min(Math.floor(diff / 60000), 90).toString()
-        : null;
-
       return {
         home,
         away,
         home_score: homeScore !== null ? parseInt(homeScore) : null,
         away_score: awayScore !== null ? parseInt(awayScore) : null,
-        minute,
+        minute: status === "live" ? Math.min(Math.floor(diff / 60000), 90).toString() : null,
         status,
-        home_shots: null,
-        away_shots: null,
-        home_shots_ot: null,
-        away_shots_ot: null,
-        home_possession: null,
-        away_possession: null,
-        home_corners: null,
-        away_corners: null,
-        home_cards: null,
-        away_cards: null,
+        home_shots: null, away_shots: null,
+        home_shots_ot: null, away_shots_ot: null,
+        home_possession: null, away_possession: null,
+        home_corners: null, away_corners: null,
+        home_cards: null, away_cards: null,
       };
     });
 
