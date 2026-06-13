@@ -5,19 +5,38 @@ export default async function handler(req, res) {
   const apiKey = process.env.ODDS_API_KEY;
 
   try {
-    // Get soccer matches from the Odds API
+    // First try FIFA World Cup specific endpoint
     const response = await fetch(
       `https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${apiKey}&daysFrom=1`
     );
 
     if (!response.ok) {
-      throw new Error(`Odds API error: ${response.status}`);
+      const errText = await response.text();
+      throw new Error(`Odds API error ${response.status}: ${errText}`);
     }
 
     const games = await response.json();
 
-    // Map to our format
-    const scores = games.map((game) => {
+    if (!games.length) {
+      return res.status(200).json([]);
+    }
+
+    // Filter to only today's games (ET timezone)
+    const nowET = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+    const todayET = nowET.toISOString().split("T")[0];
+
+    const todayGames = games.filter((game) => {
+      const gameDate = new Date(game.commence_time)
+        .toLocaleDateString("en-US", { timeZone: "America/New_York" })
+        .split("/");
+      const year = gameDate[2];
+      const month = String(gameDate[0]).padStart(2, "0");
+      const day = String(gameDate[1]).padStart(2, "0");
+      const gameDateStr = `${year}-${month}-${day}`;
+      return gameDateStr === todayET;
+    });
+
+    const scores = todayGames.map((game) => {
       const home = game.home_team;
       const away = game.away_team;
       const completed = game.completed;
@@ -43,7 +62,6 @@ export default async function handler(req, res) {
         away_score: awayScore !== null ? parseInt(awayScore) : null,
         minute,
         status,
-        // Odds API doesn't provide these stats so we leave them null
         home_shots: null,
         away_shots: null,
         home_shots_ot: null,
