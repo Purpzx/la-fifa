@@ -5,24 +5,39 @@ export default async function handler(req, res) {
   const apiKey = process.env.API_FOOTBALL_KEY;
 
   try {
-    // Get today's World Cup fixtures
-    const fixturesRes = await fetch(
-      "https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all",
-      { headers: { "x-apisports-key": apiKey } }
-    );
+    // Search for today's FIFA World Cup fixtures
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
-    const fixturesData = await fixturesRes.json();
-    const fixtures = fixturesData.response || [];
+    // Try multiple known World Cup league IDs
+    const leagueIds = [1, 16, 777];
+    let allFixtures = [];
 
-    // If no live games, get today's fixtures
-    let allFixtures = fixtures;
-    if (!fixtures.length) {
-      const todayRes = await fetch(
-        `https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" })}`,
+    for (const leagueId of leagueIds) {
+      const r = await fetch(
+        `https://v3.football.api-sports.io/fixtures?date=${today}&league=${leagueId}&season=2026`,
         { headers: { "x-apisports-key": apiKey } }
       );
-      const todayData = await todayRes.json();
-      allFixtures = todayData.response || [];
+      const d = await r.json();
+      if (d.response?.length) {
+        allFixtures = [...allFixtures, ...d.response];
+      }
+    }
+
+    // If still nothing, search by date only and filter for World Cup
+    if (!allFixtures.length) {
+      const r = await fetch(
+        `https://v3.football.api-sports.io/fixtures?date=${today}`,
+        { headers: { "x-apisports-key": apiKey } }
+      );
+      const d = await r.json();
+      allFixtures = (d.response || []).filter(f =>
+        f.league?.name?.toLowerCase().includes('world cup') ||
+        f.league?.name?.toLowerCase().includes('fifa')
+      );
+    }
+
+    if (!allFixtures.length) {
+      return res.status(200).json([]);
     }
 
     const scores = allFixtures.map((fixture) => {
@@ -37,16 +52,11 @@ export default async function handler(req, res) {
       if (["1H", "HT", "2H", "ET", "P"].includes(status)) matchStatus = "live";
       else if (["FT", "AET", "PEN"].includes(status)) matchStatus = "ft";
 
-      // Extract stats
       const homeStats = stats.find(s => s.team?.id === teams.home?.id)?.statistics || [];
       const awayStats = stats.find(s => s.team?.id === teams.away?.id)?.statistics || [];
 
-      const getStat = (statsArr, type) => {
-        const s = statsArr.find(s => s.type === type);
-        return s?.value ?? 0;
-      };
+      const getStat = (arr, type) => arr.find(s => s.type === type)?.value ?? 0;
 
-      // Extract goalscorers
       const goalEvents = events.filter(e => e.type === "Goal");
       const goalscorers = goalEvents.map(e => ({
         team: e.team?.name,
@@ -57,7 +67,6 @@ export default async function handler(req, res) {
       }));
 
       return {
-        fixture_id: f.id,
         home: teams.home?.name,
         away: teams.away?.name,
         home_score: goals?.home ?? null,
