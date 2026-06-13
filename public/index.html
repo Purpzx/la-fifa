@@ -213,7 +213,8 @@
   document.getElementById('today-badge').textContent = todayDate.toLocaleDateString('en-US', {
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
-  const todayKey = todayDate.toISOString().split('T')[0];
+  const etDate = new Date(todayDate.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart(2,'0')}-${String(etDate.getDate()).padStart(2,'0')}`;
 
   const SCHEDULE = {
     "2026-06-11":[
