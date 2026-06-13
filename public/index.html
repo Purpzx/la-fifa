@@ -477,10 +477,25 @@
     </div>`;
   }
 
+  function findLiveData(home, away) {
+    // exact match first
+    if (liveData[`${home}|${away}`]) return liveData[`${home}|${away}`];
+    // fuzzy match — check if any key contains both team names
+    for (const key of Object.keys(liveData)) {
+      const [h, a] = key.split('|');
+      if (h.includes(home.split(' ')[0]) || home.includes(h.split(' ')[0])) {
+        if (a.includes(away.split(' ')[0]) || away.includes(a.split(' ')[0])) {
+          return liveData[key];
+        }
+      }
+    }
+    return null;
+  }
+
   function renderLiveSection() {
     if(!todayMatches.length) return;
     document.getElementById('live-section').style.display='block';
-    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m,liveData[`${m.home}|${m.away}`])).join('');
+    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m, findLiveData(m.home, m.away))).join('');
   }
 
   // SPECIAL
