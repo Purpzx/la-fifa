@@ -35,7 +35,7 @@
   .section-label { font-size: 9px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* MINCHIA SPECIAL */
+  /* SPECIAL */
   .special-wrap { margin-bottom: 40px; }
   .special-card { background: linear-gradient(135deg, #1a1400 0%, #0f0f0f 60%); border: 1px solid rgba(200,168,75,0.35); border-radius: 10px; padding: 24px 26px; position: relative; overflow: hidden; }
   .special-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
@@ -76,6 +76,10 @@
   .poss-away { background: var(--blue); transition: width 0.5s; }
   .poss-labels { display: flex; justify-content: space-between; margin-top: 4px; }
   .poss-lbl { font-size: 9px; color: var(--muted); }
+  .goalscorers { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+  .goal-event { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .goal-min { color: var(--gold); font-weight: 700; font-size: 10px; min-width: 36px; }
+  .goal-name { color: var(--warm); }
 
   /* COUNTDOWN */
   .countdown-wrap { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
@@ -124,12 +128,10 @@
   .match-divider { height: 1px; background: var(--border); margin: 0 22px; }
   .picks-body { display: none; padding: 22px; }
   .match-card.open .picks-body { display: block; }
-
   .pick-pending { text-align: center; padding: 28px 16px; }
   .pick-pending-icon { font-size: 28px; margin-bottom: 10px; }
   .pick-pending-title { font-size: 13px; font-weight: 600; color: var(--warm); margin-bottom: 6px; }
   .pick-pending-sub { font-size: 11px; color: var(--muted); line-height: 1.6; }
-
   .cat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; margin-top: 18px; }
   .cat-header:first-child { margin-top: 0; }
   .cat-pip { width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0; }
@@ -158,15 +160,10 @@
   .conf-dots { display: flex; gap: 3px; margin-left: auto; }
   .conf-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--faint); }
   .conf-dot.on { background: var(--gold); }
-
   .status-box { text-align: center; padding: 64px 24px; }
   .status-icon { font-size: 38px; margin-bottom: 18px; }
   .status-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--warm); margin-bottom: 10px; }
   .status-sub { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 320px; margin: 0 auto; }
-  .spinner-wrap { text-align: center; padding: 60px 20px; }
-  .spinner { width: 32px; height: 32px; border: 2px solid var(--faint); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 14px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner-txt { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
   .disclaimer { text-align: center; font-size: 10px; color: var(--muted); margin-top: 52px; line-height: 1.7; max-width: 400px; margin-inline: auto; opacity: 0.5; }
 </style>
 </head>
@@ -213,8 +210,8 @@
   document.getElementById('today-badge').textContent = todayDate.toLocaleDateString('en-US', {
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
-  const etDate = new Date(todayDate.toLocaleString('en-US', {timeZone: 'America/New_York'}));
-const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart(2,'0')}-${String(etDate.getDate()).padStart(2,'0')}`;
+  const etDate = new Date(todayDate.toLocaleString('en-US', {timeZone:'America/New_York'}));
+  const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart(2,'0')}-${String(etDate.getDate()).padStart(2,'0')}`;
 
   const SCHEDULE = {
     "2026-06-11":[
@@ -362,7 +359,6 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     return 'ft';
   }
 
-  // COUNTDOWNS
   const countdownTimers={};
   function startCountdown(kt,elId) {
     if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
@@ -371,7 +367,7 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
       if(!el){clearInterval(countdownTimers[elId]);return;}
       const diff=kickoffDate(kt).getTime()-Date.now();
       if(diff<=0){el.textContent='LIVE';el.classList.add('urgent');clearInterval(countdownTimers[elId]);return;}
-      const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+      const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
       el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`;
       if(diff<30*60*1000) el.classList.add('urgent');
     }
@@ -379,7 +375,6 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     countdownTimers[elId]=setInterval(tick,1000);
   }
 
-  // H2H
   const h2hCache={};
   async function fetchH2H(home,away,containerId) {
     const key=`${home}|${away}`;
@@ -432,16 +427,33 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     }
   }
 
-  // LIVE SCORES
   let liveData={};
+
+  function fuzzyMatch(sh,sa,ah,aa) {
+    const n=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+    const shN=n(sh),saN=n(sa),ahN=n(ah),aaN=n(aa);
+    return (shN===ahN||ahN.includes(shN.slice(0,4))||shN.includes(ahN.slice(0,4))) &&
+           (saN===aaN||aaN.includes(saN.slice(0,4))||saN.includes(aaN.slice(0,4)));
+  }
+
+  function findLiveData(home,away) {
+    for(const key of Object.keys(liveData)) {
+      const [h,a]=key.split('|');
+      if(fuzzyMatch(home,away,h,a)) return liveData[key];
+    }
+    return null;
+  }
+
   async function fetchLiveScores() {
     if(!todayMatches.length) return;
-    const matchList=todayMatches.map(m=>`${m.home} vs ${m.away}`).join(', ');
     try {
-      const res=await fetch(`/api/live?matches=${encodeURIComponent(matchList)}`);
+      const res=await fetch('/api/live');
       const scores=await res.json();
-      if(Array.isArray(scores)) scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
-      renderLiveSection();
+      if(Array.isArray(scores)) {
+        liveData={};
+        scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
+        renderLiveSection();
+      }
     } catch(e){console.log('Live score error:',e);}
   }
 
@@ -452,25 +464,49 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
       ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
       :isFt?`<div class="ft-badge">Full Time</div>`
       :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
-    const hs=score?.home_score??(isLive||isFt?0:'–');
-    const as=score?.away_score??(isLive||isFt?0:'–');
+    const hs=score?.home_score??'–';
+    const as=score?.away_score??'–';
     let stats='';
-    if((isLive||isFt)&&score){
-      const hp=score.home_possession||50,ap=score.away_possession||50;
+    if((isLive||isFt)&&score) {
+      const hp=score.home_possession||50, ap=score.away_possession||50;
       stats=`<div class="stats-grid">
         <div class="stat-home">${score.home_shots??0}</div><div class="stat-lbl">Shots</div><div class="stat-away">${score.away_shots??0}</div>
         <div class="stat-home">${score.home_shots_ot??0}</div><div class="stat-lbl">On Target</div><div class="stat-away">${score.away_shots_ot??0}</div>
         <div class="stat-home">${score.home_corners??0}</div><div class="stat-lbl">Corners</div><div class="stat-away">${score.away_corners??0}</div>
         <div class="stat-home">${score.home_cards??'0'}</div><div class="stat-lbl">Cards</div><div class="stat-away">${score.away_cards??'0'}</div>
-        <div class="poss-bar"><div class="poss-track"><div class="poss-home" style="width:${hp}%"></div><div class="poss-away" style="width:${ap}%"></div></div>
-        <div class="poss-labels"><span class="poss-lbl">${hp}%</span><span class="poss-lbl">Possession</span><span class="poss-lbl">${ap}%</span></div></div>
+        <div class="poss-bar">
+          <div class="poss-track">
+            <div class="poss-home" style="width:${hp}%"></div>
+            <div class="poss-away" style="width:${ap}%"></div>
+          </div>
+          <div class="poss-labels">
+            <span class="poss-lbl">${hp}%</span>
+            <span class="poss-lbl">Possession</span>
+            <span class="poss-lbl">${ap}%</span>
+          </div>
+        </div>
       </div>`;
+      if(score.goalscorers&&score.goalscorers.length) {
+        const goals=score.goalscorers.map(g=>{
+          const min=g.extra?`${g.minute}+${g.extra}'`:`${g.minute}'`;
+          const icon=g.type==='Own Goal'?'⚽ OG':g.type==='Penalty'?'⚽ P':'⚽';
+          return `<div class="goal-event">
+            <span class="goal-min">${min}</span>
+            <span class="goal-name">${icon} ${g.player} <span style="color:var(--muted);font-size:10px;">(${g.team})</span></span>
+          </div>`;
+        }).join('');
+        stats+=`<div class="goalscorers">${goals}</div>`;
+      }
     }
     return `<div class="live-card${isLive?' is-live':''}">
       ${badge}
       <div class="score-row">
         <div class="score-team">${match.home}</div>
-        <div style="display:flex;align-items:center;gap:4px;"><div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div></div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div class="score-num">${hs}</div>
+          <div class="score-sep">:</div>
+          <div class="score-num">${as}</div>
+        </div>
         <div class="score-team" style="text-align:right">${match.away}</div>
       </div>
       <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:-4px;margin-bottom:4px;">${match.stage} · ${match.venue}</div>
@@ -478,28 +514,12 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     </div>`;
   }
 
-  function findLiveData(home, away) {
-    // exact match first
-    if (liveData[`${home}|${away}`]) return liveData[`${home}|${away}`];
-    // fuzzy match — check if any key contains both team names
-    for (const key of Object.keys(liveData)) {
-      const [h, a] = key.split('|');
-      if (h.includes(home.split(' ')[0]) || home.includes(h.split(' ')[0])) {
-        if (a.includes(away.split(' ')[0]) || away.includes(a.split(' ')[0])) {
-          return liveData[key];
-        }
-      }
-    }
-    return null;
-  }
-
   function renderLiveSection() {
     if(!todayMatches.length) return;
     document.getElementById('live-section').style.display='block';
-    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m, findLiveData(m.home, m.away))).join('');
+    document.getElementById('live-grid').innerHTML=todayMatches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
   }
 
-  // SPECIAL
   function renderSpecial(picks) {
     if(!picks) return;
     let best=null;
@@ -524,7 +544,6 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
       </div>`;
   }
 
-  // PICKS
   function renderPick(pick) {
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
     return `<div class="pick-card">
@@ -547,7 +566,6 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     const cdId='cd-'+index;
     const status=matchStatus(match.kickoff_et);
     const matchPicks=picksData?picksData.find(p=>p.home===match.home&&p.away===match.away):null;
-
     let bodyHtml='';
     if(matchPicks){
       const pp=(matchPicks.player_props||[]).map(p=>`<div class="cat-player">${renderPick(p)}</div>`).join('');
@@ -567,13 +585,11 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
         <div class="pick-pending-sub">Auto-generated once lineups are confirmed — roughly 75 min before kickoff.</div>
       </div>`;
     }
-
     const cdHtml=status==='pre'
       ?`<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
       :status==='live'
       ?`<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>`
       :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
-
     return `<div class="match-card${index===0?' open':''}" id="${id}">
       <div class="match-header" onclick="toggleCard('${id}')">
         <div>
@@ -637,11 +653,10 @@ const todayKey = `${etDate.getFullYear()}-${String(etDate.getMonth()+1).padStart
     }
   }
 
-  // Also need a live scores backend endpoint
   renderLiveSection();
   loadPicks();
   fetchLiveScores();
-  setInterval(fetchLiveScores,90*1000);
+  setInterval(fetchLiveScores, 30*1000);
 </script>
 </body>
 </html>
