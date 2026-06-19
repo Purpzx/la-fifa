@@ -122,7 +122,6 @@ const SCHEDULE = {
     { home: "Algeria", away: "Austria", kickoff_et: "22:00", venue: "Arrowhead Stadium, Kansas City", stage: "Group J" },
     { home: "Jordan", away: "Argentina", kickoff_et: "22:00", venue: "AT&T Stadium, Arlington", stage: "Group J" },
   ],
-  // ROUND OF 32
   "2026-06-28": [{ home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "TBD", stage: "Round of 32" }],
   "2026-06-29": [
     { home: "TBD", away: "TBD", kickoff_et: "13:00", venue: "NRG Stadium, Houston", stage: "Round of 32" },
@@ -149,7 +148,6 @@ const SCHEDULE = {
     { home: "TBD", away: "TBD", kickoff_et: "18:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Round of 32" },
     { home: "TBD", away: "TBD", kickoff_et: "21:30", venue: "Arrowhead Stadium, Kansas City", stage: "Round of 32" },
   ],
-  // ROUND OF 16
   "2026-07-04": [
     { home: "TBD", away: "TBD", kickoff_et: "13:00", venue: "NRG Stadium, Houston", stage: "Round of 16" },
     { home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Lincoln Financial Field, Philadelphia", stage: "Round of 16" },
@@ -166,59 +164,45 @@ const SCHEDULE = {
     { home: "TBD", away: "TBD", kickoff_et: "12:00", venue: "Mercedes-Benz Stadium, Atlanta", stage: "Round of 16" },
     { home: "TBD", away: "TBD", kickoff_et: "16:00", venue: "BC Place, Vancouver", stage: "Round of 16" },
   ],
-  // QUARTERFINALS
   "2026-07-09": [{ home: "TBD", away: "TBD", kickoff_et: "16:00", venue: "Gillette Stadium, Foxborough", stage: "Quarterfinal" }],
   "2026-07-10": [{ home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "SoFi Stadium, Inglewood", stage: "Quarterfinal" }],
   "2026-07-11": [
     { home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Quarterfinal" },
     { home: "TBD", away: "TBD", kickoff_et: "21:00", venue: "Arrowhead Stadium, Kansas City", stage: "Quarterfinal" },
   ],
-  // SEMIFINALS
   "2026-07-14": [{ home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "AT&T Stadium, Arlington", stage: "Semifinal" }],
   "2026-07-15": [{ home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "Mercedes-Benz Stadium, Atlanta", stage: "Semifinal" }],
-  // FINAL
   "2026-07-18": [{ home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Third Place" }],
   "2026-07-19": [{ home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "MetLife Stadium, East Rutherford, NJ", stage: "Final" }],
 };
 
-// Stadium outdoor/indoor and weather sensitivity
 const STADIUM_INFO = {
-  "Lumen Field, Seattle": { outdoor: true, weather_sensitive: true, notes: "Known for wind and rain, suppresses scoring" },
-  "MetLife Stadium, East Rutherford": { outdoor: true, weather_sensitive: true, notes: "Open-air NJ stadium, wind affects wide play" },
-  "Gillette Stadium, Foxborough": { outdoor: true, weather_sensitive: true, notes: "New England weather, can be windy" },
-  "BMO Field, Toronto": { outdoor: true, weather_sensitive: true, notes: "Open air, variable Canadian weather" },
-  "BC Place, Vancouver": { outdoor: false, weather_sensitive: false, notes: "Retractable roof, controlled conditions" },
-  "NRG Stadium, Houston": { outdoor: false, weather_sensitive: false, notes: "Domed stadium, neutral conditions" },
-  "AT&T Stadium, Arlington": { outdoor: false, weather_sensitive: false, notes: "Domed stadium, neutral conditions" },
-  "Mercedes-Benz Stadium, Atlanta": { outdoor: false, weather_sensitive: false, notes: "Retractable roof, controlled conditions" },
-  "SoFi Stadium, Inglewood": { outdoor: false, weather_sensitive: false, notes: "Covered open-air, mild LA weather" },
-  "Hard Rock Stadium, Miami Gardens": { outdoor: true, weather_sensitive: true, notes: "Open air Miami, hot and humid" },
-  "Arrowhead Stadium, Kansas City": { outdoor: true, weather_sensitive: true, notes: "Open air, variable midwest weather" },
-  "Lincoln Financial Field, Philadelphia": { outdoor: true, weather_sensitive: true, notes: "Open air Philadelphia" },
-  "Estadio Azteca, Mexico City": { outdoor: true, weather_sensitive: false, notes: "High altitude 2,240m — affects stamina and scoring" },
-  "Estadio Akron, Zapopan": { outdoor: true, weather_sensitive: false, notes: "High altitude, warm climate" },
-  "Estadio BBVA, Monterrey": { outdoor: true, weather_sensitive: true, notes: "Extreme heat in summer" },
-  "Levi's Stadium, Santa Clara": { outdoor: true, weather_sensitive: false, notes: "Open air, mild Bay Area climate" },
+  "Lumen Field, Seattle": { outdoor: true, notes: "Wind/rain suppresses scoring" },
+  "MetLife Stadium, East Rutherford": { outdoor: true, notes: "Open-air NJ, wind affects wide play" },
+  "Gillette Stadium, Foxborough": { outdoor: true, notes: "New England weather, can be windy" },
+  "BMO Field, Toronto": { outdoor: true, notes: "Open air, variable weather" },
+  "BC Place, Vancouver": { outdoor: false, notes: "Retractable roof, controlled" },
+  "NRG Stadium, Houston": { outdoor: false, notes: "Domed, neutral conditions" },
+  "AT&T Stadium, Arlington": { outdoor: false, notes: "Domed, neutral conditions" },
+  "Mercedes-Benz Stadium, Atlanta": { outdoor: false, notes: "Retractable roof, controlled" },
+  "SoFi Stadium, Inglewood": { outdoor: false, notes: "Covered, mild LA weather" },
+  "Hard Rock Stadium, Miami Gardens": { outdoor: true, notes: "Open air, hot and humid" },
+  "Arrowhead Stadium, Kansas City": { outdoor: true, notes: "Open air, variable midwest weather" },
+  "Lincoln Financial Field, Philadelphia": { outdoor: true, notes: "Open air Philadelphia" },
+  "Estadio Azteca, Mexico City": { outdoor: true, notes: "HIGH ALTITUDE 2240m — suppresses tempo and stamina" },
+  "Estadio Akron, Zapopan": { outdoor: true, notes: "High altitude, warm" },
+  "Estadio BBVA, Monterrey": { outdoor: true, notes: "Extreme summer heat" },
+  "Levi's Stadium, Santa Clara": { outdoor: true, notes: "Open air, mild Bay Area" },
 };
 
-// Tournament stage context
-function getTournamentContext(stage, matches) {
-  if (stage.includes("Group")) {
-    return `GROUP STAGE CONTEXT: Teams may be managing fitness across 3 games in ~10 days. Check current group standings — teams that have already qualified may rotate key players. Teams eliminated or needing a result play completely differently. This massively affects prop values.`;
-  }
-  if (stage.includes("Round of 32") || stage.includes("Round of 16")) {
-    return `KNOCKOUT STAGE CONTEXT: Single elimination — every team plays to win. No rotation, best XI on the pitch. Expect higher intensity, more tactical fouling, more cards. Teams that drew or were 3rd in groups are desperate. Overtime is possible — consider props that cover extra time.`;
-  }
-  if (stage.includes("Quarterfinal")) {
-    return `QUARTERFINAL CONTEXT: Elite teams only. Tactically conservative starts expected — coaches prioritize not conceding. First half often cagey. Card props valuable as both teams foul to break up play. Best 8 teams in the tournament.`;
-  }
-  if (stage.includes("Semifinal")) {
-    return `SEMIFINAL CONTEXT: Highest pressure matches of the tournament. Extremely tactically disciplined. Expect low scoring, tight lines. Players carry fatigue from previous rounds. Stars who are 1 yellow away from suspension may be managed.`;
-  }
-  if (stage.includes("Final") || stage.includes("Third")) {
-    return `FINAL/THIRD PLACE CONTEXT: Third place games are often high scoring — losing semifinalists are disappointed but free from pressure. Finals are the opposite — ultra cautious, often decided late. Consider under props for the final, over for third place.`;
-  }
-  return '';
+function getTournamentContext(stage) {
+  if (stage.includes("Group")) return "GROUP STAGE: Check standings — teams already through may rotate. Teams needing result play open and desperate = more cards/corners/shots.";
+  if (stage.includes("Round of 32") || stage.includes("Round of 16")) return "KNOCKOUT: No rotation, best XI plays. High intensity, tactical fouling = more cards. Extra time possible.";
+  if (stage.includes("Quarterfinal")) return "QUARTERFINAL: Elite teams, cautious starts. Cards valuable as teams foul to disrupt. Stars near suspension may be managed.";
+  if (stage.includes("Semifinal")) return "SEMIFINAL: Maximum pressure, ultra-disciplined. Low scoring expected. Fatigue factor. Under props gain value.";
+  if (stage.includes("Final")) return "FINAL: Ultra cautious, often decided late. Under total goals has value. Both teams rested.";
+  if (stage.includes("Third")) return "THIRD PLACE: Deflated teams play without pressure = high scoring, open game. Over/BTTS props gain value.";
+  return "";
 }
 
 function minutesUntilFirstKickoff(matches) {
@@ -249,40 +233,27 @@ async function fetchLineups(matches) {
     for (const fixture of fixtures) {
       const fixtureId = fixture.fixture?.id;
       if (!fixtureId) continue;
-
-      // Fetch lineups + fixture details in parallel
       const [lineupRes, detailRes] = await Promise.all([
         fetch(`https://v3.football.api-sports.io/fixtures/lineups?fixture=${fixtureId}`,
           { headers: { "x-apisports-key": apiKey } }),
         fetch(`https://v3.football.api-sports.io/fixtures?id=${fixtureId}`,
           { headers: { "x-apisports-key": apiKey } }),
       ]);
-
-      const [lineupJson, detailJson] = await Promise.all([
-        lineupRes.json(),
-        detailRes.json(),
-      ]);
-
+      const [lineupJson, detailJson] = await Promise.all([lineupRes.json(), detailRes.json()]);
       const lineups = lineupJson.response || [];
-      const detail = detailJson.response?.[0];
-      const referee = detail?.fixture?.referee || 'Unknown';
-
+      const referee = detailJson.response?.[0]?.fixture?.referee || 'Unknown';
       const homeTeam = fixture.teams?.home?.name;
       const awayTeam = fixture.teams?.away?.name;
-
       if (lineups.length >= 2) {
-        const formatLineup = (lineup) => ({
-          starters: (lineup.startXI || []).map(p => `${p.player?.name} (#${p.player?.number}, ${p.player?.pos})`).filter(Boolean),
-          formation: lineup.formation || 'Unknown',
-          coach: lineup.coach?.name || 'Unknown',
-          substitutes: (lineup.substitutes || []).map(p => p.player?.name).filter(Boolean).slice(0, 5),
+        const fmt = (l) => ({
+          starters: (l.startXI || []).map(p => `${p.player?.name} (${p.player?.pos})`).filter(Boolean),
+          formation: l.formation || 'Unknown',
+          coach: l.coach?.name || 'Unknown',
         });
-
         lineupData[`${homeTeam}|${awayTeam}`] = {
-          home: formatLineup(lineups[0]),
-          away: formatLineup(lineups[1]),
+          home: fmt(lineups[0]),
+          away: fmt(lineups[1]),
           referee,
-          fixture_id: fixtureId,
         };
       }
     }
@@ -302,98 +273,46 @@ async function generatePicks(matches, lineupData) {
   const matchList = matches.map((m) => {
     const key = `${m.home}|${m.away}`;
     const lineups = lineupData[key];
-    const stadiumInfo = STADIUM_INFO[m.venue] || { outdoor: true, weather_sensitive: false, notes: "Open air stadium" };
-    const tournamentContext = getTournamentContext(m.stage, matches);
+    const stadium = STADIUM_INFO[m.venue] || { outdoor: true, notes: "Open air" };
+    const context = getTournamentContext(m.stage);
 
-    let lineupText = '';
-    if (lineups) {
-      lineupText = `
-    ✅ CONFIRMED LINEUPS (use these players ONLY for player props):
-    HOME ${m.home} (${lineups.home.formation}) coached by ${lineups.home.coach}:
-    ${lineups.home.starters.join(', ')}
-    Subs available: ${lineups.home.substitutes.join(', ')}
+    let lineupText = lineups
+      ? `✅ LINEUPS CONFIRMED:
+HOME ${m.home} (${lineups.home.formation}): ${lineups.home.starters.join(', ')}
+AWAY ${m.away} (${lineups.away.formation}): ${lineups.away.starters.join(', ')}
+REFEREE: ${lineups.referee} — search avg cards/game`
+      : `⚠️ LINEUPS NOT CONFIRMED — search for expected XI and injuries`;
 
-    AWAY ${m.away} (${lineups.away.formation}) coached by ${lineups.away.coach}:
-    ${lineups.away.starters.join(', ')}
-    Subs available: ${lineups.away.substitutes.join(', ')}
-
-    🎯 REFEREE: ${lineups.referee} — search for this referee's avg cards/game, fouls/game, and style`;
-    } else {
-      lineupText = `\n    ⚠️ LINEUPS NOT YET CONFIRMED — use web search to find expected XI and any injury news`;
-    }
-
-    return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MATCH: ${m.home} vs ${m.away}
-KICKOFF: ${m.kickoff_et} ET
-VENUE: ${m.venue}
-STAGE: ${m.stage}
-STADIUM: ${stadiumInfo.outdoor ? 'OUTDOOR' : 'INDOOR/COVERED'} — ${stadiumInfo.notes}
-${tournamentContext}
+    return `${m.home} vs ${m.away} | ${m.kickoff_et} ET | ${m.venue} (${stadium.outdoor ? 'OUTDOOR' : 'INDOOR'}: ${stadium.notes}) | ${m.stage}
+${context}
 ${lineupText}`;
-  }).join('\n\n');
+  }).join('\n\n---\n\n');
 
-  const systemPrompt = `You are an elite World Cup 2026 betting analyst. You think like a professional sharp bettor — you look for edges, not just favorites.
+  const systemPrompt = `You are an elite World Cup 2026 betting analyst. Think like a sharp bettor — hunt edges, not favorites.
 
-ANALYTICAL FRAMEWORK — apply this to every pick:
-1. LINEUP VERIFICATION: Only pick props for confirmed starters. A star player starting changes everything.
-2. REFEREE ANALYSIS: Search for the assigned referee. High-card refs = card props. Low-card refs = avoid card props.
-3. FORMATION MATCHUP: A 4-3-3 vs 5-4-1 creates wide play → more corners. Two 4-4-2 teams = direct play → fewer corners.
-4. TOURNAMENT STAGE: Apply the context provided. Group stage rotation, knockout desperation, final caution — these are different games.
-5. STADIUM/WEATHER: Outdoor windy stadiums suppress corners and long balls. Altitude increases fatigue. Domes = neutral.
-6. MOTIVATION ANALYSIS: Which team NEEDS this result? A team that needs a win plays more open = more cards, corners, shots.
-7. RECENT FORM IN THIS TOURNAMENT: How did each team perform in their last match? High shots? Low corners? Aggressive ref?
-8. VALUE IDENTIFICATION: Is the line set correctly by the book? Where is the public money vs where is the value?
+APPLY TO EVERY PICK:
+- Referee: search avg cards/game → card prop value
+- Formation matchup: wide play = corners, direct = fewer corners
+- Tournament stage: apply context given (rotation, desperation, caution)
+- Stadium: outdoor/altitude affects tempo; dome = neutral
+- Motivation: who needs result? Desperate = open play = cards/corners
+- Line value: where is the public wrong?
 
-Return ONLY a valid JSON array — no markdown, no backticks, no explanation.
+Return ONLY valid JSON array, no markdown:
+[{"home":"","away":"","kickoff":"","venue":"","stage":"",
+"player_props":[{"title":"Player — Prop","line":"Over X -115","reasoning":"3 sentences: starter confirmed + specific stat + matchup/referee/stadium edge","book":"fanduel|draftkings|betmgm|bet365|fanatics","edge":"+8% Edge","confidence":4}],
+"game_props":[same,2 picks],"team_props":[same,2 picks]}]
 
-For each match return:
-{
-  "home": "Country",
-  "away": "Country",
-  "kickoff": "6:00 PM ET",
-  "venue": "Stadium, City",
-  "stage": "Group Stage",
-  "player_props": [
-    {
-      "title": "Player Name — Prop Description",
-      "line": "Over 1.5 Shots on Target -115",
-      "reasoning": "4-5 sentences. MUST include: (1) confirmed starter status, (2) specific recent stat cited, (3) matchup advantage, (4) referee/stadium factor if relevant, (5) why the line has value.",
-      "book": "fanduel|draftkings|betmgm|bet365|fanatics",
-      "edge": "+8% Edge",
-      "confidence": 4
-    }
-  ],
-  "game_props": [ same structure, 2 picks ],
-  "team_props": [ same structure, 2 picks ]
-}
-
-STRICT RULES:
-- ONLY pick player props for confirmed starters from the lineup provided
-- EXCLUDE all goalscorer props (first/last/anytime scorer)
-- Player props: shots on target, key passes, fouls, tackles, assists, saves (GK), crosses, cards
-- Game props: total corners, total cards, BTTS, total shots, Asian handicap, clean sheet
-- Team props: team corners, team clean sheet, team total shots, first corner, handicap
-- Pick the book with the genuinely best line — shop all 5 books
-- confidence 5 = near lock (use sparingly), 4 = strong, 3 = moderate, 1-2 = skip
-- If you cannot find enough data to be confident on a prop, pick a different prop
-- reasoning MUST cite the player's name, a specific stat or number, and the matchup context
-- Return exactly 2 player props, 2 game props, 2 team props per match`;
+RULES: Only confirmed starters for player props. No goalscorer props. Player: shots,passes,fouls,tackles,saves,crosses,cards. Game: corners,cards,BTTS,shots,handicap. Team: team corners,clean sheet,team shots,first corner. Best book across all 5. Confidence 5=lock(rare),4=strong,3=moderate. Exactly 2+2+2 per match.`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 8000,
+    max_tokens: 6000,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
     system: systemPrompt,
     messages: [{
       role: "user",
-      content: `Today is ${today}. Here are today's World Cup matches with all available data:\n\n${matchList}\n\nFor each match:
-1. Search for the referee's card/foul tendencies if not already provided
-2. Search for current group standings and qualification scenarios
-3. Search for injury news and any late lineup changes
-4. Search for best available odds on all 5 books
-5. Search for each team's stats from their previous WC matches (shots, corners, cards)
-
-Then apply the analytical framework and generate the sharpest possible picks. Return only the JSON array.`
+      content: `Date: ${today}\n\n${matchList}\n\nSearch for each match: referee avg cards/game, group standings, injury news, best odds across all 5 books, each team's last WC match stats. Return JSON only.`
     }],
   });
 
@@ -424,18 +343,14 @@ export default async function handler(req, res) {
 
   const minsUntil = minutesUntilFirstKickoff(todayMatches);
   if (minsUntil > 90 || minsUntil < -120) {
-    return res.status(200).json({ skipped: true, reason: `Not in window. Mins until kickoff: ${minsUntil}` });
+    return res.status(200).json({ skipped: true, reason: `Not in window. Mins: ${minsUntil}` });
   }
 
   try {
     const lineupData = await fetchLineups(todayMatches);
     const picks = await generatePicks(todayMatches, lineupData);
     await redis.set(`picks:${key}`, JSON.stringify(picks), { ex: 60 * 60 * 36 });
-    return res.status(200).json({
-      success: true, key,
-      matches: picks.length,
-      lineups_fetched: Object.keys(lineupData).length,
-    });
+    return res.status(200).json({ success: true, key, matches: picks.length, lineups_fetched: Object.keys(lineupData).length });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
