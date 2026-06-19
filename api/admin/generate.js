@@ -8,10 +8,11 @@ const redis = new Redis({
 });
 
 function todayKeyET() {
-  const etDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-  const y = etDate.getFullYear();
-  const m = String(etDate.getMonth() + 1).padStart(2, "0");
-  const d = String(etDate.getDate()).padStart(2, "0");
+  const now = new Date();
+  const et = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const y = et.getFullYear();
+  const m = String(et.getMonth() + 1).padStart(2, "0");
+  const d = String(et.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 
@@ -221,11 +222,11 @@ async function fetchLineupForMatch(match, dateKey) {
     const fixture = (data.response || []).find(f => {
       const name = f.league?.name?.toLowerCase() || '';
       if(!name.includes('world cup') && !name.includes('fifa') && f.league?.id !== 1) return false;
-      return normalize(f.teams?.home?.name).includes(normalize(match.home).slice(0,4)) ||
-             normalize(match.home).includes(normalize(f.teams?.home?.name).slice(0,4));
+      const fh = normalize(f.teams?.home?.name);
+      const mh = normalize(match.home);
+      return fh.includes(mh.slice(0,4)) || mh.includes(fh.slice(0,4));
     });
     if(!fixture) return null;
-
     const fixtureId = fixture.fixture?.id;
     const [lineupRes, detailRes] = await Promise.all([
       fetch(`https://v3.football.api-sports.io/fixtures/lineups?fixture=${fixtureId}`,
@@ -242,7 +243,7 @@ async function fetchLineupForMatch(match, dateKey) {
       formation: l.formation || 'Unknown',
       coach: l.coach?.name || 'Unknown',
     });
-    return { home: fmt(lineups[0]), away: fmt(lineups[1]), referee, confirmed: true };
+    return {home:fmt(lineups[0]), away:fmt(lineups[1]), referee, confirmed:true};
   } catch(e) { return null; }
 }
 
@@ -291,37 +292,44 @@ Search for: referee avg cards/game, group standings, injury news, best odds acro
   const text = (response.content||[]).map(i=>i.type==="text"?i.text:"").join("");
   const clean = text.replace(/```json|```/g,"").trim();
   const jsonMatch = clean.match(/\{[\s\S]*\}/);
-  if(!jsonMatch) throw new Error("No valid JSON");
+  if(!jsonMatch) throw new Error("No valid JSON in response");
   return JSON.parse(jsonMatch[0]);
 }
 
 export default async function handler(req, res) {
-  const { secret, date, home, away, force } = req.query;
+  const { secret, date, force } = req.query;
+
   if(secret !== process.env.CRON_SECRET) {
     return res.status(401).json({error:"Unauthorized"});
   }
 
+  // Always use provided date or compute today ET
   const dateKey = date || todayKeyET();
   const matches = SCHEDULE[dateKey] || [];
 
+  // Debug info always returned
+  const debug = {
+    computed_today: todayKeyET(),
+    using_date: dateKey,
+    matches_found: matches.length,
+  };
+
   if(!matches.length) {
-    return res.status(200).json({skipped:true, reason:`No matches for ${dateKey}`});
-  }
-
-  // If home+away specified, generate just that match
-  const targetMatches = (home && away)
-    ? matches.filter(m => m.home === decodeURIComponent(home) && m.away === decodeURIComponent(away))
-    : matches;
-
-  if(!targetMatches.length) {
-    return res.status(200).json({skipped:true, reason:"Match not found in schedule"});
+    return res.status(200).json({skipped:true, reason:`No matches for ${dateKey}`, debug});
   }
 
   const results = [];
 
   for(const match of targetMatches) {
+    // Skip TBD matches
+    if(match.home === 'TBD') {
+      results.push({match:"TBD vs TBD", skipped:true, reason:"TBD match"});
+      continue;
+    }
+
     const key = matchKey(dateKey, match.home, match.away);
 
+    // Check existing unless force
     if(force !== 'true') {
       const existing = await redis.get(key);
       if(existing) {
@@ -330,15 +338,16 @@ export default async function handler(req, res) {
       }
     }
 
+    // Generate — no timing window check for manual admin trigger
     try {
       const lineup = await fetchLineupForMatch(match, dateKey);
       const pick = await generatePickForMatch(match, lineup);
-      await redis.set(key, JSON.stringify(pick), {ex: 60 * 60 * 36});
+      await redis.set(key, JSON.stringify(pick), {ex:60*60*36});
       results.push({match:`${match.home} vs ${match.away}`, success:true, lineup_confirmed:!!lineup});
     } catch(err) {
       results.push({match:`${match.home} vs ${match.away}`, error:err.message});
     }
   }
 
-  return res.status(200).json({date:dateKey, results});
+  return res.status(200).json({date:dateKey, debug, results});
 }
