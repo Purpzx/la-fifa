@@ -91,9 +91,9 @@
   .goal-min { color: var(--gold); font-weight: 700; font-size: 10px; min-width: 36px; flex-shrink: 0; }
   .goal-name { color: var(--warm); }
 
-  /* 3-DAY SLATE */
+  /* 2-DAY SLATE */
   .slate-wrap { margin-bottom: 40px; }
-  .slate-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .slate-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
   .slate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; user-select: none; }
   .slate-card:hover { border-color: rgba(255,255,255,0.12); }
   .slate-card.active { border-color: var(--gold); background: rgba(200,168,75,0.06); }
@@ -103,7 +103,6 @@
   .slate-card-count { font-size: 10px; color: var(--muted); }
   .slate-card-status { display: inline-block; margin-top: 6px; font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
   .slate-status-done { background: rgba(0,146,70,0.1); color: var(--green); border: 1px solid rgba(0,146,70,0.2); }
-  .slate-status-upcoming { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
   .slate-status-today { background: rgba(200,168,75,0.15); color: var(--gold); border: 1px solid rgba(200,168,75,0.3); }
 
   /* COUNTDOWN */
@@ -215,7 +214,6 @@
 </header>
 
 <main>
-  <!-- TRACKER -->
   <div class="tracker-wrap">
     <div class="section-label">📊 Pick Tracker</div>
     <div class="tracker-card">
@@ -232,7 +230,6 @@
     </div>
   </div>
 
-  <!-- SPECIAL -->
   <div class="special-wrap">
     <div class="section-label">⭐ Minchia Special</div>
     <div class="special-card" id="special-card">
@@ -245,26 +242,22 @@
     </div>
   </div>
 
-  <!-- LIVE SCORES (today only) -->
   <div class="live-section" id="live-section" style="display:none;">
     <div class="section-label">Live Scores</div>
     <div class="live-grid" id="live-grid"></div>
   </div>
 
-  <!-- 3-DAY SLATE -->
   <div class="slate-wrap">
-    <div class="section-label">3-Day Slate</div>
+    <div class="section-label">Slate</div>
     <div class="slate-strip" id="slate-strip"></div>
   </div>
 
-  <!-- PICKS + MATCHES -->
   <div id="picks-section"></div>
 
   <div class="disclaimer">For entertainment purposes only. Gambling involves risk. Must be 21+ and located in a legal betting state. Please gamble responsibly.</div>
 </main>
 
 <script>
-  // ── DATE SETUP ───────────────────────────────────────────────
   const nowDate = new Date();
   const etDate = new Date(nowDate.toLocaleString('en-US', {timeZone:'America/New_York'}));
   document.getElementById('today-badge').textContent = etDate.toLocaleDateString('en-US', {
@@ -275,18 +268,14 @@
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
   function addDays(d, n) {
-    const r = new Date(d);
-    r.setDate(r.getDate() + n);
-    return r;
+    const r = new Date(d); r.setDate(r.getDate()+n); return r;
   }
 
   const todayET = etDate;
   const yesterdayET = addDays(etDate, -1);
-  const tomorrowET = addDays(etDate, 1);
   const todayKey = makeKey(todayET);
   let activeDay = todayKey;
 
-  // ── SCHEDULE ─────────────────────────────────────────────────
   const SCHEDULE = {
     "2026-06-11":[
       {home:"Mexico",away:"South Africa",kickoff_et:"15:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
@@ -394,17 +383,68 @@
       {home:"Algeria",away:"Austria",kickoff_et:"22:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},
       {home:"Jordan",away:"Argentina",kickoff_et:"22:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},
     ],
+    "2026-06-28":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"TBD",stage:"Round of 32"}],
+    "2026-06-29":[
+      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"16:30",venue:"Gillette Stadium, Foxborough",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Round of 32"},
+    ],
+    "2026-06-30":[
+      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 32"},
+    ],
+    "2026-07-01":[
+      {home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"Lumen Field, Seattle",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Levi's Stadium, Santa Clara",stage:"Round of 32"},
+    ],
+    "2026-07-02":[
+      {home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Round of 32"},
+    ],
+    "2026-07-03":[
+      {home:"TBD",away:"TBD",kickoff_et:"14:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Round of 32"},
+      {home:"TBD",away:"TBD",kickoff_et:"21:30",venue:"Arrowhead Stadium, Kansas City",stage:"Round of 32"},
+    ],
+    "2026-07-04":[
+      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 16"},
+      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Round of 16"},
+    ],
+    "2026-07-05":[
+      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 16"},
+      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 16"},
+    ],
+    "2026-07-06":[
+      {home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"AT&T Stadium, Arlington",stage:"Round of 16"},
+      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Lumen Field, Seattle",stage:"Round of 16"},
+    ],
+    "2026-07-07":[
+      {home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 16"},
+      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"BC Place, Vancouver",stage:"Round of 16"},
+    ],
+    "2026-07-09":[{home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"Gillette Stadium, Foxborough",stage:"Quarterfinal"}],
+    "2026-07-10":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Quarterfinal"}],
+    "2026-07-11":[
+      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Quarterfinal"},
+      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Quarterfinal"},
+    ],
+    "2026-07-14":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"AT&T Stadium, Arlington",stage:"Semifinal"}],
+    "2026-07-15":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Semifinal"}],
+    "2026-07-18":[{home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Third Place"}],
+    "2026-07-19":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"MetLife Stadium, East Rutherford, NJ",stage:"Final"}],
   };
 
   const BOOKS = {
-    fanduel:    {label:'FanDuel',    cls:'book-fanduel'},
-    draftkings: {label:'DraftKings', cls:'book-draftkings'},
-    betmgm:     {label:'BetMGM',     cls:'book-betmgm'},
-    bet365:     {label:'Bet365',     cls:'book-bet365'},
-    fanatics:   {label:'Fanatics',   cls:'book-fanatics'},
+    fanduel:{label:'FanDuel',cls:'book-fanduel'},
+    draftkings:{label:'DraftKings',cls:'book-draftkings'},
+    betmgm:{label:'BetMGM',cls:'book-betmgm'},
+    bet365:{label:'Bet365',cls:'book-bet365'},
+    fanatics:{label:'Fanatics',cls:'book-fanatics'},
   };
 
-  // ── HELPERS ──────────────────────────────────────────────────
   function confDots(n) {
     let d='';
     for(let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
@@ -413,8 +453,7 @@
 
   function fmtKickoff(kt) {
     const [h,m]=kt.split(':').map(Number);
-    const ampm=h>=12?'PM':'AM';
-    const h12=h%12||12;
+    const ampm=h>=12?'PM':'AM', h12=h%12||12;
     return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;
   }
 
@@ -432,13 +471,11 @@
   }
 
   const normalize = s => s?.toLowerCase().replace(/[^a-z]/g,'') || '';
-
-  function fuzzyTeamMatch(a, b) {
+  function fuzzyTeamMatch(a,b) {
     const na=normalize(a), nb=normalize(b);
-    return na===nb || na.includes(nb.slice(0,4)) || nb.includes(na.slice(0,4));
+    return na===nb||na.includes(nb.slice(0,4))||nb.includes(na.slice(0,4));
   }
 
-  // ── COUNTDOWNS ───────────────────────────────────────────────
   const countdownTimers={};
   function startCountdown(kt, dateKey, elId) {
     if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
@@ -455,46 +492,37 @@
     countdownTimers[elId]=setInterval(tick,1000);
   }
 
-  // ── SCORES CACHE ─────────────────────────────────────────────
   const scoresCache={};
-
   async function fetchScoresForDay(dateKey) {
     if(scoresCache[dateKey]) return scoresCache[dateKey];
     try {
       const res=await fetch(`/api/scores?date=${dateKey}`);
       const data=await res.json();
-      if(Array.isArray(data)){
-        scoresCache[dateKey]=data;
-        return data;
-      }
-    } catch(e){console.log('Scores error:',e);}
+      if(Array.isArray(data)){scoresCache[dateKey]=data;return data;}
+    } catch(e){}
     return [];
   }
 
   function findScore(scores, home, away) {
     if(!scores?.length) return null;
     for(const s of scores){
-      if(fuzzyTeamMatch(s.home,home) && fuzzyTeamMatch(s.away,away)) return s;
+      if(fuzzyTeamMatch(s.home,home)&&fuzzyTeamMatch(s.away,away)) return s;
     }
     return null;
   }
 
-  // ── 3-DAY SLATE ──────────────────────────────────────────────
+  // 2-DAY SLATE
   function renderSlate() {
     const days=[
       {date:yesterdayET, key:makeKey(yesterdayET), label:'Yesterday'},
       {date:todayET,     key:makeKey(todayET),     label:'Today'},
-      {date:tomorrowET,  key:makeKey(tomorrowET),  label:'Tomorrow'},
     ];
     document.getElementById('slate-strip').innerHTML=days.map(day=>{
       const matches=SCHEDULE[day.key]||[];
       const isToday=day.key===todayKey;
-      const isPast=day.date<todayET&&!isToday;
       const statusHtml=isToday
         ?`<span class="slate-card-status slate-status-today">Today</span>`
-        :isPast
-        ?`<span class="slate-card-status slate-status-done">Completed</span>`
-        :`<span class="slate-card-status slate-status-upcoming">Upcoming</span>`;
+        :`<span class="slate-card-status slate-status-done">Completed</span>`;
       const dateStr=day.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return `<div class="slate-card${day.key===activeDay?' active':''}" onclick="switchDay('${day.key}')">
         <div class="slate-card-label">${day.label}</div>
@@ -517,7 +545,6 @@
     }
   }
 
-  // ── TRACKER ──────────────────────────────────────────────────
   async function loadTracker() {
     try {
       const res=await fetch('/api/results');
@@ -549,7 +576,6 @@
     } catch(e){console.log('Tracker error:',e);}
   }
 
-  // ── H2H ──────────────────────────────────────────────────────
   const h2hCache={};
   async function fetchH2H(home,away,containerId) {
     const key=`${home}|${away}`;
@@ -602,9 +628,7 @@
     }
   }
 
-  // ── LIVE SCORES (today) ───────────────────────────────────────
   let liveData={};
-
   async function fetchLiveScores() {
     const matches=SCHEDULE[todayKey]||[];
     if(!matches.length) return;
@@ -614,11 +638,10 @@
       if(Array.isArray(scores)){
         liveData={};
         scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
-        renderLiveSection();
-        // Update scores cache for today
         scoresCache[todayKey]=scores;
+        renderLiveSection();
       }
-    } catch(e){console.log('Live score error:',e);}
+    } catch(e){}
   }
 
   function findLiveData(home,away) {
@@ -636,8 +659,7 @@
       ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
       :isFt?`<div class="ft-badge">Full Time</div>`
       :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
-    const hs=score?.home_score??'–';
-    const as=score?.away_score??'–';
+    const hs=score?.home_score??'–', as=score?.away_score??'–';
     let goalHtml='';
     if((isLive||isFt)&&score?.goalscorers?.length){
       const goals=score.goalscorers.map(g=>{
@@ -652,9 +674,7 @@
       <div class="score-row">
         <div class="score-team">${match.home}</div>
         <div style="display:flex;align-items:center;gap:4px;">
-          <div class="score-num">${hs}</div>
-          <div class="score-sep">:</div>
-          <div class="score-num">${as}</div>
+          <div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div>
         </div>
         <div class="score-team" style="text-align:right">${match.away}</div>
       </div>
@@ -670,7 +690,6 @@
     document.getElementById('live-grid').innerHTML=matches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
   }
 
-  // ── SPECIAL ──────────────────────────────────────────────────
   function renderSpecial(picks) {
     if(!picks) return;
     let best=null;
@@ -695,7 +714,6 @@
       </div>`;
   }
 
-  // ── PICKS ────────────────────────────────────────────────────
   function renderPick(pick) {
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
     return `<div class="pick-card">
@@ -720,18 +738,11 @@
     const matchPicks=picksData?picksData.find(p=>fuzzyTeamMatch(p.home,match.home)&&fuzzyTeamMatch(p.away,match.away)):null;
     const score=findScore(scores,match.home,match.away);
 
-    // Score in header
     let scoreHtml='';
     if(score&&(score.status==='ft'||score.status==='live')&&score.home_score!==null){
-      const liveDot=score.status==='live'?`<div class="match-score-dot"></div>`:'';
-      const liveMin=score.status==='live'?`<span class="match-score-live">${score.minute}'</span>`:'';
-      scoreHtml=`<div class="match-score">
-        ${liveDot}
-        <span class="match-score-num">${score.home_score}</span>
-        <span class="match-score-sep">–</span>
-        <span class="match-score-num">${score.away_score}</span>
-        ${liveMin}
-      </div>`;
+      const dot=score.status==='live'?`<div class="match-score-dot"></div>`:'';
+      const min=score.status==='live'?`<span class="match-score-live">${score.minute}'</span>`:'';
+      scoreHtml=`<div class="match-score">${dot}<span class="match-score-num">${score.home_score}</span><span class="match-score-sep">–</span><span class="match-score-num">${score.away_score}</span>${min}</div>`;
     }
 
     let bodyHtml='';
@@ -761,9 +772,7 @@
         :status==='live'
         ?`<div class="countdown-wrap"><span class="countdown-timer urgent" style="font-size:11px;">● LIVE</span></div>`
         :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`
-      :dateKey>todayKey
-        ?`<div class="countdown-wrap"><span class="countdown-label">Kickoff in</span><span class="countdown-timer" id="${cdId}">—</span></div>`
-        :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
+      :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
 
     return `<div class="match-card${index===0?' open':''}" id="${id}">
       <div class="match-header" onclick="toggleCard('${id}')">
@@ -802,45 +811,34 @@
     if(toggle.classList.contains('open')) fetchH2H(home,away,bodyId);
   }
 
-  // ── LOAD PICKS FOR DAY ───────────────────────────────────────
   async function loadPicksForDay(dateKey) {
     const section=document.getElementById('picks-section');
     const matches=SCHEDULE[dateKey]||[];
-
     if(!matches.length){
       section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled for this day.</div></div>`;
       return;
     }
-
-    // Fetch picks and scores in parallel
-    const [picksData, scores] = await Promise.all([
+    const [picksData, scores]=await Promise.all([
       fetch(`/api/picks?date=${dateKey}`).then(r=>r.json()).catch(()=>({status:'error'})),
       fetchScoresForDay(dateKey),
     ]);
-
     const picks=picksData.status==='ready'?picksData.picks:null;
     const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
-    const isFuture=dateKey>todayKey;
-
-    let label='';
-    if(picks) label=`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`;
-    else if(isFuture) label=`<div class="section-label">Upcoming Matches</div>`;
-    else label=`<div class="section-label">Matches</div>`;
-
+    const isPast=dateKey<todayKey;
+    let label=picks
+      ?`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
+      :`<div class="section-label">${isPast?'Yesterday\'s Matches':'Today\'s Matches'}</div>`;
     const cards=matches.map((m,i)=>renderMatchCard(m,i,picks,dateKey,scores)).join('');
     section.innerHTML=label+cards;
-
-    matches.forEach((m,i)=>{
-      if(dateKey>=todayKey&&matchStatusForDay(m.kickoff_et,dateKey)==='pre'){
-        startCountdown(m.kickoff_et,dateKey,'cd-'+i);
-      }
-    });
-
+    if(dateKey===todayKey){
+      matches.forEach((m,i)=>{
+        if(matchStatusForDay(m.kickoff_et,dateKey)==='pre') startCountdown(m.kickoff_et,dateKey,'cd-'+i);
+      });
+    }
     if(picks&&dateKey===todayKey) renderSpecial(picks);
     if(picksData.status==='pending'&&dateKey===todayKey) setTimeout(()=>loadPicksForDay(todayKey),5*60*1000);
   }
 
-  // ── INIT ─────────────────────────────────────────────────────
   renderSlate();
   loadTracker();
   renderLiveSection();
