@@ -237,7 +237,7 @@
       <div class="special-pending">
         <div class="special-pending-icon">⭐</div>
         <div class="special-pending-title">The Special drops before kickoff</div>
-        <div class="special-pending-sub">Our highest confidence pick of the day — auto-selected once lineups are confirmed.</div>
+        <div class="special-pending-sub">Our highest confidence pick from today's matches — auto-selected once lineups are confirmed.</div>
       </div>
     </div>
   </div>
@@ -267,9 +267,7 @@
   function makeKey(d) {
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
-  function addDays(d, n) {
-    const r = new Date(d); r.setDate(r.getDate()+n); return r;
-  }
+  function addDays(d, n) { const r=new Date(d); r.setDate(r.getDate()+n); return r; }
 
   const todayET = etDate;
   const yesterdayET = addDays(etDate, -1);
@@ -511,7 +509,7 @@
     return null;
   }
 
-  // 2-DAY SLATE
+  // ── 2-DAY SLATE ──────────────────────────────────────────────
   function renderSlate() {
     const days=[
       {date:yesterdayET, key:makeKey(yesterdayET), label:'Yesterday'},
@@ -545,6 +543,7 @@
     }
   }
 
+  // ── TRACKER ──────────────────────────────────────────────────
   async function loadTracker() {
     try {
       const res=await fetch('/api/results');
@@ -576,6 +575,40 @@
     } catch(e){console.log('Tracker error:',e);}
   }
 
+  // ── MINCHIA SPECIAL (always today's picks) ───────────────────
+  function renderSpecial(picks) {
+    if(!picks) return;
+    let best=null;
+    picks.forEach(match=>{
+      [...(match.player_props||[]),...(match.game_props||[]),...(match.team_props||[])].forEach(p=>{
+        if(!best||p.confidence>best.confidence) best={...p,matchHome:match.home,matchAway:match.away};
+      });
+    });
+    if(!best) return;
+    const book=BOOKS[best.book]||BOOKS['fanduel'];
+    document.getElementById('special-card').innerHTML=`
+      <div class="special-glow"></div>
+      <div class="special-eyebrow"><span>⭐</span> Minchia Special · Best Pick of the Day</div>
+      <div class="special-title">${best.title}</div>
+      <div class="special-line">${best.line}</div>
+      <div class="special-reasoning">${best.reasoning}</div>
+      <div class="special-footer">
+        <span class="book-badge ${book.cls}">${book.label}</span>
+        <span class="edge-badge">${best.edge}</span>
+        ${confDots(best.confidence)}
+        <span class="special-match" style="margin-left:8px;">${best.matchHome} vs ${best.matchAway}</span>
+      </div>`;
+  }
+
+  async function loadTodaySpecial() {
+    try {
+      const res=await fetch(`/api/picks?date=${todayKey}`);
+      const data=await res.json();
+      if(data.status==='ready'&&data.picks) renderSpecial(data.picks);
+    } catch(e){}
+  }
+
+  // ── H2H ──────────────────────────────────────────────────────
   const h2hCache={};
   async function fetchH2H(home,away,containerId) {
     const key=`${home}|${away}`;
@@ -628,6 +661,7 @@
     }
   }
 
+  // ── LIVE SCORES ──────────────────────────────────────────────
   let liveData={};
   async function fetchLiveScores() {
     const matches=SCHEDULE[todayKey]||[];
@@ -690,30 +724,7 @@
     document.getElementById('live-grid').innerHTML=matches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
   }
 
-  function renderSpecial(picks) {
-    if(!picks) return;
-    let best=null;
-    picks.forEach(match=>{
-      [...(match.player_props||[]),...(match.game_props||[]),...(match.team_props||[])].forEach(p=>{
-        if(!best||p.confidence>best.confidence) best={...p,matchHome:match.home,matchAway:match.away};
-      });
-    });
-    if(!best) return;
-    const book=BOOKS[best.book]||BOOKS['fanduel'];
-    document.getElementById('special-card').innerHTML=`
-      <div class="special-glow"></div>
-      <div class="special-eyebrow"><span>⭐</span> Minchia Special · Best Pick of the Day</div>
-      <div class="special-title">${best.title}</div>
-      <div class="special-line">${best.line}</div>
-      <div class="special-reasoning">${best.reasoning}</div>
-      <div class="special-footer">
-        <span class="book-badge ${book.cls}">${book.label}</span>
-        <span class="edge-badge">${best.edge}</span>
-        ${confDots(best.confidence)}
-        <span class="special-match" style="margin-left:8px;">${best.matchHome} vs ${best.matchAway}</span>
-      </div>`;
-  }
-
+  // ── PICKS ────────────────────────────────────────────────────
   function renderPick(pick) {
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
     return `<div class="pick-card">
@@ -818,14 +829,14 @@
       section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled for this day.</div></div>`;
       return;
     }
-    const [picksData, scores]=await Promise.all([
+    const [picksData,scores]=await Promise.all([
       fetch(`/api/picks?date=${dateKey}`).then(r=>r.json()).catch(()=>({status:'error'})),
       fetchScoresForDay(dateKey),
     ]);
     const picks=picksData.status==='ready'?picksData.picks:null;
     const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
     const isPast=dateKey<todayKey;
-    let label=picks
+    const label=picks
       ?`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
       :`<div class="section-label">${isPast?'Yesterday\'s Matches':'Today\'s Matches'}</div>`;
     const cards=matches.map((m,i)=>renderMatchCard(m,i,picks,dateKey,scores)).join('');
@@ -835,14 +846,15 @@
         if(matchStatusForDay(m.kickoff_et,dateKey)==='pre') startCountdown(m.kickoff_et,dateKey,'cd-'+i);
       });
     }
-    if(picks&&dateKey===todayKey) renderSpecial(picks);
     if(picksData.status==='pending'&&dateKey===todayKey) setTimeout(()=>loadPicksForDay(todayKey),5*60*1000);
   }
 
+  // ── INIT ─────────────────────────────────────────────────────
   renderSlate();
   loadTracker();
   renderLiveSection();
   loadPicksForDay(todayKey);
+  loadTodaySpecial();
   fetchLiveScores();
   setInterval(fetchLiveScores,30*1000);
   setInterval(loadTracker,60*1000);
