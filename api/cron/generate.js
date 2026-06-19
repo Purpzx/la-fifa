@@ -1,18 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { Redis } from "@upstash/redis";
 
-const client = new Anthropic();
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
 
-function todayKey() {
-  return new Date().toISOString().split("T")[0];
+function todayKeyET() {
+  const etDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const y = etDate.getFullYear();
+  const m = String(etDate.getMonth() + 1).padStart(2, "0");
+  const d = String(etDate.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 const SCHEDULE = {
-  // ── GROUP STAGE ──────────────────────────────────────────────
   "2026-06-11": [
     { home: "Mexico", away: "South Africa", kickoff_et: "15:00", venue: "Estadio Azteca, Mexico City", stage: "Group A" },
     { home: "South Korea", away: "Czechia", kickoff_et: "22:00", venue: "Estadio Akron, Zapopan", stage: "Group A" },
@@ -119,84 +122,10 @@ const SCHEDULE = {
     { home: "Algeria", away: "Austria", kickoff_et: "22:00", venue: "Arrowhead Stadium, Kansas City", stage: "Group J" },
     { home: "Jordan", away: "Argentina", kickoff_et: "22:00", venue: "AT&T Stadium, Arlington", stage: "Group J" },
   ],
-  // ── ROUND OF 32 (TBD matchups determined by group results) ───
-  "2026-06-28": [
-    { home: "Runner-up A", away: "Runner-up B", kickoff_et: "15:00", venue: "SoFi Stadium, Inglewood", stage: "Round of 32" },
-  ],
-  "2026-06-29": [
-    { home: "Winner C", away: "Runner-up F", kickoff_et: "13:00", venue: "NRG Stadium, Houston", stage: "Round of 32" },
-    { home: "Winner E", away: "Best 3rd Place", kickoff_et: "16:30", venue: "Gillette Stadium, Foxborough", stage: "Round of 32" },
-    { home: "Winner F", away: "Runner-up C", kickoff_et: "21:00", venue: "Estadio BBVA, Monterrey", stage: "Round of 32" },
-  ],
-  "2026-06-30": [
-    { home: "Runner-up E", away: "Runner-up I", kickoff_et: "13:00", venue: "AT&T Stadium, Arlington", stage: "Round of 32" },
-    { home: "Winner I", away: "Best 3rd Place", kickoff_et: "17:00", venue: "MetLife Stadium, East Rutherford", stage: "Round of 32" },
-    { home: "Winner A", away: "Best 3rd Place", kickoff_et: "21:00", venue: "Estadio Azteca, Mexico City", stage: "Round of 32" },
-  ],
-  "2026-07-01": [
-    { home: "Winner L", away: "Best 3rd Place", kickoff_et: "12:00", venue: "Mercedes-Benz Stadium, Atlanta", stage: "Round of 32" },
-    { home: "Winner G", away: "Best 3rd Place", kickoff_et: "16:00", venue: "Lumen Field, Seattle", stage: "Round of 32" },
-    { home: "Winner D", away: "Best 3rd Place", kickoff_et: "20:00", venue: "Levi's Stadium, Santa Clara", stage: "Round of 32" },
-  ],
-  "2026-07-02": [
-    { home: "Winner H", away: "Runner-up J", kickoff_et: "15:00", venue: "SoFi Stadium, Inglewood", stage: "Round of 32" },
-    { home: "Runner-up K", away: "Runner-up L", kickoff_et: "19:00", venue: "BMO Field, Toronto", stage: "Round of 32" },
-    { home: "Winner B", away: "Best 3rd Place", kickoff_et: "23:00", venue: "BC Place, Vancouver", stage: "Round of 32" },
-  ],
-  "2026-07-03": [
-    { home: "Runner-up D", away: "Runner-up G", kickoff_et: "14:00", venue: "AT&T Stadium, Arlington", stage: "Round of 32" },
-    { home: "Winner J", away: "Runner-up H", kickoff_et: "18:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Round of 32" },
-    { home: "Winner K", away: "Best 3rd Place", kickoff_et: "21:30", venue: "Arrowhead Stadium, Kansas City", stage: "Round of 32" },
-  ],
-  // ── ROUND OF 16 ──────────────────────────────────────────────
-  "2026-07-04": [
-    { home: "TBD", away: "TBD", kickoff_et: "13:00", venue: "NRG Stadium, Houston", stage: "Round of 16" },
-    { home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Lincoln Financial Field, Philadelphia", stage: "Round of 16" },
-  ],
-  "2026-07-05": [
-    { home: "TBD", away: "TBD", kickoff_et: "16:00", venue: "MetLife Stadium, East Rutherford", stage: "Round of 16" },
-    { home: "TBD", away: "TBD", kickoff_et: "20:00", venue: "Estadio Azteca, Mexico City", stage: "Round of 16" },
-  ],
-  "2026-07-06": [
-    { home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "AT&T Stadium, Arlington", stage: "Round of 16" },
-    { home: "TBD", away: "TBD", kickoff_et: "20:00", venue: "Lumen Field, Seattle", stage: "Round of 16" },
-  ],
-  "2026-07-07": [
-    { home: "TBD", away: "TBD", kickoff_et: "12:00", venue: "Mercedes-Benz Stadium, Atlanta", stage: "Round of 16" },
-    { home: "TBD", away: "TBD", kickoff_et: "16:00", venue: "BC Place, Vancouver", stage: "Round of 16" },
-  ],
-  // ── QUARTERFINALS ────────────────────────────────────────────
-  "2026-07-09": [
-    { home: "TBD", away: "TBD", kickoff_et: "16:00", venue: "Gillette Stadium, Foxborough", stage: "Quarterfinal" },
-  ],
-  "2026-07-10": [
-    { home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "SoFi Stadium, Inglewood", stage: "Quarterfinal" },
-  ],
-  "2026-07-11": [
-    { home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Quarterfinal" },
-    { home: "TBD", away: "TBD", kickoff_et: "21:00", venue: "Arrowhead Stadium, Kansas City", stage: "Quarterfinal" },
-  ],
-  // ── SEMIFINALS ───────────────────────────────────────────────
-  "2026-07-14": [
-    { home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "AT&T Stadium, Arlington", stage: "Semifinal" },
-  ],
-  "2026-07-15": [
-    { home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "Mercedes-Benz Stadium, Atlanta", stage: "Semifinal" },
-  ],
-  // ── THIRD PLACE & FINAL ──────────────────────────────────────
-  "2026-07-18": [
-    { home: "TBD", away: "TBD", kickoff_et: "17:00", venue: "Hard Rock Stadium, Miami Gardens", stage: "Third Place" },
-  ],
-  "2026-07-19": [
-    { home: "TBD", away: "TBD", kickoff_et: "15:00", venue: "MetLife Stadium, East Rutherford, NJ", stage: "Final" },
-  ],
 };
 
 function minutesUntilFirstKickoff(matches) {
-  const now = new Date();
-  const nowET = new Date(
-    now.toLocaleString("en-US", { timeZone: "America/New_York" })
-  );
+  const nowET = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
   const nowMinutes = nowET.getHours() * 60 + nowET.getMinutes();
   const kickoffMinutes = matches.map((m) => {
     const [h, min] = m.kickoff_et.split(":").map(Number);
@@ -205,17 +134,80 @@ function minutesUntilFirstKickoff(matches) {
   return Math.min(...kickoffMinutes) - nowMinutes;
 }
 
-async function generatePicks(matches) {
+// Fetch official lineups from API-Football
+async function fetchLineups(matches) {
+  const apiKey = process.env.API_FOOTBALL_KEY;
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  
+  try {
+    const res = await fetch(
+      `https://v3.football.api-sports.io/fixtures?date=${today}`,
+      { headers: { "x-apisports-key": apiKey } }
+    );
+    const data = await res.json();
+    const fixtures = (data.response || []).filter(f => {
+      const name = f.league?.name?.toLowerCase() || '';
+      return name.includes('world cup') || name.includes('fifa') || f.league?.id === 1;
+    });
+
+    const lineupData = {};
+    for (const fixture of fixtures) {
+      const fixtureId = fixture.fixture?.id;
+      if (!fixtureId) continue;
+
+      // Fetch lineups for this fixture
+      const lineupRes = await fetch(
+        `https://v3.football.api-sports.io/fixtures/lineups?fixture=${fixtureId}`,
+        { headers: { "x-apisports-key": apiKey } }
+      );
+      const lineupJson = await lineupRes.json();
+      const lineups = lineupJson.response || [];
+
+      if (lineups.length >= 2) {
+        const homeTeam = fixture.teams?.home?.name;
+        const awayTeam = fixture.teams?.away?.name;
+        
+        const formatLineup = (lineup) => {
+          const starters = (lineup.startXI || []).map(p => p.player?.name).filter(Boolean);
+          const formation = lineup.formation || 'Unknown';
+          const coach = lineup.coach?.name || 'Unknown';
+          return { starters, formation, coach };
+        };
+
+        lineupData[`${homeTeam}|${awayTeam}`] = {
+          home: formatLineup(lineups[0]),
+          away: formatLineup(lineups[1]),
+        };
+      }
+    }
+    return lineupData;
+  } catch (e) {
+    console.error('Lineup fetch error:', e);
+    return {};
+  }
+}
+
+async function generatePicks(matches, lineupData) {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long", month: "long", day: "numeric", year: "numeric",
     timeZone: "America/New_York",
   });
 
-  const matchList = matches
-    .map((m) => `${m.home} vs ${m.away} at ${m.kickoff_et} ET`)
-    .join("\n");
+  const matchList = matches.map((m) => {
+    const key = `${m.home}|${m.away}`;
+    const lineups = lineupData[key];
+    let lineupText = '';
+    if (lineups) {
+      lineupText = `
+      HOME LINEUP (${lineups.home.formation}): ${lineups.home.starters.join(', ')}
+      AWAY LINEUP (${lineups.away.formation}): ${lineups.away.starters.join(', ')}`;
+    } else {
+      lineupText = '\n      LINEUPS: Not yet confirmed — use web search';
+    }
+    return `${m.home} vs ${m.away} at ${m.kickoff_et} ET · ${m.venue} · ${m.stage}${lineupText}`;
+  }).join('\n\n');
 
-  const systemPrompt = `You are a sharp World Cup 2026 betting analyst. Use web search to find confirmed lineups, injury reports, and current odds for today's matches.
+  const systemPrompt = `You are an elite World Cup 2026 betting analyst with deep expertise in soccer props. You have access to official confirmed lineups and must use them to generate razor-sharp picks.
 
 Return ONLY a valid JSON array — no markdown, no backticks, no explanation.
 
@@ -230,39 +222,40 @@ For each match return:
     {
       "title": "Player Name — Prop Description",
       "line": "Over 1.5 Shots on Target -115",
-      "reasoning": "2-3 sentences with real data: form, matchup, lineup confirmation, injury news.",
+      "reasoning": "3-4 sentences citing: confirmed lineup position, recent match stats, matchup vs opponent's defensive shape, relevant Statcast-style data.",
       "book": "fanduel|draftkings|betmgm|bet365|fanatics",
       "edge": "+8% Edge",
       "confidence": 4
     }
   ],
-  "game_props": [ same, 2 picks ],
-  "team_props": [ same, 2 picks ]
+  "game_props": [ same structure, 2 picks ],
+  "team_props": [ same structure, 2 picks ]
 }
 
-Rules:
-- EXCLUDE all goalscorer props
-- Player props: shots on target, key passes, fouls, tackles, assists, saves, crosses, cards
-- Game props: total corners, total cards, BTTS, total shots, result, BTTS+goals
+CRITICAL RULES:
+- Use the confirmed lineup data provided — only pick props for players who are confirmed starters
+- EXCLUDE all goalscorer props (first/last/anytime scorer)
+- Player props: shots on target, key passes, fouls, tackles, assists, saves (GK), crosses, cards
+- Game props: total corners, total cards, BTTS, total shots, result, BTTS+goals, Asian handicap
 - Team props: team corners, clean sheet, team shots, first corner, handicap
-- book: pick from [fanduel, draftkings, betmgm, bet365, fanatics] with best line
-- confidence: integer 1-5
-- reasoning: cite confirmed lineup data, injuries, h2h, recent form
+- Pick the book from [fanduel, draftkings, betmgm, bet365, fanatics] with the best line
+- confidence: integer 1-5 (only use 5 for absolute locks)
+- reasoning: must cite actual player name from confirmed lineup, their stats, opponent weakness
+- Consider: formation matchups, referee tendencies, stadium/weather, tournament stage pressure
 - Return exactly 2 player props, 2 game props, 2 team props per match`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 4000,
+    max_tokens: 6000,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
     system: systemPrompt,
-    messages: [{ role: "user", content: `Today is ${today}. Matches:\n${matchList}\n\nReturn only the JSON array.` }],
+    messages: [{
+      role: "user",
+      content: `Today is ${today}. Here are today's matches with confirmed lineups:\n\n${matchList}\n\nUse web search to find any missing lineups, injury news, referee assignments, odds, and recent form. Generate the sharpest possible picks. Return only the JSON array.`
+    }],
   });
 
-  const fullText = (response.content || [])
-    .map((item) => (item.type === "text" ? item.text : ""))
-    .filter(Boolean)
-    .join("\n");
-
+  const fullText = (response.content || []).map((i) => (i.type === "text" ? i.text : "")).filter(Boolean).join("\n");
   const clean = fullText.replace(/```json|```/g, "").trim();
   const jsonMatch = clean.match(/\[[\s\S]*\]/);
   if (!jsonMatch) throw new Error("No valid JSON in Claude response");
@@ -272,14 +265,14 @@ Rules:
 export default async function handler(req, res) {
   const authHeader = req.headers["authorization"];
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: "Unauthorized", header: authHeader });
   }
 
-  const key = todayKey();
+  const key = todayKeyET();
   const todayMatches = SCHEDULE[key];
 
   if (!todayMatches || todayMatches.length === 0) {
-    return res.status(200).json({ skipped: true, reason: "No matches today" });
+    return res.status(200).json({ skipped: true, reason: `No matches today (${key})` });
   }
 
   const existing = await redis.get(`picks:${key}`);
@@ -288,14 +281,25 @@ export default async function handler(req, res) {
   }
 
   const minsUntil = minutesUntilFirstKickoff(todayMatches);
-  if (minsUntil > 90 || minsUntil < -30) {
+  if (minsUntil > 90 || minsUntil < -120) {
     return res.status(200).json({ skipped: true, reason: `Not in window. Mins until kickoff: ${minsUntil}` });
   }
 
   try {
-    const picks = await generatePicks(todayMatches);
+    // Fetch official lineups first
+    const lineupData = await fetchLineups(todayMatches);
+    const lineupCount = Object.keys(lineupData).length;
+    
+    // Generate picks with lineup data
+    const picks = await generatePicks(todayMatches, lineupData);
     await redis.set(`picks:${key}`, JSON.stringify(picks), { ex: 60 * 60 * 36 });
-    return res.status(200).json({ success: true, matches: picks.length });
+    
+    return res.status(200).json({ 
+      success: true, 
+      key, 
+      matches: picks.length,
+      lineups_fetched: lineupCount 
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
