@@ -10,21 +10,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fetch live events, stats, and player stats in parallel
-    const [eventsRes, statsRes, playersRes] = await Promise.all([
+    const [eventsRes, statsRes, playersRes, fixtureRes] = await Promise.all([
       fetch(`https://v3.football.api-sports.io/fixtures/events?fixture=${fixture_id}`,
         { headers: { "x-apisports-key": apiKey } }),
       fetch(`https://v3.football.api-sports.io/fixtures/statistics?fixture=${fixture_id}`,
         { headers: { "x-apisports-key": apiKey } }),
       fetch(`https://v3.football.api-sports.io/fixtures/players?fixture=${fixture_id}`,
         { headers: { "x-apisports-key": apiKey } }),
+      fetch(`https://v3.football.api-sports.io/fixtures?id=${fixture_id}`,
+        { headers: { "x-apisports-key": apiKey } }),
     ]);
 
-    const [eventsData, statsData, playersData] = await Promise.all([
+    const [eventsData, statsData, playersData, fixtureData] = await Promise.all([
       eventsRes.json(),
       statsRes.json(),
       playersRes.json(),
+      fixtureRes.json(),
     ]);
+
+    const fixture = fixtureData.response?.[0];
+    const status = fixture?.fixture?.status?.short || 'NS';
+    const minute = fixture?.fixture?.status?.elapsed || 0;
+    const homeScore = fixture?.goals?.home ?? 0;
+    const awayScore = fixture?.goals?.away ?? 0;
+    const homeTeam = fixture?.teams?.home?.name;
+    const awayTeam = fixture?.teams?.away?.name;
 
     // Parse events
     const events = eventsData.response || [];
@@ -41,19 +51,26 @@ export default async function handler(req, res) {
       minute: e.time?.elapsed,
       type: e.detail,
     }));
-    const corners = events.filter(e =>
-      e.type === "Goal" && e.detail === "Corner" ||
-      e.comments?.toLowerCase().includes("corner")
-    );
 
     // Parse team stats
     const teamStats = statsData.response || [];
-    const getTeamStat = (teamName, statType) => {
-      const team = teamStats.find(t =>
-        t.team?.name?.toLowerCase().includes(teamName?.toLowerCase().slice(0,4))
-      );
+    const getStat = (teamName, statType) => {
+      const team = teamStats.find(t => {
+        const tn = t.team?.name?.toLowerCase().replace(/[^a-z]/g,'') || '';
+        const search = teamName?.toLowerCase().replace(/[^a-z]/g,'') || '';
+        return tn.includes(search.slice(0,4)) || search.includes(tn.slice(0,4));
+      });
       return team?.statistics?.find(s => s.type === statType)?.value ?? 0;
     };
+
+    const homeCorners = parseInt(getStat(homeTeam, "Corner Kicks")) || 0;
+    const awayCorners = parseInt(getStat(awayTeam, "Corner Kicks")) || 0;
+    const homeYellow = parseInt(getStat(homeTeam, "Yellow Cards")) || 0;
+    const awayYellow = parseInt(getStat(awayTeam, "Yellow Cards")) || 0;
+    const homeRed = parseInt(getStat(homeTeam, "Red Cards")) || 0;
+    const awayRed = parseInt(getStat(awayTeam, "Red Cards")) || 0;
+    const homeShots = parseInt(getStat(homeTeam, "Total Shots")) || 0;
+    const awayShots = parseInt(getStat(awayTeam, "Total Shots")) || 0;
 
     // Parse player stats
     const playerStats = {};
@@ -80,28 +97,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Get fixture status and minute
-    const fixtureRes = await fetch(
-      `https://v3.football.api-sports.io/fixtures?id=${fixture_id}`,
-      { headers: { "x-apisports-key": apiKey } }
-    );
-    const fixtureData = await fixtureRes.json();
-    const fixture = fixtureData.response?.[0];
-    const status = fixture?.fixture?.status?.short || 'NS';
-    const minute = fixture?.fixture?.status?.elapsed || 0;
-    const homeScore = fixture?.goals?.home ?? 0;
-    const awayScore = fixture?.goals?.away ?? 0;
-    const homeTeam = fixture?.teams?.home?.name;
-    const awayTeam = fixture?.teams?.away?.name;
-
-    // Build team stats summary
-    const homeCorners = parseInt(getTeamStat(homeTeam, "Corner Kicks")) || 0;
-    const awayCorners = parseInt(getTeamStat(awayTeam, "Corner Kicks")) || 0;
-    const homeYellow = parseInt(getTeamStat(homeTeam, "Yellow Cards")) || 0;
-    const awayYellow = parseInt(getTeamStat(awayTeam, "Yellow Cards")) || 0;
-    const homeShots = parseInt(getTeamStat(homeTeam, "Total Shots")) || 0;
-    const awayShots = parseInt(getTeamStat(awayTeam, "Total Shots")) || 0;
-
     return res.status(200).json({
       fixture_id,
       status,
@@ -111,6 +106,7 @@ export default async function handler(req, res) {
       team_stats: {
         corners: { home: homeCorners, away: awayCorners, total: homeCorners + awayCorners },
         yellow_cards: { home: homeYellow, away: awayYellow, total: homeYellow + awayYellow },
+        red_cards: { home: homeRed, away: awayRed, total: homeRed + awayRed },
         shots: { home: homeShots, away: awayShots, total: homeShots + awayShots },
       },
       goals,
