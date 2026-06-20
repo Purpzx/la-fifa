@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
         headers: { "x-apisports-key": apiKey }
       }),
-      fetch(`https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${oddsApiKey}&daysFrom=1`)
+      fetch(`https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${oddsApiKey}&daysFrom=3`)
     ]);
 
     const [liveData, todayData, oddsData] = await Promise.all([
@@ -52,12 +52,14 @@ export default async function handler(req, res) {
     }
 
     function findOddsScore(homeTeam, awayTeam) {
+      const hn = normalize(homeTeam);
+      const an = normalize(awayTeam);
       for (const key of Object.keys(oddsMap)) {
         const [h, a] = key.split('|');
-        if (
-          (h.includes(normalize(homeTeam).slice(0,4)) || normalize(homeTeam).includes(h.slice(0,4))) &&
-          (a.includes(normalize(awayTeam).slice(0,4)) || normalize(awayTeam).includes(a.slice(0,4)))
-        ) return oddsMap[key];
+        if ((h.includes(hn.slice(0,4)) || hn.includes(h.slice(0,4))) &&
+            (a.includes(an.slice(0,4)) || an.includes(a.slice(0,4)))) {
+          return oddsMap[key];
+        }
       }
       return null;
     }
@@ -67,14 +69,16 @@ export default async function handler(req, res) {
       const teams = fixture.teams;
       const events = fixture.events || [];
 
-      const status = f.status?.short;
+      const statusShort = f.status?.short;
       let matchStatus = "pre";
-      if (["1H", "HT", "2H", "ET", "P"].includes(status)) matchStatus = "live";
-      else if (["FT", "AET", "PEN"].includes(status)) matchStatus = "ft";
+      if (["1H", "HT", "2H", "ET", "P"].includes(statusShort)) matchStatus = "live";
+      else if (["FT", "AET", "PEN"].includes(statusShort)) matchStatus = "ft";
 
       const oddsScore = findOddsScore(teams.home?.name, teams.away?.name);
       const homeScore = oddsScore?.home_score ?? fixture.goals?.home ?? null;
       const awayScore = oddsScore?.away_score ?? fixture.goals?.away ?? null;
+
+      if (oddsScore?.completed && matchStatus === "pre") matchStatus = "ft";
 
       const goalEvents = events.filter(e => e.type === "Goal");
       const goalscorers = goalEvents.map(e => ({
@@ -96,6 +100,29 @@ export default async function handler(req, res) {
         goalscorers,
       };
     });
+
+    // Add any Odds API games not in API-Football
+    const fixtureNames = allFixtures.map(f => normalize(f.teams?.home?.name));
+    for (const game of (oddsData || [])) {
+      const hn = normalize(game.home_team);
+      const alreadyIncluded = fixtureNames.some(n => n.includes(hn.slice(0,4)) || hn.includes(n.slice(0,4)));
+      if (!alreadyIncluded && game.scores) {
+        const hs = game.scores?.find(s => s.name === game.home_team)?.score;
+        const as = game.scores?.find(s => s.name === game.away_team)?.score;
+        if (hs !== undefined && as !== undefined) {
+          scores.push({
+            fixture_id: null,
+            home: game.home_team,
+            away: game.away_team,
+            home_score: parseInt(hs),
+            away_score: parseInt(as),
+            minute: "90",
+            status: game.completed ? "ft" : "live",
+            goalscorers: [],
+          });
+        }
+      }
+    }
 
     return res.status(200).json(scores);
   } catch (err) {
