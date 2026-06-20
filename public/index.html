@@ -118,6 +118,22 @@
   .match-score-live { font-size: 9px; color: var(--red); font-weight: 700; letter-spacing: 0.1em; }
   .match-score-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--red); animation: pulse 1.2s ease-in-out infinite; flex-shrink: 0; }
 
+  /* LIVE TRACKER */
+  .pick-tracker-live { margin-top: 10px; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 5px; border: 1px solid var(--border); }
+  .pick-tracker-row { display: flex; align-items: center; gap: 8px; }
+  .pick-tracker-status { font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .pick-tracker-status.hit { color: var(--green); }
+  .pick-tracker-status.miss { color: var(--red); }
+  .pick-tracker-status.live { color: var(--gold); }
+  .pick-tracker-status.pending { color: var(--muted); }
+  .pick-tracker-label { font-size: 10px; color: var(--muted); flex: 1; }
+  .pick-tracker-value { font-size: 11px; font-weight: 700; color: var(--warm); flex-shrink: 0; }
+  .pick-progress-bar { height: 3px; background: var(--faint); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .pick-progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .pick-progress-fill.hit { background: var(--green); }
+  .pick-progress-fill.live { background: var(--gold); }
+  .pick-progress-fill.miss { background: var(--red); }
+
   /* H2H */
   .h2h-wrap { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
   .h2h-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
@@ -172,7 +188,10 @@
   .cat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
   .picks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
   @media (max-width: 540px) { .picks-grid { grid-template-columns: 1fr; } }
-  .pick-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; position: relative; overflow: hidden; }
+  .pick-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .pick-card.pick-hit { border-color: rgba(0,146,70,0.4); }
+  .pick-card.pick-miss { border-color: rgba(206,43,55,0.4); }
+  .pick-card.pick-live { border-color: rgba(200,168,75,0.4); }
   .pick-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .cat-player .pick-accent { background: var(--green); }
   .cat-game .pick-accent { background: var(--blue); }
@@ -448,34 +467,31 @@
     for(let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
     return `<div class="conf-dots">${d}</div>`;
   }
-
   function fmtKickoff(kt) {
     const [h,m]=kt.split(':').map(Number);
     const ampm=h>=12?'PM':'AM', h12=h%12||12;
     return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;
   }
-
-  function kickoffDate(kt, dateKey) {
+  function kickoffDate(kt,dateKey) {
     const [y,mo,d]=dateKey.split('-').map(Number);
     const [h,m]=kt.split(':').map(Number);
     return new Date(y,mo-1,d,h,m,0);
   }
-
-  function matchStatusForDay(kt, dateKey) {
-    const now=Date.now(), ko=kickoffDate(kt,dateKey).getTime(), diff=now-ko;
+  function matchStatusForDay(kt,dateKey) {
+    const now=Date.now(),ko=kickoffDate(kt,dateKey).getTime(),diff=now-ko;
     if(diff<0) return 'pre';
     if(diff<115*60*1000) return 'live';
     return 'ft';
   }
-
-  const normalize = s => s?.toLowerCase().replace(/[^a-z]/g,'') || '';
+  const normalize=s=>s?.toLowerCase().replace(/[^a-z]/g,'')||'';
   function fuzzyTeamMatch(a,b) {
-    const na=normalize(a), nb=normalize(b);
+    const na=normalize(a),nb=normalize(b);
     return na===nb||na.includes(nb.slice(0,4))||nb.includes(na.slice(0,4));
   }
 
+  // ── COUNTDOWNS ───────────────────────────────────────────────
   const countdownTimers={};
-  function startCountdown(kt, dateKey, elId) {
+  function startCountdown(kt,dateKey,elId) {
     if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
     function tick() {
       const el=document.getElementById(elId);
@@ -490,6 +506,7 @@
     countdownTimers[elId]=setInterval(tick,1000);
   }
 
+  // ── SCORES CACHE ─────────────────────────────────────────────
   const scoresCache={};
   async function fetchScoresForDay(dateKey) {
     if(scoresCache[dateKey]) return scoresCache[dateKey];
@@ -500,8 +517,7 @@
     } catch(e){}
     return [];
   }
-
-  function findScore(scores, home, away) {
+  function findScore(scores,home,away) {
     if(!scores?.length) return null;
     for(const s of scores){
       if(fuzzyTeamMatch(s.home,home)&&fuzzyTeamMatch(s.away,away)) return s;
@@ -509,11 +525,133 @@
     return null;
   }
 
+  // ── LIVE TRACKER ─────────────────────────────────────────────
+  const trackerCache={};
+  const trackerIntervals={};
+
+  async function fetchTrackerData(fixtureId) {
+    if(!fixtureId) return null;
+    try {
+      const res=await fetch(`/api/live-tracker?fixture_id=${fixtureId}`);
+      const data=await res.json();
+      trackerCache[fixtureId]=data;
+      return data;
+    } catch(e){return null;}
+  }
+
+  function parsePickLine(line) {
+    // Extract stat type, direction, and threshold from line string
+    // e.g. "Over 1.5 Shots on Target -115" → {dir:'over', threshold:1.5, stat:'shots_on_target'}
+    const lower = line.toLowerCase();
+    const dir = lower.includes('over') ? 'over' : lower.includes('under') ? 'under' : null;
+    const numMatch = line.match(/(\d+\.?\d*)/);
+    const threshold = numMatch ? parseFloat(numMatch[1]) : null;
+
+    let stat = null;
+    if(lower.includes('shot on target')||lower.includes('shots on target')) stat='shotsOnTarget';
+    else if(lower.includes('shot')||lower.includes('shots')) stat='shots';
+    else if(lower.includes('tackle')) stat='tackles';
+    else if(lower.includes('foul')) stat='fouls';
+    else if(lower.includes('key pass')) stat='keyPasses';
+    else if(lower.includes('pass')) stat='passes';
+    else if(lower.includes('save')) stat='saves';
+    else if(lower.includes('corner')) stat='corners';
+    else if(lower.includes('yellow card')||lower.includes('card')) stat='yellowCards';
+    else if(lower.includes('btts')||lower.includes('both teams')) stat='btts';
+    else if(lower.includes('total goals')||lower.includes('over total')) stat='totalGoals';
+    else if(lower.includes('clean sheet')) stat='cleanSheet';
+
+    return {dir, threshold, stat};
+  }
+
+  function getStatValue(trackerData, pick, home, away) {
+    if(!trackerData) return null;
+    const parsed = parsePickLine(pick.line);
+    if(!parsed.stat) return null;
+
+    const title = pick.title.toLowerCase();
+    const teamStats = trackerData.team_stats;
+    const playerStats = trackerData.player_stats;
+
+    // Game/team props
+    if(parsed.stat==='corners') return {current: teamStats?.corners?.total ?? 0, threshold: parsed.threshold, dir: parsed.dir, label: 'Corners'};
+    if(parsed.stat==='yellowCards') return {current: teamStats?.yellow_cards?.total ?? 0, threshold: parsed.threshold, dir: parsed.dir, label: 'Cards'};
+    if(parsed.stat==='totalGoals') return {current: (trackerData.home?.score??0)+(trackerData.away?.score??0), threshold: parsed.threshold, dir: parsed.dir, label: 'Goals'};
+    if(parsed.stat==='btts') {
+      const bothScored = trackerData.home?.score>0 && trackerData.away?.score>0;
+      return {current: bothScored?1:0, threshold:1, dir:'over', label:'BTTS', isBool:true};
+    }
+    if(parsed.stat==='cleanSheet') {
+      const teamName = title.includes(home.toLowerCase().slice(0,4)) ? 'home' : 'away';
+      const conceded = teamName==='home' ? trackerData.away?.score??0 : trackerData.home?.score??0;
+      return {current: conceded===0?1:0, threshold:1, dir:'over', label:'Clean Sheet', isBool:true};
+    }
+
+    // Player props — find player in title
+    for(const [name, stats] of Object.entries(playerStats||{})) {
+      if(title.includes(name.split(' ').pop()?.toLowerCase()||'')) {
+        const current = stats[parsed.stat] ?? 0;
+        return {current, threshold: parsed.threshold, dir: parsed.dir, label: parsed.stat};
+      }
+    }
+
+    return null;
+  }
+
+  function renderPickTracker(pick, trackerData, home, away, matchStatus) {
+    if(matchStatus==='pre'||!trackerData) return '';
+
+    const statVal = getStatValue(trackerData, pick, home, away);
+    if(!statVal) return '';
+
+    const {current, threshold, dir, label, isBool} = statVal;
+    const minute = trackerData.minute || 90;
+    const isFt = matchStatus==='ft';
+
+    let status, statusLabel, pct;
+
+    if(isBool) {
+      if(current===1) { status='hit'; statusLabel='✅ Hit'; pct=100; }
+      else if(isFt) { status='miss'; statusLabel='❌ Miss'; pct=0; }
+      else { status='live'; statusLabel=`🔄 Tracking`; pct=50; }
+    } else if(dir==='over') {
+      pct = Math.min(100, Math.round((current/threshold)*100));
+      if(current>=threshold) { status='hit'; statusLabel=`✅ Hit ${current}/${threshold}`; pct=100; }
+      else if(isFt) { status='miss'; statusLabel=`❌ Miss ${current}/${threshold}`; }
+      else { status='live'; statusLabel=`🔄 ${current}/${threshold} · ${minute}'`; }
+    } else {
+      pct = Math.min(100, Math.round((current/threshold)*100));
+      if(current<=threshold&&isFt) { status='hit'; statusLabel=`✅ Hit ${current}/${threshold}`; pct=100; }
+      else if(current>threshold) { status='miss'; statusLabel=`❌ Busted ${current}/${threshold}`; pct=100; }
+      else { status='live'; statusLabel=`🔄 ${current}/${threshold} · ${minute}'`; pct=Math.min(90,pct); }
+    }
+
+    return `<div class="pick-tracker-live">
+      <div class="pick-tracker-row">
+        <span class="pick-tracker-status ${status}">${statusLabel}</span>
+      </div>
+      <div class="pick-progress-bar">
+        <div class="pick-progress-fill ${status}" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+  }
+
+  function getPickCardClass(pick, trackerData, home, away, matchStatus) {
+    if(matchStatus==='pre'||!trackerData) return '';
+    const statVal = getStatValue(trackerData, pick, home, away);
+    if(!statVal) return '';
+    const {current, threshold, dir, isBool} = statVal;
+    const isFt = matchStatus==='ft';
+    if(isBool) return current===1?'pick-hit':isFt?'pick-miss':'pick-live';
+    if(dir==='over') return current>=threshold?'pick-hit':isFt?'pick-miss':'pick-live';
+    return current<=threshold&&isFt?'pick-hit':current>threshold?'pick-miss':'pick-live';
+  }
+
   // ── 2-DAY SLATE ──────────────────────────────────────────────
   function renderSlate() {
     const days=[
-      {date:yesterdayET, key:makeKey(yesterdayET), label:'Yesterday'},
-      {date:todayET,     key:makeKey(todayET),     label:'Today'},
+      {date:yesterdayET,key:makeKey(yesterdayET),label:'Yesterday'},
+      {date:todayET,key:makeKey(todayET),label:'Today'},
     ];
     document.getElementById('slate-strip').innerHTML=days.map(day=>{
       const matches=SCHEDULE[day.key]||[];
@@ -572,10 +710,10 @@
           <span class="result-badge result-${r.result}">${r.result}</span>
         </div>`;
       }).join('');
-    } catch(e){console.log('Tracker error:',e);}
+    } catch(e){}
   }
 
-  // ── MINCHIA SPECIAL (always today's picks) ───────────────────
+  // ── SPECIAL ──────────────────────────────────────────────────
   function renderSpecial(picks) {
     if(!picks) return;
     let best=null;
@@ -657,7 +795,7 @@
       h2hCache[key]=html;
       el.innerHTML=html;
     } catch(e){
-      el.innerHTML=`<div class="h2h-loading">Could not load historical data. Try again.</div>`;
+      el.innerHTML=`<div class="h2h-loading">Could not load historical data.</div>`;
     }
   }
 
@@ -674,6 +812,12 @@
         scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
         scoresCache[todayKey]=scores;
         renderLiveSection();
+        // Fetch tracker data for live matches
+        for(const s of scores){
+          if(s.status==='live'&&s.fixture_id){
+            fetchTrackerData(s.fixture_id);
+          }
+        }
       }
     } catch(e){}
   }
@@ -688,12 +832,12 @@
 
   function renderLiveCard(match,score) {
     const status=score?score.status:matchStatusForDay(match.kickoff_et,todayKey);
-    const isLive=status==='live', isFt=status==='ft';
+    const isLive=status==='live',isFt=status==='ft';
     let badge=isLive
       ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
       :isFt?`<div class="ft-badge">Full Time</div>`
       :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
-    const hs=score?.home_score??'–', as=score?.away_score??'–';
+    const hs=score?.home_score??'–',as=score?.away_score??'–';
     let goalHtml='';
     if((isLive||isFt)&&score?.goalscorers?.length){
       const goals=score.goalscorers.map(g=>{
@@ -725,14 +869,17 @@
   }
 
   // ── PICKS ────────────────────────────────────────────────────
-  function renderPick(pick) {
+  function renderPick(pick, trackerData, home, away, matchStatus) {
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
-    return `<div class="pick-card">
+    const cardClass=getPickCardClass(pick,trackerData,home,away,matchStatus);
+    const trackerHtml=renderPickTracker(pick,trackerData,home,away,matchStatus);
+    return `<div class="pick-card ${cardClass}">
       <div class="pick-accent"></div>
       <div class="pick-title">${pick.title}</div>
       <div class="pick-line">${pick.line}</div>
       <div class="pick-reasoning">${pick.reasoning}</div>
-      <div class="pick-footer">
+      ${trackerHtml}
+      <div class="pick-footer" style="margin-top:${trackerHtml?'8px':'0'}">
         <span class="book-badge ${book.cls}">${book.label}</span>
         <span class="edge-badge">${pick.edge}</span>
         ${confDots(pick.confidence)}
@@ -740,14 +887,17 @@
     </div>`;
   }
 
-  function renderMatchCard(match, index, picksData, dateKey, scores) {
+  function renderMatchCard(match,index,picksData,dateKey,scores) {
     const id='mc-'+index;
     const h2hBodyId='h2h-body-'+index;
     const h2hToggleId='h2h-toggle-'+index;
     const cdId='cd-'+index;
     const status=matchStatusForDay(match.kickoff_et,dateKey);
-    const matchPicks=picksData?picksData.find(p=>fuzzyTeamMatch(p.home,match.home)&&fuzzyTeamMatch(p.away,match.away)):null;
+    const matchPicks=picksData?picksData.find(p=>!p.pending&&fuzzyTeamMatch(p.home,match.home)&&fuzzyTeamMatch(p.away,match.away)):null;
     const score=findScore(scores,match.home,match.away);
+    const liveScore=findLiveData(match.home,match.away);
+    const fixtureId=liveScore?.fixture_id||null;
+    const trackerData=fixtureId?trackerCache[fixtureId]||null:null;
 
     let scoreHtml='';
     if(score&&(score.status==='ft'||score.status==='live')&&score.home_score!==null){
@@ -758,9 +908,9 @@
 
     let bodyHtml='';
     if(matchPicks){
-      const pp=(matchPicks.player_props||[]).map(p=>`<div class="cat-player">${renderPick(p)}</div>`).join('');
-      const gp=(matchPicks.game_props||[]).map(p=>`<div class="cat-game">${renderPick(p)}</div>`).join('');
-      const tp=(matchPicks.team_props||[]).map(p=>`<div class="cat-team">${renderPick(p)}</div>`).join('');
+      const pp=(matchPicks.player_props||[]).map(p=>`<div class="cat-player">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
+      const gp=(matchPicks.game_props||[]).map(p=>`<div class="cat-game">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
+      const tp=(matchPicks.team_props||[]).map(p=>`<div class="cat-team">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
       bodyHtml=`
         <div class="cat-header cat-player"><div class="cat-pip"></div><div class="cat-label">Player Props</div></div>
         <div class="picks-grid cat-player">${pp}</div>
@@ -770,6 +920,7 @@
         <div class="picks-grid cat-team">${tp}</div>`;
     } else {
       const isPast=dateKey<todayKey;
+      const isPending=picksData&&picksData.find(p=>p.pending&&fuzzyTeamMatch(p.home,match.home));
       bodyHtml=`<div class="pick-pending">
         <div class="pick-pending-icon">${isPast?'📭':'⏳'}</div>
         <div class="pick-pending-title">${isPast?'No picks recorded':'Picks dropping soon'}</div>
@@ -785,7 +936,7 @@
         :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`
       :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
 
-    return `<div class="match-card${index===0?' open':''}" id="${id}">
+    return `<div class="match-card${index===0?' open':''}" id="${id}" data-fixture="${fixtureId||''}">
       <div class="match-header" onclick="toggleCard('${id}')">
         <div style="flex:1;min-width:0;">
           <div class="match-teams">${match.home}<span class="match-vs">vs</span>${match.away}</div>
@@ -826,18 +977,18 @@
     const section=document.getElementById('picks-section');
     const matches=SCHEDULE[dateKey]||[];
     if(!matches.length){
-      section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled for this day.</div></div>`;
+      section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled.</div></div>`;
       return;
     }
     const [picksData,scores]=await Promise.all([
       fetch(`/api/picks?date=${dateKey}`).then(r=>r.json()).catch(()=>({status:'error'})),
       fetchScoresForDay(dateKey),
     ]);
-    const picks=picksData.status==='ready'?picksData.picks:null;
+    const picks=picksData.status==='ready'||picksData.partial?picksData.picks:null;
     const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
     const isPast=dateKey<todayKey;
     const label=picks
-      ?`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated at ${genTime} · Lineups confirmed</div>`
+      ?`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated · Lineups confirmed</div>`
       :`<div class="section-label">${isPast?'Yesterday\'s Matches':'Today\'s Matches'}</div>`;
     const cards=matches.map((m,i)=>renderMatchCard(m,i,picks,dateKey,scores)).join('');
     section.innerHTML=label+cards;
@@ -858,6 +1009,8 @@
   fetchLiveScores();
   setInterval(fetchLiveScores,30*1000);
   setInterval(loadTracker,60*1000);
+  // Refresh picks section every 60s to update live trackers
+  setInterval(()=>{if(activeDay===todayKey) loadPicksForDay(todayKey);},60*1000);
 </script>
 </body>
 </html>
