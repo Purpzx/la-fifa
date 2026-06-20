@@ -320,7 +320,8 @@ export default async function handler(req, res) {
 
   const results = [];
 
-  for(const match of targetMatches) {
+  const targetMatches = matches;
+for(const match of targetMatches) {
     // Skip TBD matches
     if(match.home === 'TBD') {
       results.push({match:"TBD vs TBD", skipped:true, reason:"TBD match"});
