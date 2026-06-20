@@ -26,8 +26,9 @@ export default async function handler(req, res) {
       return name.includes('world cup') || name.includes('fifa');
     });
 
-    // Build odds score map
     const normalize = s => s?.toLowerCase().replace(/[^a-z]/g, '') || '';
+
+    // Build odds map for accurate scores
     const oddsMap = {};
     for (const game of (oddsData || [])) {
       const hs = game.scores?.find(s => s.name === game.home_team)?.score;
@@ -39,6 +40,19 @@ export default async function handler(req, res) {
       };
     }
 
+    function findOddsScore(homeTeam, awayTeam) {
+      const hn = normalize(homeTeam);
+      const an = normalize(awayTeam);
+      for (const key of Object.keys(oddsMap)) {
+        const [h, a] = key.split('|');
+        if ((h.includes(hn.slice(0,4)) || hn.includes(h.slice(0,4))) &&
+            (a.includes(an.slice(0,4)) || an.includes(a.slice(0,4)))) {
+          return oddsMap[key];
+        }
+      }
+      return null;
+    }
+
     const scores = fixtures.map(fixture => {
       const homeTeam = fixture.teams?.home?.name;
       const awayTeam = fixture.teams?.away?.name;
@@ -48,21 +62,13 @@ export default async function handler(req, res) {
       if (["1H", "HT", "2H", "ET", "P"].includes(status)) matchStatus = "live";
       else if (["FT", "AET", "PEN"].includes(status)) matchStatus = "ft";
 
-      // Find odds score
-      let homeScore = null, awayScore = null;
-      for (const key of Object.keys(oddsMap)) {
-        const [h, a] = key.split('|');
-        if ((h.includes(normalize(homeTeam).slice(0,4)) || normalize(homeTeam).includes(h.slice(0,4))) &&
-            (a.includes(normalize(awayTeam).slice(0,4)) || normalize(awayTeam).includes(a.slice(0,4)))) {
-          homeScore = oddsMap[key].home_score;
-          awayScore = oddsMap[key].away_score;
-          break;
-        }
-      }
+      // Prefer Odds API scores, fall back to API-Football
+      const oddsScore = findOddsScore(homeTeam, awayTeam);
+      const homeScore = oddsScore?.home_score ?? fixture.goals?.home ?? null;
+      const awayScore = oddsScore?.away_score ?? fixture.goals?.away ?? null;
 
-      // Fall back to API-Football scores
-      if (homeScore === null) homeScore = fixture.goals?.home ?? null;
-      if (awayScore === null) awayScore = fixture.goals?.away ?? null;
+      // If Odds API says completed but API-Football says pre, trust API-Football status
+      if (oddsScore?.completed && matchStatus === "pre") matchStatus = "ft";
 
       return {
         home: homeTeam,
@@ -73,6 +79,27 @@ export default async function handler(req, res) {
         status: matchStatus,
       };
     });
+
+    // Also add any games from Odds API that weren't in API-Football response
+    const fixtureNames = fixtures.map(f => normalize(f.teams?.home?.name));
+    for (const game of (oddsData || [])) {
+      const hn = normalize(game.home_team);
+      const alreadyIncluded = fixtureNames.some(n => n.includes(hn.slice(0,4)) || hn.includes(n.slice(0,4)));
+      if (!alreadyIncluded && game.scores) {
+        const hs = game.scores?.find(s => s.name === game.home_team)?.score;
+        const as = game.scores?.find(s => s.name === game.away_team)?.score;
+        if (hs !== undefined && as !== undefined) {
+          scores.push({
+            home: game.home_team,
+            away: game.away_team,
+            home_score: parseInt(hs),
+            away_score: parseInt(as),
+            minute: "90",
+            status: game.completed ? "ft" : "live",
+          });
+        }
+      }
+    }
 
     return res.status(200).json(scores);
   } catch (err) {
