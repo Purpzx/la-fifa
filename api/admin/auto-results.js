@@ -233,9 +233,9 @@ export default async function handler(req, res) {
 
   try {
     const fixturesRes = await fetch(
-      `https://v3.football.api-sports.io/fixtures?date=${dateKey}`,
-      { headers: { "x-apisports-key": apiKey } }
-    );
+  `https://v3.football.api-sports.io/fixtures?date=${dateKey}&league=1&season=2026`,
+  { headers: { "x-apisports-key": apiKey } }
+);
     const fixturesData = await fixturesRes.json();
     const allFixtures = fixturesData.response || [];
 const finishedFixtures = allFixtures.filter(f => {
