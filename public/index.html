@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Minchia Picks</title>
@@ -656,16 +657,24 @@
 
     let bodyHtml='';
     if(matchPicks){
-      const pp=(matchPicks.player_props||[]).map(p=>`<div class="cat-player">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
-      const gp=(matchPicks.game_props||[]).map(p=>`<div class="cat-game">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
-      const tp=(matchPicks.team_props||[]).map(p=>`<div class="cat-team">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('');
-      bodyHtml=`
-        <div class="cat-header cat-player"><div class="cat-pip"></div><div class="cat-label">Player Props</div></div>
-        <div class="picks-grid cat-player">${pp}</div>
-        <div class="cat-header cat-game"><div class="cat-pip"></div><div class="cat-label">Game Props</div></div>
-        <div class="picks-grid cat-game">${gp}</div>
-        <div class="cat-header cat-team"><div class="cat-pip"></div><div class="cat-label">Team Props</div></div>
-        <div class="picks-grid cat-team">${tp}</div>`;
+      // Support both new unified picks[] and old player/game/team format
+      const allPicks = matchPicks.picks
+        ? matchPicks.picks
+        : [...(matchPicks.player_props||[]).map(p=>({...p,category:'player'})),
+           ...(matchPicks.game_props||[]).map(p=>({...p,category:'game'})),
+           ...(matchPicks.team_props||[]).map(p=>({...p,category:'team'}))];
+
+      const playerPicks = allPicks.filter(p=>p.category==='player');
+      const gamePicks = allPicks.filter(p=>p.category==='game');
+      const teamPicks = allPicks.filter(p=>p.category==='team');
+      const otherPicks = allPicks.filter(p=>!['player','game','team'].includes(p.category));
+
+      let bodyParts = '';
+      if(playerPicks.length) bodyParts += `<div class="cat-header cat-player"><div class="cat-pip"></div><div class="cat-label">Player Props</div></div><div class="picks-grid cat-player">${playerPicks.map(p=>`<div class="cat-player">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('')}</div>`;
+      if(gamePicks.length) bodyParts += `<div class="cat-header cat-game"><div class="cat-pip"></div><div class="cat-label">Game Props</div></div><div class="picks-grid cat-game">${gamePicks.map(p=>`<div class="cat-game">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('')}</div>`;
+      if(teamPicks.length) bodyParts += `<div class="cat-header cat-team"><div class="cat-pip"></div><div class="cat-label">Team Props</div></div><div class="picks-grid cat-team">${teamPicks.map(p=>`<div class="cat-team">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('')}</div>`;
+      if(otherPicks.length) bodyParts += `<div class="cat-header cat-game"><div class="cat-pip"></div><div class="cat-label">Best Props</div></div><div class="picks-grid cat-game">${otherPicks.map(p=>`<div class="cat-game">${renderPick(p,trackerData,match.home,match.away,status)}</div>`).join('')}</div>`;
+      bodyHtml = bodyParts;
     }else{
       const isPast=dateKey<todayKey;
       bodyHtml=`<div class="pick-pending">
