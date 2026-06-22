@@ -1,7 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { Redis } from "@upstash/redis";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
@@ -19,22 +17,20 @@ function norm(s) {
 }
 
 function gradePick(pick, stats) {
-  // Combine title + line for matching — Claude stores description in title, threshold in line
   const title = norm(pick.title);
   const line = norm(pick.line || "");
-  const combined = `${title} ${line}`;
 
-  // Extract over/under direction
-  const isOver = combined.includes("over") || combined.includes("yes");
-  const isUnder = combined.includes("under") || combined.includes("no");
+  const isOver = title.includes("over") || line.includes("over") || title.includes("yes") || line.includes("yes");
+  const isUnder = title.includes("under") || line.includes("under") || title.includes("no") || line.includes("no");
 
-  // Extract threshold — prefer from line, fallback to title
+  // Extract threshold from line first, then title
   const lineNum = (pick.line || "").match(/(\d+\.?\d*)/);
   const titleNum = (pick.title || "").match(/(\d+\.?\d*)/);
   const threshold = lineNum ? parseFloat(lineNum[1]) : (titleNum ? parseFloat(titleNum[1]) : null);
 
   // ── TOTAL GOALS ──────────────────────────────────────────────
-  if (title.includes("total goals") || (title.includes("goal") && (isOver || isUnder) && !title.includes("scorer"))) {
+  if (title.includes("total goals") || title.includes("total goal") ||
+      (title.includes("goal") && (isOver || isUnder) && !title.includes("scorer") && !title.includes("player"))) {
     if (threshold === null) return null;
     const val = stats.totalGoals;
     if (isOver) return val > threshold ? "W" : val === threshold ? "P" : "L";
@@ -44,19 +40,14 @@ function gradePick(pick, stats) {
   // ── BTTS ─────────────────────────────────────────────────────
   if (title.includes("btts") || title.includes("both teams to score") || title.includes("both teams not")) {
     const wantBtts = !title.includes("no") && !title.includes("not");
-    if (stats.btts === null) return null;
     return stats.btts === wantBtts ? "W" : "L";
   }
 
   // ── CLEAN SHEET ───────────────────────────────────────────────
   if (title.includes("clean sheet")) {
     const homeNorm = norm(stats.homeTeam);
-    const awayNorm = norm(stats.awayTeam);
-    // Check which team the pick is about
     const homeParts = homeNorm.split(" ");
-    const awayParts = awayNorm.split(" ");
-    const isHomeCS = homeParts.some(p => p.length >= 4 && title.includes(p)) ||
-                     title.includes(homeNorm.slice(0,5));
+    const isHomeCS = homeParts.some(p => p.length >= 4 && title.includes(p)) || title.includes(homeNorm.slice(0,5));
     const conceded = isHomeCS ? stats.awayScore : stats.homeScore;
     const hasCS = conceded === 0;
     const wantCS = !title.includes("no") && !line.includes("no");
@@ -64,10 +55,10 @@ function gradePick(pick, stats) {
   }
 
   // ── TOTAL CORNERS ─────────────────────────────────────────────
-  if (title.includes("corner") && (title.includes("total") || title.includes("match") || (!title.includes("team") && !title.includes("home") && !title.includes("away")))) {
-    if (threshold === null) return null;
+  if (title.includes("corner") && (title.includes("total") || title.includes("match") ||
+      (!title.includes("team") && !title.includes("home") && !title.includes("away")))) {
+    if (threshold === null || stats.totalCorners === null) return null;
     const val = stats.totalCorners;
-    if (val === null) return null;
     if (isOver) return val > threshold ? "W" : val === threshold ? "P" : "L";
     if (isUnder) return val < threshold ? "W" : val === threshold ? "P" : "L";
   }
@@ -77,8 +68,7 @@ function gradePick(pick, stats) {
     if (threshold === null) return null;
     const homeNorm = norm(stats.homeTeam);
     const homeParts = homeNorm.split(" ");
-    const isHomeTeam = homeParts.some(p => p.length >= 4 && title.includes(p)) ||
-                       title.includes(homeNorm.slice(0,5));
+    const isHomeTeam = homeParts.some(p => p.length >= 4 && title.includes(p)) || title.includes(homeNorm.slice(0,5));
     const val = isHomeTeam ? stats.homeCorners : stats.awayCorners;
     if (val === null) return null;
     if (isOver) return val > threshold ? "W" : val === threshold ? "P" : "L";
@@ -87,9 +77,8 @@ function gradePick(pick, stats) {
 
   // ── TOTAL CARDS ───────────────────────────────────────────────
   if (title.includes("card") && (title.includes("total") || title.includes("match"))) {
-    if (threshold === null) return null;
+    if (threshold === null || stats.totalCards === null) return null;
     const val = stats.totalCards;
-    if (val === null) return null;
     if (isOver) return val > threshold ? "W" : val === threshold ? "P" : "L";
     if (isUnder) return val < threshold ? "W" : val === threshold ? "P" : "L";
   }
@@ -97,15 +86,13 @@ function gradePick(pick, stats) {
   // ── PLAYER PROPS ──────────────────────────────────────────────
   if (threshold === null) return null;
 
-  // Find matching player — try multi-word matching
   let playerStats = null;
   let bestMatchScore = 0;
 
-  for (const [name, pStats] of Object.entries(stats.playerStats)) {
+  for (const [name, pStats] of Object.entries(stats.playerStats || {})) {
     const nameNorm = norm(name);
     const nameWords = nameNorm.split(" ").filter(w => w.length >= 3);
     const titleWords = title.split(" ").filter(w => w.length >= 3);
-
     let matchScore = 0;
     for (const nw of nameWords) {
       for (const tw of titleWords) {
@@ -113,13 +100,9 @@ function gradePick(pick, stats) {
         else if (tw.includes(nw) || nw.includes(tw)) matchScore += 1;
       }
     }
-    if (matchScore > bestMatchScore) {
-      bestMatchScore = matchScore;
-      playerStats = pStats;
-    }
+    if (matchScore > bestMatchScore) { bestMatchScore = matchScore; playerStats = pStats; }
   }
 
-  // Require at least one word match
   if (!playerStats || bestMatchScore < 1) return null;
 
   let val = null;
@@ -135,7 +118,6 @@ function gradePick(pick, stats) {
   else if (title.includes("card")) val = playerStats.yellowCards;
 
   if (val === null || val === undefined) return null;
-
   if (isOver) return val > threshold ? "W" : val === threshold ? "P" : "L";
   if (isUnder) return val < threshold ? "W" : val === threshold ? "P" : "L";
   return null;
@@ -155,22 +137,18 @@ async function fetchMatchStats(fixtureId, apiKey) {
     const fixture = fixtureData.response?.[0];
     if (!fixture) return null;
 
+    const status = fixture?.fixture?.status?.short;
+    if (!["FT", "AET", "PEN"].includes(status)) return { notFinished: true, status };
+
     const homeScore = fixture?.goals?.home ?? 0;
     const awayScore = fixture?.goals?.away ?? 0;
     const homeTeam = fixture?.teams?.home?.name;
     const awayTeam = fixture?.teams?.away?.name;
 
-    // Verify match is actually finished
-    const status = fixture?.fixture?.status?.short;
-    if (!["FT", "AET", "PEN"].includes(status)) {
-      return { notFinished: true, status };
-    }
-
     const teamStats = statsData.response || [];
     const getStat = (teamName, statType) => {
       const team = teamStats.find(t => {
-        const tn = norm(t.team?.name);
-        const sn = norm(teamName);
+        const tn = norm(t.team?.name); const sn = norm(teamName);
         return tn.includes(sn.slice(0,4)) || sn.includes(tn.slice(0,4));
       });
       const raw = team?.statistics?.find(s => s.type === statType)?.value;
@@ -214,48 +192,110 @@ async function fetchMatchStats(fixtureId, apiKey) {
       playerStats,
       playerCount: Object.keys(playerStats).length,
     };
-  } catch (e) {
+  } catch (e) { return null; }
+}
+
+// Fetch fixtures using the same dual-source approach as scores.js
+async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
+  const normalize = s => s?.toLowerCase().replace(/[^a-z]/g, '') || '';
+
+  const [fixturesRes, oddsRes] = await Promise.all([
+    fetch(`https://v3.football.api-sports.io/fixtures?date=${dateKey}`, { headers: { "x-apisports-key": apiKey } }),
+    fetch(`https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup/scores/?apiKey=${oddsApiKey}&daysFrom=3`),
+  ]);
+
+  const [fixturesData, oddsData] = await Promise.all([
+    fixturesRes.json(),
+    oddsRes.json(),
+  ]);
+
+  // Filter WC fixtures from API-Football
+  const apfFixtures = (fixturesData.response || []).filter(f => {
+    const name = f.league?.name?.toLowerCase() || "";
+    return name.includes("world cup") || name.includes("fifa") || f.league?.id === 1;
+  });
+
+  // Build odds map for score lookup
+  const oddsMap = {};
+  for (const game of (oddsData || [])) {
+    const hs = game.scores?.find(s => s.name === game.home_team)?.score;
+    const as = game.scores?.find(s => s.name === game.away_team)?.score;
+    oddsMap[`${normalize(game.home_team)}|${normalize(game.away_team)}`] = {
+      home_score: hs !== undefined ? parseInt(hs) : null,
+      away_score: as !== undefined ? parseInt(as) : null,
+      completed: game.completed,
+      home_team: game.home_team,
+      away_team: game.away_team,
+    };
+  }
+
+  function findOddsScore(homeTeam, awayTeam) {
+    const hn = normalize(homeTeam); const an = normalize(awayTeam);
+    for (const key of Object.keys(oddsMap)) {
+      const [h, a] = key.split("|");
+      if ((h.includes(hn.slice(0,4)) || hn.includes(h.slice(0,4))) &&
+          (a.includes(an.slice(0,4)) || an.includes(a.slice(0,4)))) return oddsMap[key];
+    }
     return null;
   }
+
+  const results = [];
+  const seen = new Set();
+
+  // Process API-Football fixtures (have fixture IDs for stats)
+  for (const f of apfFixtures) {
+    const homeTeam = f.teams?.home?.name;
+    const awayTeam = f.teams?.away?.name;
+    const status = f.fixture?.status?.short;
+    const oddsScore = findOddsScore(homeTeam, awayTeam);
+    const isFinished = ["FT","AET","PEN"].includes(status) || oddsScore?.completed;
+    if (!isFinished) continue;
+    seen.add(normalize(homeTeam));
+    results.push({
+      fixtureId: f.fixture?.id,
+      homeTeam,
+      awayTeam,
+      homeScore: oddsScore?.home_score ?? f.goals?.home ?? 0,
+      awayScore: oddsScore?.away_score ?? f.goals?.away ?? 0,
+    });
+  }
+
+  // Add completed Odds API games not found in API-Football (no fixture ID = no player stats)
+  for (const game of (oddsData || [])) {
+    if (!game.completed) continue;
+    const hn = normalize(game.home_team);
+    if (seen.has(hn)) continue;
+    // Check if date matches (Odds API returns last 3 days)
+    const hs = game.scores?.find(s => s.name === game.home_team)?.score;
+    const as = game.scores?.find(s => s.name === game.away_team)?.score;
+    if (hs === undefined || as === undefined) continue;
+    results.push({
+      fixtureId: null,
+      homeTeam: game.home_team,
+      awayTeam: game.away_team,
+      homeScore: parseInt(hs),
+      awayScore: parseInt(as),
+    });
+  }
+
+  return results;
 }
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   const { secret, date, force } = req.query;
-  if(secret !== process.env.CRON_SECRET && secret !== "minchia2026") {
+  if (secret !== process.env.CRON_SECRET && secret !== "minchia2026") {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
   const apiKey = process.env.API_FOOTBALL_KEY;
+  const oddsApiKey = process.env.ODDS_API_KEY;
   const dateKey = date || todayKeyET();
   const forceRegrade = force === "true";
 
   try {
-    const fixturesRes = await fetch(
-  `https://v3.football.api-sports.io/fixtures?date=${dateKey}&league=1&season=2026`,
-  { headers: { "x-apisports-key": apiKey } }
-);
-    const fixturesData = await fixturesRes.json();
-    const allFixtures = fixturesData.response || [];
-const finishedFixtures = allFixtures.filter(f => {
-  const name = f.league?.name?.toLowerCase() || "";
-  const lid = f.league?.id;
-  const isWC = name.includes("world cup") || name.includes("fifa") || 
-               name.includes("mundial") || lid === 1 || lid === 15 || lid === 16;
-  const isFt = ["FT","AET","PEN"].includes(f.fixture?.status?.short);
-  return isWC && isFt;
-});
-
-if(!finishedFixtures.length) {
-  const leagues = [...new Set(allFixtures.map(f => `${f.league?.id}:${f.league?.name}`))];
-  return res.status(200).json({
-    message:"No finished WC matches found", 
-    date:dateKey,
-    total_fixtures: allFixtures.length,
-    leagues_found: leagues
-  });
-}
+    const finishedFixtures = await fetchFinishedFixtures(dateKey, apiKey, oddsApiKey);
 
     if (!finishedFixtures.length) {
       return res.status(200).json({ message: "No finished WC matches found", date: dateKey });
@@ -264,14 +304,11 @@ if(!finishedFixtures.length) {
     const results = [];
 
     for (const fixture of finishedFixtures) {
-      const homeTeam = fixture.teams?.home?.name;
-      const awayTeam = fixture.teams?.away?.name;
-      const fixtureId = fixture.fixture?.id;
+      const { homeTeam, awayTeam, fixtureId, homeScore, awayScore } = fixture;
 
-      // Find picks in Redis — try exact then fuzzy
+      // Find picks in Redis
       const exactKey = `picks:${dateKey}:${homeTeam.replace(/\s/g,"-")}:${awayTeam.replace(/\s/g,"-")}`;
       let picksData = await redis.get(exactKey);
-      let usedKey = exactKey;
 
       if (!picksData) {
         const allKeys = await redis.keys(`picks:${dateKey}:*`);
@@ -280,7 +317,6 @@ if(!finishedFixtures.length) {
           const kHome = (parts[2] || "").replace(/-/g," ");
           if (norm(kHome).includes(norm(homeTeam).slice(0,4)) || norm(homeTeam).includes(norm(kHome).slice(0,4))) {
             picksData = await redis.get(k);
-            usedKey = k;
             break;
           }
         }
@@ -301,16 +337,22 @@ if(!finishedFixtures.length) {
         continue;
       }
 
-      const stats = await fetchMatchStats(fixtureId, apiKey);
-
-      if (!stats) {
-        results.push({ match: `${homeTeam} vs ${awayTeam}`, error: "Could not fetch stats from API-Football" });
-        continue;
+      // Build stats — use API-Football if we have a fixture ID, otherwise use just scores
+      let stats = null;
+      if (fixtureId) {
+        stats = await fetchMatchStats(fixtureId, apiKey);
       }
 
-      if (stats.notFinished) {
-        results.push({ match: `${homeTeam} vs ${awayTeam}`, skipped: true, reason: `Match not finished yet (${stats.status})` });
-        continue;
+      // If no API-Football stats, build minimal stats from Odds API scores
+      if (!stats || stats.notFinished) {
+        stats = {
+          homeTeam, awayTeam, homeScore, awayScore,
+          totalGoals: homeScore + awayScore,
+          btts: homeScore > 0 && awayScore > 0,
+          homeCorners: 0, awayCorners: 0, totalCorners: 0,
+          totalCards: 0, playerStats: {}, playerCount: 0,
+          oddsApiOnly: true,
+        };
       }
 
       const graded = [];
@@ -318,27 +360,24 @@ if(!finishedFixtures.length) {
         const resultKey = `result:${dateKey}:${pick.title}`;
         const existing = await redis.get(resultKey);
 
-        // Skip if already graded correctly (not a Push from failed grading) unless force=true
         if (existing && !forceRegrade) {
-          const existingParsed = typeof existing === "string" ? JSON.parse(existing) : existing;
-          // Skip only if it was genuinely graded (W or L), re-grade if it was a Push from failure
-          if (existingParsed.result === "W" || existingParsed.result === "L") {
-            graded.push({ pick: pick.title, skipped: true, reason: "Already graded", result: existingParsed.result });
+          const ep = typeof existing === "string" ? JSON.parse(existing) : existing;
+          if (ep.result === "W" || ep.result === "L") {
+            graded.push({ pick: pick.title, skipped: true, reason: "Already graded", result: ep.result });
             continue;
           }
-          // If it's a P with "Could not determine" reason, re-try grading
-          if (existingParsed.result === "P" && existingParsed.reason?.includes("Could not determine")) {
-            // Fall through to re-grade
-          } else if (existingParsed.result === "P") {
+          if (ep.result === "P" && !ep.reason?.includes("Could not determine")) {
             graded.push({ pick: pick.title, skipped: true, reason: "Already graded as Push", result: "P" });
             continue;
           }
+          // Re-grade bad pushes
         }
 
         const result = gradePick(pick, stats);
         const finalResult = result || "P";
+        const scoreStr = `${stats.homeTeam} ${stats.homeScore}-${stats.awayScore} ${stats.awayTeam}`;
         const reason = result
-          ? `Auto-graded: ${stats.homeTeam} ${stats.homeScore}-${stats.awayScore} ${stats.awayTeam} | Corners: ${stats.totalCorners} | Cards: ${stats.totalCards} | Players tracked: ${stats.playerCount}`
+          ? `Auto-graded: ${scoreStr} | Corners: ${stats.totalCorners} | Cards: ${stats.totalCards}`
           : `Could not determine from stats — marked push`;
 
         await redis.set(resultKey, JSON.stringify({
@@ -349,18 +388,14 @@ if(!finishedFixtures.length) {
           date: dateKey,
           match: `${homeTeam} vs ${awayTeam}`,
           gradedAt: new Date().toISOString(),
-          stats: {
-            score: `${stats.homeScore}-${stats.awayScore}`,
-            totalGoals: stats.totalGoals,
-            totalCorners: stats.totalCorners,
-            totalCards: stats.totalCards,
-          }
+          fixtureId: fixtureId || null,
+          stats: { score: `${homeScore}-${awayScore}`, totalGoals: stats.totalGoals, totalCorners: stats.totalCorners, totalCards: stats.totalCards }
         }), { ex: 60*60*24*30 });
 
         graded.push({ pick: pick.title, result: finalResult, reason });
       }
 
-      results.push({ match: `${homeTeam} vs ${awayTeam}`, picks_graded: graded });
+      results.push({ match: `${homeTeam} vs ${awayTeam}`, fixtureId, picks_graded: graded });
     }
 
     return res.status(200).json({ date: dateKey, results });
