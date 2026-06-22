@@ -8,15 +8,12 @@ const redis = new Redis({
 });
 
 function todayKeyET() {
-  const etDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-  const y = etDate.getFullYear();
-  const m = String(etDate.getMonth() + 1).padStart(2, "0");
-  const d = String(etDate.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  const et = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  return `${et.getFullYear()}-${String(et.getMonth()+1).padStart(2,"0")}-${String(et.getDate()).padStart(2,"0")}`;
 }
 
 function matchKey(dateKey, home, away) {
-  return `picks:${dateKey}:${home.replace(/\s/g,'-')}:${away.replace(/\s/g,'-')}`;
+  return `picks:${dateKey}:${home.replace(/\s/g,"-")}:${away.replace(/\s/g,"-")}`;
 }
 
 const SCHEDULE = {
@@ -76,138 +73,98 @@ const STADIUM_INFO = {
 };
 
 function getTournamentContext(stage) {
-  if(stage.includes("Group")) return "GROUP STAGE: Check standings — teams already through may rotate. Teams needing result play open = more cards/corners/shots.";
-  if(stage.includes("Round of 32")||stage.includes("Round of 16")) return "KNOCKOUT: No rotation, best XI plays. High intensity, tactical fouling = more cards. Extra time possible.";
-  if(stage.includes("Quarterfinal")) return "QUARTERFINAL: Elite teams, cautious starts. Cards valuable as teams foul to disrupt.";
-  if(stage.includes("Semifinal")) return "SEMIFINAL: Maximum pressure, ultra-disciplined. Low scoring expected. Under props gain value.";
-  if(stage.includes("Final")) return "FINAL: Ultra cautious. Under total goals has value.";
-  if(stage.includes("Third")) return "THIRD PLACE: Deflated teams play without pressure = high scoring. Over/BTTS gain value.";
+  if(stage.includes("Group")) return "GROUP STAGE: Check standings — rotation likely for qualified teams. Desperate teams play open = more cards/corners/shots.";
+  if(stage.includes("Round of 32")||stage.includes("Round of 16")) return "KNOCKOUT: Best XI always plays. High intensity, tactical fouling = more cards. Extra time possible.";
+  if(stage.includes("Quarterfinal")) return "QUARTERFINAL: Cautious starts, foul-heavy midfields. Card props valuable.";
+  if(stage.includes("Semifinal")) return "SEMIFINAL: Ultra-disciplined, low scoring. Under props gain value.";
+  if(stage.includes("Final")) return "FINAL: Ultra cautious. Under goals has value.";
+  if(stage.includes("Third")) return "THIRD PLACE: Open, high scoring. Over/BTTS gain value.";
   return "";
 }
 
 function minutesUntilKickoff(match) {
-  const nowET = new Date(new Date().toLocaleString("en-US", {timeZone:"America/New_York"}));
-  const nowMinutes = nowET.getHours() * 60 + nowET.getMinutes();
-  const [h, min] = match.kickoff_et.split(":").map(Number);
-  return (h * 60 + min) - nowMinutes;
+  const et = new Date(new Date().toLocaleString("en-US", {timeZone:"America/New_York"}));
+  const now = et.getHours()*60 + et.getMinutes();
+  const [h,m] = match.kickoff_et.split(":").map(Number);
+  return (h*60+m) - now;
 }
 
 async function fetchLineupForMatch(match) {
   const apiKey = process.env.API_FOOTBALL_KEY;
   const today = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+
+  // Check Redis cache first — lineups don't change once confirmed
+  const cacheKey = `lineup:${today}:${match.home}`;
+  try {
+    const cached = await redis.get(cacheKey);
+    if(cached) return typeof cached === "string" ? JSON.parse(cached) : cached;
+  } catch(e) {}
+
   try {
     const res = await fetch(
       `https://v3.football.api-sports.io/fixtures?date=${today}`,
       {headers:{"x-apisports-key":apiKey}}
     );
     const data = await res.json();
-    const normalize = s => s?.toLowerCase().replace(/[^a-z]/g,'') || '';
-    const fixture = (data.response || []).find(f => {
-      const name = f.league?.name?.toLowerCase() || '';
-      if(!name.includes('world cup') && !name.includes('fifa') && f.league?.id !== 1) return false;
-      return normalize(f.teams?.home?.name).includes(normalize(match.home).slice(0,4)) ||
-             normalize(match.home).includes(normalize(f.teams?.home?.name).slice(0,4));
+    const norm = s => s?.toLowerCase().replace(/[^a-z]/g,"") || "";
+    const fixture = (data.response||[]).find(f => {
+      const name = f.league?.name?.toLowerCase() || "";
+      if(!name.includes("world cup") && !name.includes("fifa") && f.league?.id !== 1) return false;
+      const fh = norm(f.teams?.home?.name);
+      const mh = norm(match.home);
+      return fh.includes(mh.slice(0,4)) || mh.includes(fh.slice(0,4));
     });
     if(!fixture) return null;
-    const fixtureId = fixture.fixture?.id;
-    const [lineupRes, detailRes] = await Promise.all([
-      fetch(`https://v3.football.api-sports.io/fixtures/lineups?fixture=${fixtureId}`,
-        {headers:{"x-apisports-key":apiKey}}),
-      fetch(`https://v3.football.api-sports.io/fixtures?id=${fixtureId}`,
-        {headers:{"x-apisports-key":apiKey}}),
+
+    const fid = fixture.fixture?.id;
+    const [lr, dr] = await Promise.all([
+      fetch(`https://v3.football.api-sports.io/fixtures/lineups?fixture=${fid}`, {headers:{"x-apisports-key":apiKey}}),
+      fetch(`https://v3.football.api-sports.io/fixtures?id=${fid}`, {headers:{"x-apisports-key":apiKey}}),
     ]);
-    const [lineupJson, detailJson] = await Promise.all([lineupRes.json(), detailRes.json()]);
-    const lineups = lineupJson.response || [];
-    const referee = detailJson.response?.[0]?.fixture?.referee || 'Unknown';
+    const [lj, dj] = await Promise.all([lr.json(), dr.json()]);
+    const lineups = lj.response || [];
+    const referee = dj.response?.[0]?.fixture?.referee || "Unknown";
     if(lineups.length < 2) return null;
+
     const fmt = l => ({
       starters: (l.startXI||[]).map(p=>`${p.player?.name} (${p.player?.pos})`).filter(Boolean),
-      formation: l.formation || 'Unknown',
-      coach: l.coach?.name || 'Unknown',
+      formation: l.formation || "Unknown",
+      coach: l.coach?.name || "Unknown",
     });
-    return {home:fmt(lineups[0]), away:fmt(lineups[1]), referee, confirmed:true};
+    const result = {home:fmt(lineups[0]), away:fmt(lineups[1]), referee, confirmed:true};
+
+    // Cache for 2 hours
+    await redis.set(cacheKey, JSON.stringify(result), {ex: 60*60*2});
+    return result;
   } catch(e) { return null; }
 }
 
 async function generatePickForMatch(match, lineup) {
-  const stadium = STADIUM_INFO[match.venue] || {outdoor:true,notes:"Open air"};
+  const stadium = STADIUM_INFO[match.venue] || {outdoor:true, notes:"Open air"};
   const context = getTournamentContext(match.stage);
   const lineupText = lineup
-    ? `✅ CONFIRMED LINEUPS:
-HOME ${match.home} (${lineup.home.formation}): ${lineup.home.starters.join(', ')}
-AWAY ${match.away} (${lineup.away.formation}): ${lineup.away.starters.join(', ')}
-REFEREE: ${lineup.referee} — search avg cards/game this tournament`
-    : `⚠️ LINEUPS NOT CONFIRMED — search for expected XI and injuries`;
+    ? `LINEUPS CONFIRMED:
+HOME ${match.home} (${lineup.home.formation}): ${lineup.home.starters.join(", ")}
+AWAY ${match.away} (${lineup.away.formation}): ${lineup.away.starters.join(", ")}
+REFEREE: ${lineup.referee}`
+    : `LINEUPS NOT CONFIRMED — search expected XI and injuries`;
 
-  const systemPrompt = `You are an elite World Cup 2026 betting analyst targeting an 80% hit rate. You think like a professional sharp bettor — precision over volume, value over action.
-
-MISSION: Find the 4 absolute best props for this match. Not 2 of each type — just the 4 sharpest bets available, from any category. Quality over format.
-
-ODDS REQUIREMENT: Only pick props with odds between -175 and +175. This is the value zone — avoid heavy favorites and longshots.
-
-ANALYTICAL FRAMEWORK:
-- Referee: search avg cards/game → if low card ref, skip card props entirely
-- Formation matchup: does this setup structurally produce corners? shots? fouls?
-- Tournament stage context: apply it — rotation, desperation, caution all change prop values
-- Stadium/altitude: outdoor windy = suppress corners; altitude = suppress tempo
-- Motivation: who NEEDS this result? Changes the game style completely
-- Line value: is this prop mispriced? Compare your true probability to the implied odds
-- Recent WC form: how did each team play their last match — shots, corners, cards, intensity?
-
-PROP TYPES AVAILABLE (pick the best 4 from anywhere):
-Player: shots on target, shots total, passes, key passes, tackles, fouls committed, yellow cards, saves, crosses, assists
-Game: total corners, total cards, BTTS, total goals, Asian handicap, result
-Team: team corners, clean sheet, team total shots, first corner, team cards, to win either half
-
-HIGH HIT RATE PROPS (prioritize these when the matchup supports):
-- Team corners over low line (5.5-7.5) for wide-formation teams vs deep block
-- Clean sheet for dominant team vs weak attack (check xGA)
-- Total cards over low line when desperate team meets card-happy referee
-- Shots on target over 1.5 for elite attackers vs weak defense
-- BTTS No when one team is defensively elite and other struggles to score
-
-Return ONLY valid JSON for ONE match — no markdown:
-{
-  "home": "",
-  "away": "",
-  "kickoff": "",
-  "venue": "",
-  "stage": "",
-  "picks": [
-    {
-      "category": "player|game|team",
-      "title": "Description of pick",
-      "line": "Over X -115",
-      "reasoning": "3 sentences: specific data point + matchup edge + why odds are value between -175/+175",
-      "book": "fanduel|draftkings|betmgm|bet365|fanatics",
-      "edge": "+X% Edge",
-      "confidence": 4
-    }
-  ]
-}
-
-STRICT RULES:
-- Exactly 4 picks total — no more, no less
-- ALL odds must be between -175 and +175
-- Minimum confidence 4 — if you can't find 4 props at confidence 4+, lower the line threshold rather than picking weak props
-- No goalscorer props ever
-- Only pick player props for confirmed starters
-- reasoning must cite a specific number or stat
-- Best book = genuinely best line across all 5 books`;
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 2000,
-    tools: [{type:"web_search_20250305",name:"web_search"}],
-    system: systemPrompt,
-    messages: [{
-      role: "user",
-      content: `${match.home} vs ${match.away} | ${match.kickoff_et} ET | ${match.venue} (${stadium.outdoor?'OUTDOOR':'INDOOR'}: ${stadium.notes}) | ${match.stage}
+  const prompt = `WC 2026 match: ${match.home} vs ${match.away} | ${match.kickoff_et} ET | ${match.venue} (${stadium.outdoor?"OUTDOOR":"INDOOR"}: ${stadium.notes}) | ${match.stage}
 ${context}
 ${lineupText}
 
-Search for: referee avg cards/game this tournament, group standings + qualification scenarios, injury/lineup news, best odds across FanDuel DraftKings BetMGM Bet365 Fanatics, both teams last WC match stats (shots corners cards possession). Then find the 4 sharpest props. Return JSON only.`
-    }],
+Search for: 1) referee avg cards/game this tournament 2) group standings + who needs result 3) injury/lineup news 4) best odds FanDuel/DraftKings/BetMGM/Bet365/Fanatics 5) both teams last WC match stats
+
+Return ONLY this JSON, no other text:
+{"home":"${match.home}","away":"${match.away}","kickoff":"${match.kickoff_et} ET","venue":"${match.venue}","stage":"${match.stage}","picks":[{"category":"player|game|team","title":"pick description","line":"Over X -115","reasoning":"2 sentences max: stat + edge","book":"fanduel|draftkings|betmgm|bet365|fanatics","edge":"+X% Edge","confidence":4}]}
+
+Rules: exactly 4 picks, odds -175 to +175 only, confidence 4+ only, no goalscorer props, only confirmed starters for player props, cite specific stats in reasoning.`;
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-6",
+    max_tokens: 1500,
+    tools: [{type:"web_search_20250305", name:"web_search"}],
+    messages: [{role:"user", content:prompt}],
   });
 
   const text = (response.content||[]).map(i=>i.type==="text"?i.text:"").join("");
@@ -216,11 +173,11 @@ Search for: referee avg cards/game this tournament, group standings + qualificat
   if(!jsonMatch) throw new Error("No valid JSON");
   const parsed = JSON.parse(jsonMatch[0]);
 
-  // Normalize to expected format for frontend compatibility
+  // Normalize for frontend
   if(parsed.picks && !parsed.player_props) {
-    parsed.player_props = parsed.picks.filter(p=>p.category==='player');
-    parsed.game_props = parsed.picks.filter(p=>p.category==='game');
-    parsed.team_props = parsed.picks.filter(p=>p.category==='team');
+    parsed.player_props = parsed.picks.filter(p=>p.category==="player");
+    parsed.game_props = parsed.picks.filter(p=>p.category==="game");
+    parsed.team_props = parsed.picks.filter(p=>p.category==="team");
   }
   return parsed;
 }
@@ -233,13 +190,11 @@ export default async function handler(req, res) {
 
   const key = todayKeyET();
   const todayMatches = SCHEDULE[key];
-
-  if(!todayMatches || todayMatches.length === 0) {
+  if(!todayMatches?.length) {
     return res.status(200).json({skipped:true, reason:`No matches today (${key})`});
   }
 
   const results = [];
-
   for(const match of todayMatches) {
     const mKey = matchKey(key, match.home, match.away);
     const existing = await redis.get(mKey);
@@ -247,22 +202,19 @@ export default async function handler(req, res) {
       results.push({match:`${match.home} vs ${match.away}`, skipped:true, reason:"Already generated"});
       continue;
     }
-
     const minsUntil = minutesUntilKickoff(match);
     if(minsUntil > 90 || minsUntil < -120) {
-      results.push({match:`${match.home} vs ${match.away}`, skipped:true, reason:`Not in window (${minsUntil} mins)`});
+      results.push({match:`${match.home} vs ${match.away}`, skipped:true, reason:`Not in window (${minsUntil}m)`});
       continue;
     }
-
     try {
       const lineup = await fetchLineupForMatch(match);
       const pick = await generatePickForMatch(match, lineup);
-      await redis.set(mKey, JSON.stringify(pick), {ex: 60 * 60 * 36});
+      await redis.set(mKey, JSON.stringify(pick), {ex:60*60*36});
       results.push({match:`${match.home} vs ${match.away}`, success:true, lineup_confirmed:!!lineup});
     } catch(err) {
       results.push({match:`${match.home} vs ${match.away}`, error:err.message});
     }
   }
-
   return res.status(200).json({date:key, results});
 }
