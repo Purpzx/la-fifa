@@ -23,7 +23,6 @@ function gradePick(pick, stats) {
   const isOver = title.includes("over") || line.includes("over") || title.includes("yes") || line.includes("yes");
   const isUnder = title.includes("under") || line.includes("under") || title.includes("no") || line.includes("no");
 
-  // Extract threshold from line first, then title
   const lineNum = (pick.line || "").match(/(\d+\.?\d*)/);
   const titleNum = (pick.title || "").match(/(\d+\.?\d*)/);
   const threshold = lineNum ? parseFloat(lineNum[1]) : (titleNum ? parseFloat(titleNum[1]) : null);
@@ -195,7 +194,59 @@ async function fetchMatchStats(fixtureId, apiKey) {
   } catch (e) { return null; }
 }
 
-// Fetch fixtures using the same dual-source approach as scores.js
+// Look up fixture ID by searching for a team — works for past dates
+async function lookupFixtureId(homeTeam, awayTeam, dateKey, apiKey) {
+  try {
+    // Try searching by team name + season
+    const homeRes = await fetch(
+      `https://v3.football.api-sports.io/fixtures?date=${dateKey}&league=1&season=2026`,
+      { headers: { "x-apisports-key": apiKey } }
+    );
+    const homeData = await homeRes.json();
+    const fixtures = homeData.response || [];
+    for (const f of fixtures) {
+      const fh = norm(f.teams?.home?.name);
+      const fa = norm(f.teams?.away?.name);
+      const mh = norm(homeTeam);
+      const ma = norm(awayTeam);
+      if ((fh.includes(mh.slice(0,4)) || mh.includes(fh.slice(0,4))) &&
+          (fa.includes(ma.slice(0,4)) || ma.includes(fa.slice(0,4)))) {
+        return f.fixture?.id;
+      }
+    }
+
+    // Fallback: search by home team name
+    const teamRes = await fetch(
+      `https://v3.football.api-sports.io/teams?search=${encodeURIComponent(homeTeam.split(" ")[0])}`,
+      { headers: { "x-apisports-key": apiKey } }
+    );
+    const teamData = await teamRes.json();
+    const team = (teamData.response || []).find(t => {
+      const tn = norm(t.team?.name);
+      const mh = norm(homeTeam);
+      return tn.includes(mh.slice(0,4)) || mh.includes(tn.slice(0,4));
+    });
+    if (!team) return null;
+
+    const teamId = team.team?.id;
+    const fixRes = await fetch(
+      `https://v3.football.api-sports.io/fixtures?team=${teamId}&league=1&season=2026`,
+      { headers: { "x-apisports-key": apiKey } }
+    );
+    const fixData = await fixRes.json();
+    for (const f of (fixData.response || [])) {
+      const fDate = f.fixture?.date?.slice(0, 10);
+      if (fDate !== dateKey) continue;
+      const fa = norm(f.teams?.away?.name);
+      const ma = norm(awayTeam);
+      if (fa.includes(ma.slice(0,4)) || ma.includes(fa.slice(0,4))) {
+        return f.fixture?.id;
+      }
+    }
+    return null;
+  } catch (e) { return null; }
+}
+
 async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
   const normalize = s => s?.toLowerCase().replace(/[^a-z]/g, '') || '';
 
@@ -209,18 +260,17 @@ async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
     oddsRes.json(),
   ]);
 
-  // Filter WC fixtures from API-Football
   const apfFixtures = (fixturesData.response || []).filter(f => {
     const name = f.league?.name?.toLowerCase() || "";
     return name.includes("world cup") || name.includes("fifa") || f.league?.id === 1;
   });
 
-  // Build odds map for score lookup
+  const normalize2 = s => s?.toLowerCase().replace(/[^a-z]/g, '') || '';
   const oddsMap = {};
   for (const game of (oddsData || [])) {
     const hs = game.scores?.find(s => s.name === game.home_team)?.score;
     const as = game.scores?.find(s => s.name === game.away_team)?.score;
-    oddsMap[`${normalize(game.home_team)}|${normalize(game.away_team)}`] = {
+    oddsMap[`${normalize2(game.home_team)}|${normalize2(game.away_team)}`] = {
       home_score: hs !== undefined ? parseInt(hs) : null,
       away_score: as !== undefined ? parseInt(as) : null,
       completed: game.completed,
@@ -230,7 +280,7 @@ async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
   }
 
   function findOddsScore(homeTeam, awayTeam) {
-    const hn = normalize(homeTeam); const an = normalize(awayTeam);
+    const hn = normalize2(homeTeam); const an = normalize2(awayTeam);
     for (const key of Object.keys(oddsMap)) {
       const [h, a] = key.split("|");
       if ((h.includes(hn.slice(0,4)) || hn.includes(h.slice(0,4))) &&
@@ -242,7 +292,7 @@ async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
   const results = [];
   const seen = new Set();
 
-  // Process API-Football fixtures (have fixture IDs for stats)
+  // Process API-Football fixtures first (have fixture IDs)
   for (const f of apfFixtures) {
     const homeTeam = f.teams?.home?.name;
     const awayTeam = f.teams?.away?.name;
@@ -250,31 +300,30 @@ async function fetchFinishedFixtures(dateKey, apiKey, oddsApiKey) {
     const oddsScore = findOddsScore(homeTeam, awayTeam);
     const isFinished = ["FT","AET","PEN"].includes(status) || oddsScore?.completed;
     if (!isFinished) continue;
-    seen.add(normalize(homeTeam));
+    seen.add(normalize2(homeTeam));
     results.push({
       fixtureId: f.fixture?.id,
-      homeTeam,
-      awayTeam,
+      homeTeam, awayTeam,
       homeScore: oddsScore?.home_score ?? f.goals?.home ?? 0,
       awayScore: oddsScore?.away_score ?? f.goals?.away ?? 0,
     });
   }
 
-  // Add completed Odds API games not found in API-Football (no fixture ID = no player stats)
+  // Add completed Odds API games not in API-Football — need to look up fixture IDs
   for (const game of (oddsData || [])) {
     if (!game.completed) continue;
-    const hn = normalize(game.home_team);
+    const hn = normalize2(game.home_team);
     if (seen.has(hn)) continue;
-    // Check if date matches (Odds API returns last 3 days)
     const hs = game.scores?.find(s => s.name === game.home_team)?.score;
     const as = game.scores?.find(s => s.name === game.away_team)?.score;
     if (hs === undefined || as === undefined) continue;
     results.push({
-      fixtureId: null,
+      fixtureId: null, // will be resolved below
       homeTeam: game.home_team,
       awayTeam: game.away_team,
       homeScore: parseInt(hs),
       awayScore: parseInt(as),
+      needsFixtureId: true,
     });
   }
 
@@ -304,7 +353,12 @@ export default async function handler(req, res) {
     const results = [];
 
     for (const fixture of finishedFixtures) {
-      const { homeTeam, awayTeam, fixtureId, homeScore, awayScore } = fixture;
+      let { homeTeam, awayTeam, fixtureId, homeScore, awayScore, needsFixtureId } = fixture;
+
+      // Resolve missing fixture IDs for Odds-API-only matches
+      if (needsFixtureId && !fixtureId) {
+        fixtureId = await lookupFixtureId(homeTeam, awayTeam, dateKey, apiKey);
+      }
 
       // Find picks in Redis
       const exactKey = `picks:${dateKey}:${homeTeam.replace(/\s/g,"-")}:${awayTeam.replace(/\s/g,"-")}`;
@@ -337,13 +391,13 @@ export default async function handler(req, res) {
         continue;
       }
 
-      // Build stats — use API-Football if we have a fixture ID, otherwise use just scores
+      // Fetch full stats if we have a fixture ID
       let stats = null;
       if (fixtureId) {
         stats = await fetchMatchStats(fixtureId, apiKey);
       }
 
-      // If no API-Football stats, build minimal stats from Odds API scores
+      // Fallback to minimal stats from scores only
       if (!stats || stats.notFinished) {
         stats = {
           homeTeam, awayTeam, homeScore, awayScore,
@@ -370,14 +424,13 @@ export default async function handler(req, res) {
             graded.push({ pick: pick.title, skipped: true, reason: "Already graded as Push", result: "P" });
             continue;
           }
-          // Re-grade bad pushes
         }
 
         const result = gradePick(pick, stats);
         const finalResult = result || "P";
         const scoreStr = `${stats.homeTeam} ${stats.homeScore}-${stats.awayScore} ${stats.awayTeam}`;
         const reason = result
-          ? `Auto-graded: ${scoreStr} | Corners: ${stats.totalCorners} | Cards: ${stats.totalCards}`
+          ? `Auto-graded: ${scoreStr} | Corners: ${stats.totalCorners} | Cards: ${stats.totalCards} | Players: ${stats.playerCount}`
           : `Could not determine from stats — marked push`;
 
         await redis.set(resultKey, JSON.stringify({
