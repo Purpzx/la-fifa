@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   const { secret, date, mode } = req.query;
-  if (secret !== process.env.CRON_SECRET) {
+  if (secret !== "minchia2026") {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
