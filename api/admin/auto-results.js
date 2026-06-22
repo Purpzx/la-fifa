@@ -237,12 +237,25 @@ export default async function handler(req, res) {
       { headers: { "x-apisports-key": apiKey } }
     );
     const fixturesData = await fixturesRes.json();
-    const finishedFixtures = (fixturesData.response || []).filter(f => {
-      const name = f.league?.name?.toLowerCase() || "";
-      const isWC = name.includes("world cup") || name.includes("fifa") || f.league?.id === 1;
-      const isFt = ["FT", "AET", "PEN"].includes(f.fixture?.status?.short);
-      return isWC && isFt;
-    });
+    const allFixtures = fixturesData.response || [];
+const finishedFixtures = allFixtures.filter(f => {
+  const name = f.league?.name?.toLowerCase() || "";
+  const lid = f.league?.id;
+  const isWC = name.includes("world cup") || name.includes("fifa") || 
+               name.includes("mundial") || lid === 1 || lid === 15 || lid === 16;
+  const isFt = ["FT","AET","PEN"].includes(f.fixture?.status?.short);
+  return isWC && isFt;
+});
+
+if(!finishedFixtures.length) {
+  const leagues = [...new Set(allFixtures.map(f => `${f.league?.id}:${f.league?.name}`))];
+  return res.status(200).json({
+    message:"No finished WC matches found", 
+    date:dateKey,
+    total_fixtures: allFixtures.length,
+    leagues_found: leagues
+  });
+}
 
     if (!finishedFixtures.length) {
       return res.status(200).json({ message: "No finished WC matches found", date: dateKey });
