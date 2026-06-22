@@ -14,11 +14,9 @@
     --blue: #6C72FF; --border: rgba(255,255,255,0.07);
   }
   body { background: var(--bg); color: var(--warm); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-
   .ticker-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow: hidden; white-space: nowrap; padding: 9px 0; }
   .ticker-content { display: inline-block; animation: ticker 40s linear infinite; font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
   @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
-
   header { padding: 48px 24px 36px; text-align: center; border-bottom: 1px solid var(--border); }
   .flag-bar { display: flex; height: 3px; width: 72px; margin: 0 auto 24px; border-radius: 2px; overflow: hidden; }
   .flag-bar span { flex: 1; }
@@ -29,13 +27,9 @@
   .header-title em { font-style: italic; color: var(--gold); }
   .header-sub { font-size: 13px; color: var(--muted); margin-top: 14px; letter-spacing: 0.04em; }
   .today-badge { display: inline-block; margin-top: 18px; border: 1px solid var(--faint); color: var(--muted); font-size: 10px; font-weight: 500; letter-spacing: 0.18em; padding: 6px 16px; border-radius: 100px; text-transform: uppercase; }
-
   main { max-width: 860px; margin: 0 auto; padding: 36px 16px 80px; }
-
   .section-label { font-size: 9px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* TRACKER */
   .tracker-wrap { margin-bottom: 40px; }
   .tracker-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; }
   .tracker-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
@@ -54,8 +48,6 @@
   .result-L { background: rgba(232,0,61,0.15); color: #ff6b8a; border: 1px solid rgba(232,0,61,0.3); }
   .result-P { background: rgba(200,168,75,0.15); color: var(--gold); border: 1px solid rgba(200,168,75,0.3); }
   .tracker-empty { text-align: center; padding: 20px; font-size: 12px; color: var(--muted); }
-
-  /* SPECIAL */
   .special-wrap { margin-bottom: 40px; }
   .special-card { background: linear-gradient(135deg, #1a1400 0%, #0f0f0f 60%); border: 1px solid rgba(200,168,75,0.35); border-radius: 10px; padding: 24px 26px; position: relative; overflow: hidden; }
   .special-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
@@ -70,8 +62,6 @@
   .special-pending-icon { font-size: 32px; margin-bottom: 10px; }
   .special-pending-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--warm); margin-bottom: 6px; }
   .special-pending-sub { font-size: 12px; color: var(--muted); }
-
-  /* LIVE SCORES */
   .live-section { margin-bottom: 40px; }
   .live-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
   .live-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; position: relative; overflow: hidden; }
@@ -90,8 +80,6 @@
   .goal-event { display: flex; align-items: center; gap: 6px; font-size: 11px; }
   .goal-min { color: var(--gold); font-weight: 700; font-size: 10px; min-width: 36px; flex-shrink: 0; }
   .goal-name { color: var(--warm); }
-
-  /* 2-DAY SLATE */
   .slate-wrap { margin-bottom: 40px; }
   .slate-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
   .slate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; user-select: none; }
@@ -104,37 +92,26 @@
   .slate-card-status { display: inline-block; margin-top: 6px; font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
   .slate-status-done { background: rgba(0,146,70,0.1); color: var(--green); border: 1px solid rgba(0,146,70,0.2); }
   .slate-status-today { background: rgba(200,168,75,0.15); color: var(--gold); border: 1px solid rgba(200,168,75,0.3); }
-
-  /* COUNTDOWN */
   .countdown-wrap { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
   .countdown-label { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
   .countdown-timer { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gold); font-weight: 700; }
   .countdown-timer.urgent { color: var(--red); }
-
-  /* MATCH SCORE IN HEADER */
   .match-score { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
   .match-score-num { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--warm); }
   .match-score-sep { color: var(--muted); font-size: 13px; }
   .match-score-live { font-size: 9px; color: var(--red); font-weight: 700; letter-spacing: 0.1em; }
   .match-score-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--red); animation: pulse 1.2s ease-in-out infinite; flex-shrink: 0; }
-
-  /* LIVE TRACKER */
   .pick-tracker-live { margin-top: 10px; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 5px; border: 1px solid var(--border); }
   .pick-tracker-row { display: flex; align-items: center; gap: 8px; }
   .pick-tracker-status { font-size: 10px; font-weight: 700; flex-shrink: 0; }
   .pick-tracker-status.hit { color: var(--green); }
   .pick-tracker-status.miss { color: var(--red); }
   .pick-tracker-status.live { color: var(--gold); }
-  .pick-tracker-status.pending { color: var(--muted); }
-  .pick-tracker-label { font-size: 10px; color: var(--muted); flex: 1; }
-  .pick-tracker-value { font-size: 11px; font-weight: 700; color: var(--warm); flex-shrink: 0; }
   .pick-progress-bar { height: 3px; background: var(--faint); border-radius: 2px; margin-top: 6px; overflow: hidden; }
   .pick-progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
   .pick-progress-fill.hit { background: var(--green); }
   .pick-progress-fill.live { background: var(--gold); }
   .pick-progress-fill.miss { background: var(--red); }
-
-  /* H2H */
   .h2h-wrap { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
   .h2h-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
   .h2h-toggle-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
@@ -152,13 +129,11 @@
   .h2h-stat-value { font-size: 11px; font-weight: 600; color: var(--warm); }
   .h2h-record { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
   .h2h-record-title { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .h2h-meetings { display: flex; flex-direction: column; gap: 0; }
+  .h2h-meetings { display: flex; flex-direction: column; }
   .h2h-meeting { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); }
   .h2h-meeting:last-child { border-bottom: none; }
   .h2h-meeting-score { font-weight: 600; color: var(--warm); }
   .h2h-loading { font-size: 11px; color: var(--muted); text-align: center; padding: 16px; }
-
-  /* PICKS */
   .last-updated { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 20px; letter-spacing: 0.06em; }
   .match-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s; }
   .match-card:hover { border-color: rgba(255,255,255,0.11); }
@@ -189,8 +164,8 @@
   .picks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
   @media (max-width: 540px) { .picks-grid { grid-template-columns: 1fr; } }
   .pick-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; position: relative; overflow: hidden; transition: border-color 0.3s; }
-  .pick-card.pick-hit { border-color: rgba(0,146,70,0.4); }
-  .pick-card.pick-miss { border-color: rgba(206,43,55,0.4); }
+  .pick-card.pick-hit { border-color: rgba(0,146,70,0.4); background: rgba(0,146,70,0.04); }
+  .pick-card.pick-miss { border-color: rgba(206,43,55,0.4); background: rgba(206,43,55,0.04); }
   .pick-card.pick-live { border-color: rgba(200,168,75,0.4); }
   .pick-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .cat-player .pick-accent { background: var(--green); }
@@ -277,388 +252,196 @@
 </main>
 
 <script>
-  const nowDate = new Date();
-  const etDate = new Date(nowDate.toLocaleString('en-US', {timeZone:'America/New_York'}));
-  document.getElementById('today-badge').textContent = etDate.toLocaleDateString('en-US', {
-    weekday:'long', year:'numeric', month:'long', day:'numeric'
-  });
+  const nowDate=new Date();
+  const etDate=new Date(nowDate.toLocaleString('en-US',{timeZone:'America/New_York'}));
+  document.getElementById('today-badge').textContent=etDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-  function makeKey(d) {
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function addDays(d, n) { const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function makeKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+  function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
 
-  const todayET = etDate;
-  const yesterdayET = addDays(etDate, -1);
-  const todayKey = makeKey(todayET);
-  let activeDay = todayKey;
+  const todayET=etDate,yesterdayET=addDays(etDate,-1);
+  const todayKey=makeKey(todayET);
+  let activeDay=todayKey;
 
-  const SCHEDULE = {
-    "2026-06-11":[
-      {home:"Mexico",away:"South Africa",kickoff_et:"15:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
-      {home:"South Korea",away:"Czechia",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group A"},
-    ],
-    "2026-06-12":[
-      {home:"Canada",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group B"},
-      {home:"USA",away:"Paraguay",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"},
-    ],
-    "2026-06-13":[
-      {home:"Qatar",away:"Switzerland",kickoff_et:"15:00",venue:"Levi's Stadium, Santa Clara",stage:"Group B"},
-      {home:"Brazil",away:"Morocco",kickoff_et:"18:00",venue:"MetLife Stadium, East Rutherford",stage:"Group C"},
-      {home:"Haiti",away:"Scotland",kickoff_et:"21:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"},
-    ],
-    "2026-06-14":[
-      {home:"Australia",away:"Türkiye",kickoff_et:"00:00",venue:"BC Place, Vancouver",stage:"Group D"},
-      {home:"Germany",away:"Curaçao",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group E"},
-      {home:"Netherlands",away:"Japan",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},
-      {home:"Ivory Coast",away:"Ecuador",kickoff_et:"19:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},
-      {home:"Sweden",away:"Tunisia",kickoff_et:"22:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"},
-    ],
-    "2026-06-15":[
-      {home:"Spain",away:"Cape Verde",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},
-      {home:"Belgium",away:"Egypt",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group G"},
-      {home:"Saudi Arabia",away:"Uruguay",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},
-      {home:"Iran",away:"New Zealand",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"},
-    ],
-    "2026-06-16":[
-      {home:"France",away:"Senegal",kickoff_et:"15:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},
-      {home:"Iraq",away:"Norway",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},
-      {home:"Argentina",away:"Algeria",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},
-    ],
-    "2026-06-17":[
-      {home:"Austria",away:"Jordan",kickoff_et:"00:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"},
-      {home:"Portugal",away:"DR Congo",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},
-      {home:"England",away:"Croatia",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group L"},
-      {home:"Ghana",away:"Panama",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},
-      {home:"Uzbekistan",away:"Colombia",kickoff_et:"22:00",venue:"Estadio Azteca, Mexico City",stage:"Group K"},
-    ],
-    "2026-06-18":[
-      {home:"Czechia",away:"South Africa",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group A"},
-      {home:"Switzerland",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group B"},
-      {home:"Canada",away:"Qatar",kickoff_et:"18:00",venue:"BC Place, Vancouver",stage:"Group B"},
-      {home:"Mexico",away:"South Korea",kickoff_et:"21:00",venue:"Estadio Akron, Zapopan",stage:"Group A"},
-    ],
-    "2026-06-19":[
-      {home:"USA",away:"Australia",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group D"},
-      {home:"Scotland",away:"Morocco",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"},
-      {home:"Brazil",away:"Haiti",kickoff_et:"20:30",venue:"Lincoln Financial Field, Philadelphia",stage:"Group C"},
-      {home:"Türkiye",away:"Paraguay",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"},
-    ],
-    "2026-06-20":[
-      {home:"Netherlands",away:"Sweden",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group F"},
-      {home:"Germany",away:"Ivory Coast",kickoff_et:"16:00",venue:"BMO Field, Toronto",stage:"Group E"},
-      {home:"Ecuador",away:"Curaçao",kickoff_et:"20:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group E"},
-    ],
-    "2026-06-21":[
-      {home:"Tunisia",away:"Japan",kickoff_et:"00:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"},
-      {home:"Spain",away:"Saudi Arabia",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},
-      {home:"Belgium",away:"Iran",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"},
-      {home:"Uruguay",away:"Cape Verde",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},
-      {home:"New Zealand",away:"Egypt",kickoff_et:"21:00",venue:"BC Place, Vancouver",stage:"Group G"},
-    ],
-    "2026-06-22":[
-      {home:"Argentina",away:"Austria",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},
-      {home:"France",away:"Iraq",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group I"},
-      {home:"Norway",away:"Senegal",kickoff_et:"20:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},
-      {home:"Jordan",away:"Algeria",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"},
-    ],
-    "2026-06-23":[
-      {home:"Portugal",away:"Uzbekistan",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},
-      {home:"England",away:"Ghana",kickoff_et:"16:00",venue:"Gillette Stadium, Foxborough",stage:"Group L"},
-      {home:"Panama",away:"Croatia",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},
-      {home:"Colombia",away:"DR Congo",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group K"},
-    ],
-    "2026-06-24":[
-      {home:"Switzerland",away:"Canada",kickoff_et:"15:00",venue:"BC Place, Vancouver",stage:"Group B"},
-      {home:"Bosnia & Herzegovina",away:"Qatar",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group B"},
-      {home:"Scotland",away:"Brazil",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group C"},
-      {home:"Morocco",away:"Haiti",kickoff_et:"18:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group C"},
-      {home:"Czechia",away:"Mexico",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},
-      {home:"South Africa",away:"South Korea",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Group A"},
-    ],
-    "2026-06-25":[
-      {home:"Curaçao",away:"Ivory Coast",kickoff_et:"16:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},
-      {home:"Ecuador",away:"Germany",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Group E"},
-      {home:"Japan",away:"Sweden",kickoff_et:"19:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},
-      {home:"Tunisia",away:"Netherlands",kickoff_et:"19:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group F"},
-      {home:"Türkiye",away:"USA",kickoff_et:"22:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"},
-      {home:"Paraguay",away:"Australia",kickoff_et:"22:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"},
-    ],
-    "2026-06-26":[
-      {home:"Norway",away:"France",kickoff_et:"15:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},
-      {home:"Senegal",away:"Iraq",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group I"},
-      {home:"Cape Verde",away:"Saudi Arabia",kickoff_et:"20:00",venue:"NRG Stadium, Houston",stage:"Group H"},
-      {home:"Uruguay",away:"Spain",kickoff_et:"20:00",venue:"Estadio Akron, Zapopan",stage:"Group H"},
-      {home:"Egypt",away:"Iran",kickoff_et:"23:00",venue:"Lumen Field, Seattle",stage:"Group G"},
-      {home:"New Zealand",away:"Belgium",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Group G"},
-    ],
-    "2026-06-27":[
-      {home:"Panama",away:"England",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Group L"},
-      {home:"Croatia",away:"Ghana",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group L"},
-      {home:"Colombia",away:"Portugal",kickoff_et:"19:30",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group K"},
-      {home:"DR Congo",away:"Uzbekistan",kickoff_et:"19:30",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group K"},
-      {home:"Algeria",away:"Austria",kickoff_et:"22:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},
-      {home:"Jordan",away:"Argentina",kickoff_et:"22:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},
-    ],
+  const SCHEDULE={
+    "2026-06-11":[{home:"Mexico",away:"South Africa",kickoff_et:"15:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},{home:"South Korea",away:"Czechia",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group A"}],
+    "2026-06-12":[{home:"Canada",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group B"},{home:"USA",away:"Paraguay",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"}],
+    "2026-06-13":[{home:"Qatar",away:"Switzerland",kickoff_et:"15:00",venue:"Levi's Stadium, Santa Clara",stage:"Group B"},{home:"Brazil",away:"Morocco",kickoff_et:"18:00",venue:"MetLife Stadium, East Rutherford",stage:"Group C"},{home:"Haiti",away:"Scotland",kickoff_et:"21:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"}],
+    "2026-06-14":[{home:"Australia",away:"Türkiye",kickoff_et:"00:00",venue:"BC Place, Vancouver",stage:"Group D"},{home:"Germany",away:"Curaçao",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group E"},{home:"Netherlands",away:"Japan",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},{home:"Ivory Coast",away:"Ecuador",kickoff_et:"19:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},{home:"Sweden",away:"Tunisia",kickoff_et:"22:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"}],
+    "2026-06-15":[{home:"Spain",away:"Cape Verde",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},{home:"Belgium",away:"Egypt",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group G"},{home:"Saudi Arabia",away:"Uruguay",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},{home:"Iran",away:"New Zealand",kickoff_et:"21:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"}],
+    "2026-06-16":[{home:"France",away:"Senegal",kickoff_et:"15:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},{home:"Iraq",away:"Norway",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},{home:"Argentina",away:"Algeria",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"}],
+    "2026-06-17":[{home:"Austria",away:"Jordan",kickoff_et:"00:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"},{home:"Portugal",away:"DR Congo",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},{home:"England",away:"Croatia",kickoff_et:"16:00",venue:"AT&T Stadium, Arlington",stage:"Group L"},{home:"Ghana",away:"Panama",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},{home:"Uzbekistan",away:"Colombia",kickoff_et:"22:00",venue:"Estadio Azteca, Mexico City",stage:"Group K"}],
+    "2026-06-18":[{home:"Czechia",away:"South Africa",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group A"},{home:"Switzerland",away:"Bosnia & Herzegovina",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group B"},{home:"Canada",away:"Qatar",kickoff_et:"18:00",venue:"BC Place, Vancouver",stage:"Group B"},{home:"Mexico",away:"South Korea",kickoff_et:"21:00",venue:"Estadio Akron, Zapopan",stage:"Group A"}],
+    "2026-06-19":[{home:"USA",away:"Australia",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group D"},{home:"Scotland",away:"Morocco",kickoff_et:"18:00",venue:"Gillette Stadium, Foxborough",stage:"Group C"},{home:"Brazil",away:"Haiti",kickoff_et:"20:30",venue:"Lincoln Financial Field, Philadelphia",stage:"Group C"},{home:"Türkiye",away:"Paraguay",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"}],
+    "2026-06-20":[{home:"Netherlands",away:"Sweden",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group F"},{home:"Germany",away:"Ivory Coast",kickoff_et:"16:00",venue:"BMO Field, Toronto",stage:"Group E"},{home:"Ecuador",away:"Curaçao",kickoff_et:"20:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group E"}],
+    "2026-06-21":[{home:"Tunisia",away:"Japan",kickoff_et:"00:00",venue:"Estadio BBVA, Monterrey",stage:"Group F"},{home:"Spain",away:"Saudi Arabia",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group H"},{home:"Belgium",away:"Iran",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Group G"},{home:"Uruguay",away:"Cape Verde",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group H"},{home:"New Zealand",away:"Egypt",kickoff_et:"21:00",venue:"BC Place, Vancouver",stage:"Group G"}],
+    "2026-06-22":[{home:"Argentina",away:"Austria",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Group J"},{home:"France",away:"Iraq",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group I"},{home:"Norway",away:"Senegal",kickoff_et:"20:00",venue:"MetLife Stadium, East Rutherford",stage:"Group I"},{home:"Jordan",away:"Algeria",kickoff_et:"23:00",venue:"Levi's Stadium, Santa Clara",stage:"Group J"}],
+    "2026-06-23":[{home:"Portugal",away:"Uzbekistan",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Group K"},{home:"England",away:"Ghana",kickoff_et:"16:00",venue:"Gillette Stadium, Foxborough",stage:"Group L"},{home:"Panama",away:"Croatia",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Group L"},{home:"Colombia",away:"DR Congo",kickoff_et:"22:00",venue:"Estadio Akron, Zapopan",stage:"Group K"}],
+    "2026-06-24":[{home:"Switzerland",away:"Canada",kickoff_et:"15:00",venue:"BC Place, Vancouver",stage:"Group B"},{home:"Bosnia & Herzegovina",away:"Qatar",kickoff_et:"15:00",venue:"Lumen Field, Seattle",stage:"Group B"},{home:"Scotland",away:"Brazil",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group C"},{home:"Morocco",away:"Haiti",kickoff_et:"18:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group C"},{home:"Czechia",away:"Mexico",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Group A"},{home:"South Africa",away:"South Korea",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Group A"}],
+    "2026-06-25":[{home:"Curaçao",away:"Ivory Coast",kickoff_et:"16:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group E"},{home:"Ecuador",away:"Germany",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Group E"},{home:"Japan",away:"Sweden",kickoff_et:"19:00",venue:"AT&T Stadium, Arlington",stage:"Group F"},{home:"Tunisia",away:"Netherlands",kickoff_et:"19:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group F"},{home:"Türkiye",away:"USA",kickoff_et:"22:00",venue:"SoFi Stadium, Inglewood",stage:"Group D"},{home:"Paraguay",away:"Australia",kickoff_et:"22:00",venue:"Levi's Stadium, Santa Clara",stage:"Group D"}],
+    "2026-06-26":[{home:"Norway",away:"France",kickoff_et:"15:00",venue:"Gillette Stadium, Foxborough",stage:"Group I"},{home:"Senegal",away:"Iraq",kickoff_et:"15:00",venue:"BMO Field, Toronto",stage:"Group I"},{home:"Cape Verde",away:"Saudi Arabia",kickoff_et:"20:00",venue:"NRG Stadium, Houston",stage:"Group H"},{home:"Uruguay",away:"Spain",kickoff_et:"20:00",venue:"Estadio Akron, Zapopan",stage:"Group H"},{home:"Egypt",away:"Iran",kickoff_et:"23:00",venue:"Lumen Field, Seattle",stage:"Group G"},{home:"New Zealand",away:"Belgium",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Group G"}],
+    "2026-06-27":[{home:"Panama",away:"England",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Group L"},{home:"Croatia",away:"Ghana",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Group L"},{home:"Colombia",away:"Portugal",kickoff_et:"19:30",venue:"Hard Rock Stadium, Miami Gardens",stage:"Group K"},{home:"DR Congo",away:"Uzbekistan",kickoff_et:"19:30",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Group K"},{home:"Algeria",away:"Austria",kickoff_et:"22:00",venue:"Arrowhead Stadium, Kansas City",stage:"Group J"},{home:"Jordan",away:"Argentina",kickoff_et:"22:00",venue:"AT&T Stadium, Arlington",stage:"Group J"}],
     "2026-06-28":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"TBD",stage:"Round of 32"}],
-    "2026-06-29":[
-      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"16:30",venue:"Gillette Stadium, Foxborough",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Round of 32"},
-    ],
-    "2026-06-30":[
-      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 32"},
-    ],
-    "2026-07-01":[
-      {home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"Lumen Field, Seattle",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Levi's Stadium, Santa Clara",stage:"Round of 32"},
-    ],
-    "2026-07-02":[
-      {home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Round of 32"},
-    ],
-    "2026-07-03":[
-      {home:"TBD",away:"TBD",kickoff_et:"14:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Round of 32"},
-      {home:"TBD",away:"TBD",kickoff_et:"21:30",venue:"Arrowhead Stadium, Kansas City",stage:"Round of 32"},
-    ],
-    "2026-07-04":[
-      {home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 16"},
-      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Round of 16"},
-    ],
-    "2026-07-05":[
-      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 16"},
-      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 16"},
-    ],
-    "2026-07-06":[
-      {home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"AT&T Stadium, Arlington",stage:"Round of 16"},
-      {home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Lumen Field, Seattle",stage:"Round of 16"},
-    ],
-    "2026-07-07":[
-      {home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 16"},
-      {home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"BC Place, Vancouver",stage:"Round of 16"},
-    ],
+    "2026-06-29":[{home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"16:30",venue:"Gillette Stadium, Foxborough",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio BBVA, Monterrey",stage:"Round of 32"}],
+    "2026-06-30":[{home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 32"}],
+    "2026-07-01":[{home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"Lumen Field, Seattle",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Levi's Stadium, Santa Clara",stage:"Round of 32"}],
+    "2026-07-02":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"19:00",venue:"BMO Field, Toronto",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"23:00",venue:"BC Place, Vancouver",stage:"Round of 32"}],
+    "2026-07-03":[{home:"TBD",away:"TBD",kickoff_et:"14:00",venue:"AT&T Stadium, Arlington",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"18:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Round of 32"},{home:"TBD",away:"TBD",kickoff_et:"21:30",venue:"Arrowhead Stadium, Kansas City",stage:"Round of 32"}],
+    "2026-07-04":[{home:"TBD",away:"TBD",kickoff_et:"13:00",venue:"NRG Stadium, Houston",stage:"Round of 16"},{home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Lincoln Financial Field, Philadelphia",stage:"Round of 16"}],
+    "2026-07-05":[{home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"MetLife Stadium, East Rutherford",stage:"Round of 16"},{home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Estadio Azteca, Mexico City",stage:"Round of 16"}],
+    "2026-07-06":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"AT&T Stadium, Arlington",stage:"Round of 16"},{home:"TBD",away:"TBD",kickoff_et:"20:00",venue:"Lumen Field, Seattle",stage:"Round of 16"}],
+    "2026-07-07":[{home:"TBD",away:"TBD",kickoff_et:"12:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Round of 16"},{home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"BC Place, Vancouver",stage:"Round of 16"}],
     "2026-07-09":[{home:"TBD",away:"TBD",kickoff_et:"16:00",venue:"Gillette Stadium, Foxborough",stage:"Quarterfinal"}],
     "2026-07-10":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"SoFi Stadium, Inglewood",stage:"Quarterfinal"}],
-    "2026-07-11":[
-      {home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Quarterfinal"},
-      {home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Quarterfinal"},
-    ],
+    "2026-07-11":[{home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Quarterfinal"},{home:"TBD",away:"TBD",kickoff_et:"21:00",venue:"Arrowhead Stadium, Kansas City",stage:"Quarterfinal"}],
     "2026-07-14":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"AT&T Stadium, Arlington",stage:"Semifinal"}],
     "2026-07-15":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"Mercedes-Benz Stadium, Atlanta",stage:"Semifinal"}],
     "2026-07-18":[{home:"TBD",away:"TBD",kickoff_et:"17:00",venue:"Hard Rock Stadium, Miami Gardens",stage:"Third Place"}],
     "2026-07-19":[{home:"TBD",away:"TBD",kickoff_et:"15:00",venue:"MetLife Stadium, East Rutherford, NJ",stage:"Final"}],
   };
 
-  const BOOKS = {
-    fanduel:{label:'FanDuel',cls:'book-fanduel'},
-    draftkings:{label:'DraftKings',cls:'book-draftkings'},
-    betmgm:{label:'BetMGM',cls:'book-betmgm'},
-    bet365:{label:'Bet365',cls:'book-bet365'},
-    fanatics:{label:'Fanatics',cls:'book-fanatics'},
-  };
+  const BOOKS={fanduel:{label:'FanDuel',cls:'book-fanduel'},draftkings:{label:'DraftKings',cls:'book-draftkings'},betmgm:{label:'BetMGM',cls:'book-betmgm'},bet365:{label:'Bet365',cls:'book-bet365'},fanatics:{label:'Fanatics',cls:'book-fanatics'}};
 
-  function confDots(n) {
-    let d='';
-    for(let i=1;i<=5;i++) d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;
-    return `<div class="conf-dots">${d}</div>`;
-  }
-  function fmtKickoff(kt) {
-    const [h,m]=kt.split(':').map(Number);
-    const ampm=h>=12?'PM':'AM', h12=h%12||12;
-    return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;
-  }
-  function kickoffDate(kt,dateKey) {
-    const [y,mo,d]=dateKey.split('-').map(Number);
-    const [h,m]=kt.split(':').map(Number);
-    return new Date(y,mo-1,d,h,m,0);
-  }
-  function matchStatusForDay(kt,dateKey) {
-    const now=Date.now(),ko=kickoffDate(kt,dateKey).getTime(),diff=now-ko;
-    if(diff<0) return 'pre';
-    if(diff<115*60*1000) return 'live';
-    return 'ft';
-  }
-  const normalize=s=>s?.toLowerCase().replace(/[^a-z]/g,'')||'';
-  function fuzzyTeamMatch(a,b) {
-    const na=normalize(a),nb=normalize(b);
-    return na===nb||na.includes(nb.slice(0,4))||nb.includes(na.slice(0,4));
-  }
+  function confDots(n){let d='';for(let i=1;i<=5;i++)d+=`<div class="conf-dot${i<=n?' on':''}"></div>`;return `<div class="conf-dots">${d}</div>`;}
+  function fmtKickoff(kt){const[h,m]=kt.split(':').map(Number);const ampm=h>=12?'PM':'AM',h12=h%12||12;return `${h12}:${String(m).padStart(2,'0')} ${ampm} ET`;}
+  function kickoffDate(kt,dateKey){const[y,mo,d]=dateKey.split('-').map(Number);const[h,m]=kt.split(':').map(Number);return new Date(y,mo-1,d,h,m,0);}
+  function matchStatusForDay(kt,dateKey){const now=Date.now(),ko=kickoffDate(kt,dateKey).getTime(),diff=now-ko;if(diff<0)return 'pre';if(diff<115*60*1000)return 'live';return 'ft';}
 
-  // ── COUNTDOWNS ───────────────────────────────────────────────
+  function normalizeForMatch(s){
+    if(!s)return '';
+    return s.toLowerCase()
+      .replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/İ/g,'i').replace(/Ğ/g,'g').replace(/Ü/g,'u').replace(/Ş/g,'s').replace(/Ö/g,'o').replace(/Ç/g,'c')
+      .replace(/[^a-z0-9\s]/g,'').trim();
+  }
+  function fuzzyTeamMatch(a,b){const na=normalizeForMatch(a),nb=normalizeForMatch(b);return na===nb||na.includes(nb.slice(0,4))||nb.includes(na.slice(0,4));}
+
   const countdownTimers={};
-  function startCountdown(kt,dateKey,elId) {
-    if(countdownTimers[elId]) clearInterval(countdownTimers[elId]);
-    function tick() {
+  function startCountdown(kt,dateKey,elId){
+    if(countdownTimers[elId])clearInterval(countdownTimers[elId]);
+    function tick(){
       const el=document.getElementById(elId);
       if(!el){clearInterval(countdownTimers[elId]);return;}
       const diff=kickoffDate(kt,dateKey).getTime()-Date.now();
       if(diff<=0){el.textContent='LIVE';el.classList.add('urgent');clearInterval(countdownTimers[elId]);return;}
       const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
       el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`;
-      if(diff<30*60*1000) el.classList.add('urgent');
+      if(diff<30*60*1000)el.classList.add('urgent');
     }
-    tick();
-    countdownTimers[elId]=setInterval(tick,1000);
+    tick();countdownTimers[elId]=setInterval(tick,1000);
   }
 
-  // ── SCORES CACHE ─────────────────────────────────────────────
   const scoresCache={};
-  async function fetchScoresForDay(dateKey) {
-    if(scoresCache[dateKey]) return scoresCache[dateKey];
-    try {
-      const res=await fetch(`/api/scores?date=${dateKey}`);
-      const data=await res.json();
-      if(Array.isArray(data)){scoresCache[dateKey]=data;return data;}
-    } catch(e){}
+  async function fetchScoresForDay(dateKey){
+    if(scoresCache[dateKey])return scoresCache[dateKey];
+    try{const res=await fetch(`/api/scores?date=${dateKey}`);const data=await res.json();if(Array.isArray(data)){scoresCache[dateKey]=data;return data;}}catch(e){}
     return [];
   }
-  function findScore(scores,home,away) {
-    if(!scores?.length) return null;
-    for(const s of scores){
-      if(fuzzyTeamMatch(s.home,home)&&fuzzyTeamMatch(s.away,away)) return s;
-    }
-    return null;
-  }
+  function findScore(scores,home,away){if(!scores?.length)return null;for(const s of scores){if(fuzzyTeamMatch(s.home,home)&&fuzzyTeamMatch(s.away,away))return s;}return null;}
 
   // ── LIVE TRACKER ─────────────────────────────────────────────
   const trackerCache={};
-  const trackerIntervals={};
-
-  async function fetchTrackerData(fixtureId) {
-    if(!fixtureId) return null;
-    try {
-      const res=await fetch(`/api/live-tracker?fixture_id=${fixtureId}`);
-      const data=await res.json();
-      trackerCache[fixtureId]=data;
-      return data;
-    } catch(e){return null;}
+  async function fetchTrackerData(fixtureId){
+    if(!fixtureId)return null;
+    try{const res=await fetch(`/api/live-tracker?fixture_id=${fixtureId}`);const data=await res.json();trackerCache[fixtureId]=data;return data;}
+    catch(e){return null;}
   }
 
-  function parsePickLine(line) {
-    // Extract stat type, direction, and threshold from line string
-    // e.g. "Over 1.5 Shots on Target -115" → {dir:'over', threshold:1.5, stat:'shots_on_target'}
-    const lower = line.toLowerCase();
-    const dir = lower.includes('over') ? 'over' : lower.includes('under') ? 'under' : null;
-    const numMatch = line.match(/(\d+\.?\d*)/);
-    const threshold = numMatch ? parseFloat(numMatch[1]) : null;
-
-    let stat = null;
-    if(lower.includes('shot on target')||lower.includes('shots on target')) stat='shotsOnTarget';
-    else if(lower.includes('shot')||lower.includes('shots')) stat='shots';
-    else if(lower.includes('tackle')) stat='tackles';
-    else if(lower.includes('foul')) stat='fouls';
-    else if(lower.includes('key pass')) stat='keyPasses';
-    else if(lower.includes('pass')) stat='passes';
-    else if(lower.includes('save')) stat='saves';
-    else if(lower.includes('corner')) stat='corners';
-    else if(lower.includes('yellow card')||lower.includes('card')) stat='yellowCards';
-    else if(lower.includes('btts')||lower.includes('both teams')) stat='btts';
-    else if(lower.includes('total goals')||lower.includes('over total')) stat='totalGoals';
-    else if(lower.includes('clean sheet')) stat='cleanSheet';
-
-    return {dir, threshold, stat};
+  function parsePickLine(line){
+    const lower=line.toLowerCase();
+    const dir=lower.includes('over')?'over':lower.includes('under')?'under':null;
+    const numMatch=line.match(/(\d+\.?\d*)/);
+    const threshold=numMatch?parseFloat(numMatch[1]):null;
+    let stat=null;
+    if(lower.includes('shot on target')||lower.includes('shots on target'))stat='shotsOnTarget';
+    else if(lower.includes('shot')||lower.includes('shots'))stat='shots';
+    else if(lower.includes('tackle'))stat='tackles';
+    else if(lower.includes('foul'))stat='fouls';
+    else if(lower.includes('key pass'))stat='keyPasses';
+    else if(lower.includes('pass'))stat='passes';
+    else if(lower.includes('save'))stat='saves';
+    else if(lower.includes('corner'))stat='corners';
+    else if(lower.includes('yellow card')||lower.includes('card'))stat='yellowCards';
+    else if(lower.includes('btts')||lower.includes('both teams'))stat='btts';
+    else if(lower.includes('total goals'))stat='totalGoals';
+    else if(lower.includes('clean sheet'))stat='cleanSheet';
+    return{dir,threshold,stat};
   }
 
-  function getStatValue(trackerData, pick, home, away) {
-    if(!trackerData) return null;
-    const parsed = parsePickLine(pick.line);
-    if(!parsed.stat) return null;
-
-    const title = pick.title.toLowerCase();
-    const teamStats = trackerData.team_stats;
-    const playerStats = trackerData.player_stats;
-
-    // Game/team props
-    if(parsed.stat==='corners') return {current: teamStats?.corners?.total ?? 0, threshold: parsed.threshold, dir: parsed.dir, label: 'Corners'};
-    if(parsed.stat==='yellowCards') return {current: teamStats?.yellow_cards?.total ?? 0, threshold: parsed.threshold, dir: parsed.dir, label: 'Cards'};
-    if(parsed.stat==='totalGoals') return {current: (trackerData.home?.score??0)+(trackerData.away?.score??0), threshold: parsed.threshold, dir: parsed.dir, label: 'Goals'};
-    if(parsed.stat==='btts') {
-      const bothScored = trackerData.home?.score>0 && trackerData.away?.score>0;
-      return {current: bothScored?1:0, threshold:1, dir:'over', label:'BTTS', isBool:true};
+  function getStatValue(trackerData,pick,home,away){
+    if(!trackerData)return null;
+    const parsed=parsePickLine(pick.line);
+    if(!parsed.stat)return null;
+    const title=pick.title.toLowerCase();
+    const teamStats=trackerData.team_stats;
+    const playerStats=trackerData.player_stats||{};
+    if(parsed.stat==='corners')return{current:teamStats?.corners?.total??0,threshold:parsed.threshold,dir:parsed.dir,label:'Corners'};
+    if(parsed.stat==='yellowCards')return{current:teamStats?.yellow_cards?.total??0,threshold:parsed.threshold,dir:parsed.dir,label:'Cards'};
+    if(parsed.stat==='totalGoals')return{current:(trackerData.home?.score??0)+(trackerData.away?.score??0),threshold:parsed.threshold,dir:parsed.dir,label:'Goals'};
+    if(parsed.stat==='btts'){const b=trackerData.home?.score>0&&trackerData.away?.score>0;return{current:b?1:0,threshold:1,dir:'over',label:'BTTS',isBool:true};}
+    if(parsed.stat==='cleanSheet'){
+      const hn=normalizeForMatch(home),th=normalizeForMatch(title);
+      const isHome=th.includes(hn.slice(0,4));
+      const conceded=isHome?trackerData.away?.score??0:trackerData.home?.score??0;
+      return{current:conceded===0?1:0,threshold:1,dir:'over',label:'Clean Sheet',isBool:true};
     }
-    if(parsed.stat==='cleanSheet') {
-      const teamName = title.includes(home.toLowerCase().slice(0,4)) ? 'home' : 'away';
-      const conceded = teamName==='home' ? trackerData.away?.score??0 : trackerData.home?.score??0;
-      return {current: conceded===0?1:0, threshold:1, dir:'over', label:'Clean Sheet', isBool:true};
+    const titleNorm=normalizeForMatch(title);
+    for(const[name,stats]of Object.entries(playerStats)){
+      const nameNorm=normalizeForMatch(name);
+      const nameWords=nameNorm.split(' ');
+      const matched=nameWords.some(nw=>nw.length>=4&&titleNorm.includes(nw));
+      if(matched){return{current:stats[parsed.stat]??0,threshold:parsed.threshold,dir:parsed.dir,label:parsed.stat};}
     }
-
-    // Player props — find player in title
-    for(const [name, stats] of Object.entries(playerStats||{})) {
-      if(title.includes(name.split(' ').pop()?.toLowerCase()||'')) {
-        const current = stats[parsed.stat] ?? 0;
-        return {current, threshold: parsed.threshold, dir: parsed.dir, label: parsed.stat};
-      }
-    }
-
     return null;
   }
 
-  function renderPickTracker(pick, trackerData, home, away, matchStatus) {
-    if(matchStatus==='pre'||!trackerData) return '';
-
-    const statVal = getStatValue(trackerData, pick, home, away);
-    if(!statVal) return '';
-
-    const {current, threshold, dir, label, isBool} = statVal;
-    const minute = trackerData.minute || 90;
-    const isFt = matchStatus==='ft';
-
-    let status, statusLabel, pct;
-
-    if(isBool) {
-      if(current===1) { status='hit'; statusLabel='✅ Hit'; pct=100; }
-      else if(isFt) { status='miss'; statusLabel='❌ Miss'; pct=0; }
-      else { status='live'; statusLabel=`🔄 Tracking`; pct=50; }
-    } else if(dir==='over') {
-      pct = Math.min(100, Math.round((current/threshold)*100));
-      if(current>=threshold) { status='hit'; statusLabel=`✅ Hit ${current}/${threshold}`; pct=100; }
-      else if(isFt) { status='miss'; statusLabel=`❌ Miss ${current}/${threshold}`; }
-      else { status='live'; statusLabel=`🔄 ${current}/${threshold} · ${minute}'`; }
-    } else {
-      pct = Math.min(100, Math.round((current/threshold)*100));
-      if(current<=threshold&&isFt) { status='hit'; statusLabel=`✅ Hit ${current}/${threshold}`; pct=100; }
-      else if(current>threshold) { status='miss'; statusLabel=`❌ Busted ${current}/${threshold}`; pct=100; }
-      else { status='live'; statusLabel=`🔄 ${current}/${threshold} · ${minute}'`; pct=Math.min(90,pct); }
+  function renderPickTracker(pick,trackerData,home,away,matchStatus){
+    if(matchStatus==='pre'||!trackerData)return '';
+    const statVal=getStatValue(trackerData,pick,home,away);
+    if(!statVal)return '';
+    const{current,threshold,dir,isBool}=statVal;
+    const minute=trackerData.minute||90;
+    const isFt=matchStatus==='ft';
+    let status,statusLabel,pct;
+    if(isBool){
+      if(current===1){status='hit';statusLabel='✅ Hit';pct=100;}
+      else if(isFt){status='miss';statusLabel='❌ Miss';pct=0;}
+      else{status='live';statusLabel='🔄 Tracking...';pct=50;}
+    }else if(dir==='over'){
+      pct=Math.min(100,Math.round((current/threshold)*100));
+      if(current>=threshold){status='hit';statusLabel=`✅ Hit — ${current}/${threshold}`;pct=100;}
+      else if(isFt){status='miss';statusLabel=`❌ Miss — ${current}/${threshold}`;}
+      else{status='live';statusLabel=`🔄 ${current} of ${threshold} needed · ${minute}'`;}
+    }else{
+      pct=Math.min(100,Math.round((current/threshold)*100));
+      if(current<=threshold&&isFt){status='hit';statusLabel=`✅ Hit — ${current}/${threshold}`;pct=100;}
+      else if(current>threshold){status='miss';statusLabel=`❌ Busted — ${current}/${threshold}`;pct=100;}
+      else{status='live';statusLabel=`🔄 ${current}/${threshold} · ${minute}'`;pct=Math.min(90,pct);}
     }
-
     return `<div class="pick-tracker-live">
-      <div class="pick-tracker-row">
-        <span class="pick-tracker-status ${status}">${statusLabel}</span>
-      </div>
-      <div class="pick-progress-bar">
-        <div class="pick-progress-fill ${status}" style="width:${pct}%"></div>
-      </div>
+      <div class="pick-tracker-row"><span class="pick-tracker-status ${status}">${statusLabel}</span></div>
+      <div class="pick-progress-bar"><div class="pick-progress-fill ${status}" style="width:${pct}%"></div></div>
     </div>`;
   }
 
-  function getPickCardClass(pick, trackerData, home, away, matchStatus) {
-    if(matchStatus==='pre'||!trackerData) return '';
-    const statVal = getStatValue(trackerData, pick, home, away);
-    if(!statVal) return '';
-    const {current, threshold, dir, isBool} = statVal;
-    const isFt = matchStatus==='ft';
-    if(isBool) return current===1?'pick-hit':isFt?'pick-miss':'pick-live';
-    if(dir==='over') return current>=threshold?'pick-hit':isFt?'pick-miss':'pick-live';
+  function getPickCardClass(pick,trackerData,home,away,matchStatus){
+    if(matchStatus==='pre'||!trackerData)return '';
+    const statVal=getStatValue(trackerData,pick,home,away);
+    if(!statVal)return '';
+    const{current,threshold,dir,isBool}=statVal;
+    const isFt=matchStatus==='ft';
+    if(isBool)return current===1?'pick-hit':isFt?'pick-miss':'pick-live';
+    if(dir==='over')return current>=threshold?'pick-hit':isFt?'pick-miss':'pick-live';
     return current<=threshold&&isFt?'pick-hit':current>threshold?'pick-miss':'pick-live';
   }
 
   // ── 2-DAY SLATE ──────────────────────────────────────────────
-  function renderSlate() {
-    const days=[
-      {date:yesterdayET,key:makeKey(yesterdayET),label:'Yesterday'},
-      {date:todayET,key:makeKey(todayET),label:'Today'},
-    ];
+  function renderSlate(){
+    const days=[{date:yesterdayET,key:makeKey(yesterdayET),label:'Yesterday'},{date:todayET,key:makeKey(todayET),label:'Today'}];
     document.getElementById('slate-strip').innerHTML=days.map(day=>{
       const matches=SCHEDULE[day.key]||[];
       const isToday=day.key===todayKey;
-      const statusHtml=isToday
-        ?`<span class="slate-card-status slate-status-today">Today</span>`
-        :`<span class="slate-card-status slate-status-done">Completed</span>`;
+      const statusHtml=isToday?`<span class="slate-card-status slate-status-today">Today</span>`:`<span class="slate-card-status slate-status-done">Completed</span>`;
       const dateStr=day.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return `<div class="slate-card${day.key===activeDay?' active':''}" onclick="switchDay('${day.key}')">
         <div class="slate-card-label">${day.label}</div>
@@ -669,24 +452,18 @@
     }).join('');
   }
 
-  function switchDay(key) {
-    activeDay=key;
-    renderSlate();
-    loadPicksForDay(key);
-    if(key===todayKey){
-      fetchLiveScores();
-      document.getElementById('live-section').style.display='block';
-    } else {
-      document.getElementById('live-section').style.display='none';
-    }
+  function switchDay(key){
+    activeDay=key;renderSlate();loadPicksForDay(key);
+    if(key===todayKey){fetchLiveScores();document.getElementById('live-section').style.display='block';}
+    else document.getElementById('live-section').style.display='none';
   }
 
   // ── TRACKER ──────────────────────────────────────────────────
-  async function loadTracker() {
-    try {
+  async function loadTracker(){
+    try{
       const res=await fetch('/api/results');
       const data=await res.json();
-      const {record,units,results}=data;
+      const{record,units,results}=data;
       document.getElementById('t-wins').textContent=record.wins;
       document.getElementById('t-losses').textContent=record.losses;
       document.getElementById('t-pushes').textContent=record.pushes;
@@ -695,10 +472,7 @@
       uEl.style.color=units>=0?'var(--green)':'var(--red)';
       const picksEl=document.getElementById('tracker-picks');
       const keys=Object.keys(results);
-      if(!keys.length){
-        picksEl.innerHTML=`<div class="tracker-empty">No results tracked yet. Check back after matches.</div>`;
-        return;
-      }
+      if(!keys.length){picksEl.innerHTML=`<div class="tracker-empty">No results tracked yet. Check back after matches.</div>`;return;}
       picksEl.innerHTML=keys.sort().reverse().map(key=>{
         const r=results[key];
         return `<div class="tracker-pick">
@@ -710,19 +484,19 @@
           <span class="result-badge result-${r.result}">${r.result}</span>
         </div>`;
       }).join('');
-    } catch(e){}
+    }catch(e){}
   }
 
   // ── SPECIAL ──────────────────────────────────────────────────
-  function renderSpecial(picks) {
-    if(!picks) return;
+  function renderSpecial(picks){
+    if(!picks)return;
     let best=null;
     picks.forEach(match=>{
       [...(match.player_props||[]),...(match.game_props||[]),...(match.team_props||[])].forEach(p=>{
-        if(!best||p.confidence>best.confidence) best={...p,matchHome:match.home,matchAway:match.away};
+        if(!best||p.confidence>best.confidence)best={...p,matchHome:match.home,matchAway:match.away};
       });
     });
-    if(!best) return;
+    if(!best)return;
     const book=BOOKS[best.book]||BOOKS['fanduel'];
     document.getElementById('special-card').innerHTML=`
       <div class="special-glow"></div>
@@ -738,26 +512,21 @@
       </div>`;
   }
 
-  async function loadTodaySpecial() {
-    try {
-      const res=await fetch(`/api/picks?date=${todayKey}`);
-      const data=await res.json();
-      if(data.status==='ready'&&data.picks) renderSpecial(data.picks);
-    } catch(e){}
+  async function loadTodaySpecial(){
+    try{const res=await fetch(`/api/picks?date=${todayKey}`);const data=await res.json();if(data.status==='ready'&&data.picks)renderSpecial(data.picks);}catch(e){}
   }
 
   // ── H2H ──────────────────────────────────────────────────────
   const h2hCache={};
-  async function fetchH2H(home,away,containerId) {
-    const key=`${home}|${away}`;
-    const el=document.getElementById(containerId);
-    if(!el) return;
+  async function fetchH2H(home,away,containerId){
+    const key=`${home}|${away}`;const el=document.getElementById(containerId);
+    if(!el)return;
     if(h2hCache[key]){el.innerHTML=h2hCache[key];return;}
     el.innerHTML=`<div class="h2h-loading">Loading historical data...</div>`;
-    try {
+    try{
       const res=await fetch(`/api/h2h?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}`);
       const d=await res.json();
-      if(d.error) throw new Error(d.error);
+      if(d.error)throw new Error(d.error);
       const html=`
         <div class="h2h-grid">
           <div class="h2h-team-card">
@@ -785,26 +554,19 @@
             <div style="text-align:center;flex:1;"><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--warm)">${d.h2h?.away_wins||0}</div><div style="font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">${away} Wins</div></div>
           </div>
           <div class="h2h-meetings">
-            ${(d.h2h?.last_meetings||[]).map(m=>`
-              <div class="h2h-meeting">
-                <span>${m.year} · ${m.competition}</span>
-                <span class="h2h-meeting-score">${m.score}</span>
-              </div>`).join('')}
+            ${(d.h2h?.last_meetings||[]).map(m=>`<div class="h2h-meeting"><span>${m.year} · ${m.competition}</span><span class="h2h-meeting-score">${m.score}</span></div>`).join('')}
           </div>
         </div>`;
-      h2hCache[key]=html;
-      el.innerHTML=html;
-    } catch(e){
-      el.innerHTML=`<div class="h2h-loading">Could not load historical data.</div>`;
-    }
+      h2hCache[key]=html;el.innerHTML=html;
+    }catch(e){el.innerHTML=`<div class="h2h-loading">Could not load historical data.</div>`;}
   }
 
   // ── LIVE SCORES ──────────────────────────────────────────────
   let liveData={};
-  async function fetchLiveScores() {
+  async function fetchLiveScores(){
     const matches=SCHEDULE[todayKey]||[];
-    if(!matches.length) return;
-    try {
+    if(!matches.length)return;
+    try{
       const res=await fetch('/api/live');
       const scores=await res.json();
       if(Array.isArray(scores)){
@@ -812,31 +574,18 @@
         scores.forEach(s=>{liveData[`${s.home}|${s.away}`]=s;});
         scoresCache[todayKey]=scores;
         renderLiveSection();
-        // Fetch tracker data for live matches
-        for(const s of scores){
-          if(s.status==='live'&&s.fixture_id){
-            fetchTrackerData(s.fixture_id);
-          }
-        }
+        const fetches=scores.filter(s=>(s.status==='live'||s.status==='ft')&&s.fixture_id).map(s=>fetchTrackerData(s.fixture_id));
+        if(fetches.length){await Promise.all(fetches);if(activeDay===todayKey)loadPicksForDay(todayKey);}
       }
-    } catch(e){}
+    }catch(e){}
   }
 
-  function findLiveData(home,away) {
-    for(const key of Object.keys(liveData)){
-      const [h,a]=key.split('|');
-      if(fuzzyTeamMatch(h,home)&&fuzzyTeamMatch(a,away)) return liveData[key];
-    }
-    return null;
-  }
+  function findLiveData(home,away){for(const key of Object.keys(liveData)){const[h,a]=key.split('|');if(fuzzyTeamMatch(h,home)&&fuzzyTeamMatch(a,away))return liveData[key];}return null;}
 
-  function renderLiveCard(match,score) {
+  function renderLiveCard(match,score){
     const status=score?score.status:matchStatusForDay(match.kickoff_et,todayKey);
     const isLive=status==='live',isFt=status==='ft';
-    let badge=isLive
-      ?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`
-      :isFt?`<div class="ft-badge">Full Time</div>`
-      :`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
+    let badge=isLive?`<div class="live-badge"><div class="live-dot"></div>Live · ${score?.minute||''}'</div>`:isFt?`<div class="ft-badge">Full Time</div>`:`<div class="pre-badge">${fmtKickoff(match.kickoff_et)}</div>`;
     const hs=score?.home_score??'–',as=score?.away_score??'–';
     let goalHtml='';
     if((isLive||isFt)&&score?.goalscorers?.length){
@@ -851,9 +600,7 @@
       ${badge}
       <div class="score-row">
         <div class="score-team">${match.home}</div>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div>
-        </div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="score-num">${hs}</div><div class="score-sep">:</div><div class="score-num">${as}</div></div>
         <div class="score-team" style="text-align:right">${match.away}</div>
       </div>
       <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:-4px;margin-bottom:6px;">${match.stage} · ${match.venue}</div>
@@ -861,15 +608,15 @@
     </div>`;
   }
 
-  function renderLiveSection() {
+  function renderLiveSection(){
     const matches=SCHEDULE[todayKey]||[];
-    if(!matches.length) return;
+    if(!matches.length)return;
     document.getElementById('live-section').style.display='block';
     document.getElementById('live-grid').innerHTML=matches.map(m=>renderLiveCard(m,findLiveData(m.home,m.away))).join('');
   }
 
   // ── PICKS ────────────────────────────────────────────────────
-  function renderPick(pick, trackerData, home, away, matchStatus) {
+  function renderPick(pick,trackerData,home,away,matchStatus){
     const book=BOOKS[pick.book]||BOOKS['fanduel'];
     const cardClass=getPickCardClass(pick,trackerData,home,away,matchStatus);
     const trackerHtml=renderPickTracker(pick,trackerData,home,away,matchStatus);
@@ -887,7 +634,7 @@
     </div>`;
   }
 
-  function renderMatchCard(match,index,picksData,dateKey,scores) {
+  function renderMatchCard(match,index,picksData,dateKey,scores){
     const id='mc-'+index;
     const h2hBodyId='h2h-body-'+index;
     const h2hToggleId='h2h-toggle-'+index;
@@ -896,7 +643,8 @@
     const matchPicks=picksData?picksData.find(p=>!p.pending&&fuzzyTeamMatch(p.home,match.home)&&fuzzyTeamMatch(p.away,match.away)):null;
     const score=findScore(scores,match.home,match.away);
     const liveScore=findLiveData(match.home,match.away);
-    const fixtureId=liveScore?.fixture_id||null;
+    // Get fixture ID from live data OR scores data (covers finished games)
+    const fixtureId=liveScore?.fixture_id||score?.fixture_id||null;
     const trackerData=fixtureId?trackerCache[fixtureId]||null:null;
 
     let scoreHtml='';
@@ -918,9 +666,8 @@
         <div class="picks-grid cat-game">${gp}</div>
         <div class="cat-header cat-team"><div class="cat-pip"></div><div class="cat-label">Team Props</div></div>
         <div class="picks-grid cat-team">${tp}</div>`;
-    } else {
+    }else{
       const isPast=dateKey<todayKey;
-      const isPending=picksData&&picksData.find(p=>p.pending&&fuzzyTeamMatch(p.home,match.home));
       bodyHtml=`<div class="pick-pending">
         <div class="pick-pending-icon">${isPast?'📭':'⏳'}</div>
         <div class="pick-pending-title">${isPast?'No picks recorded':'Picks dropping soon'}</div>
@@ -936,7 +683,7 @@
         :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`
       :`<div class="countdown-wrap"><span style="font-size:10px;color:var(--muted);">Full Time</span></div>`;
 
-    return `<div class="match-card${index===0?' open':''}" id="${id}" data-fixture="${fixtureId||''}">
+    return `<div class="match-card${index===0?' open':''}" id="${id}">
       <div class="match-header" onclick="toggleCard('${id}')">
         <div style="flex:1;min-width:0;">
           <div class="match-teams">${match.home}<span class="match-vs">vs</span>${match.away}</div>
@@ -970,22 +717,45 @@
   function toggleH2H(toggleId,bodyId,home,away){
     const toggle=document.getElementById(toggleId);
     toggle.classList.toggle('open');
-    if(toggle.classList.contains('open')) fetchH2H(home,away,bodyId);
+    if(toggle.classList.contains('open'))fetchH2H(home,away,bodyId);
   }
 
-  async function loadPicksForDay(dateKey) {
+  // ── LOAD PICKS ───────────────────────────────────────────────
+  async function loadPicksForDay(dateKey){
     const section=document.getElementById('picks-section');
     const matches=SCHEDULE[dateKey]||[];
     if(!matches.length){
       section.innerHTML=`<div class="status-box"><div class="status-icon">📅</div><div class="status-title">No matches</div><div class="status-sub">No World Cup 2026 matches scheduled.</div></div>`;
       return;
     }
-    const [picksData,scores]=await Promise.all([
+
+    const[picksData,scores]=await Promise.all([
       fetch(`/api/picks?date=${dateKey}`).then(r=>r.json()).catch(()=>({status:'error'})),
       fetchScoresForDay(dateKey),
     ]);
+
+    // Fetch tracker data for ALL finished and live matches BEFORE rendering
+    if(dateKey===todayKey){
+      const seen=new Set();
+      const trackerFetches=[];
+      // From live data
+      for(const s of Object.values(liveData)){
+        if((s.status==='live'||s.status==='ft')&&s.fixture_id&&!trackerCache[s.fixture_id]&&!seen.has(s.fixture_id)){
+          seen.add(s.fixture_id);
+          trackerFetches.push(fetchTrackerData(s.fixture_id));
+        }
+      }
+      // From scores data — catches finished games not in liveData
+      for(const s of scores){
+        if((s.status==='live'||s.status==='ft')&&s.fixture_id&&!trackerCache[s.fixture_id]&&!seen.has(s.fixture_id)){
+          seen.add(s.fixture_id);
+          trackerFetches.push(fetchTrackerData(s.fixture_id));
+        }
+      }
+      if(trackerFetches.length)await Promise.all(trackerFetches);
+    }
+
     const picks=picksData.status==='ready'||picksData.partial?picksData.picks:null;
-    const genTime=picks?new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):null;
     const isPast=dateKey<todayKey;
     const label=picks
       ?`<div class="section-label">Picks · ${new Date(dateKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div><div class="last-updated">Generated · Lineups confirmed</div>`
@@ -994,23 +764,20 @@
     section.innerHTML=label+cards;
     if(dateKey===todayKey){
       matches.forEach((m,i)=>{
-        if(matchStatusForDay(m.kickoff_et,dateKey)==='pre') startCountdown(m.kickoff_et,dateKey,'cd-'+i);
+        if(matchStatusForDay(m.kickoff_et,dateKey)==='pre')startCountdown(m.kickoff_et,dateKey,'cd-'+i);
       });
     }
-    if(picksData.status==='pending'&&dateKey===todayKey) setTimeout(()=>loadPicksForDay(todayKey),5*60*1000);
+    if(picksData.status==='pending'&&dateKey===todayKey)setTimeout(()=>loadPicksForDay(todayKey),5*60*1000);
   }
 
   // ── INIT ─────────────────────────────────────────────────────
   renderSlate();
   loadTracker();
   renderLiveSection();
-  loadPicksForDay(todayKey);
+  fetchLiveScores().then(()=>loadPicksForDay(todayKey));
   loadTodaySpecial();
-  fetchLiveScores();
   setInterval(fetchLiveScores,30*1000);
   setInterval(loadTracker,60*1000);
-  // Refresh picks section every 60s to update live trackers
-  setInterval(()=>{if(activeDay===todayKey) loadPicksForDay(todayKey);},60*1000);
 </script>
 </body>
 </html>
