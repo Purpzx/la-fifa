@@ -85,7 +85,6 @@ function getTournamentContext(stage) {
 async function fetchLineupForMatch(match, dateKey) {
   const apiKey = process.env.API_FOOTBALL_KEY;
 
-  // Check Redis cache first
   const cacheKey = `lineup:${dateKey}:${match.home}`;
   try {
     const cached = await redis.get(cacheKey);
@@ -125,11 +124,22 @@ async function fetchLineupForMatch(match, dateKey) {
     });
     const result = {home:fmt(lineups[0]), away:fmt(lineups[1]), referee, confirmed:true};
 
-    // Cache for 2 hours
     await redis.set(cacheKey, JSON.stringify(result), {ex:60*60*2});
     return result;
   } catch(e) { return null; }
 }
+
+// Static system prompt — cached by Anthropic so you only pay for it once
+const SYSTEM_PROMPT = `You are an expert World Cup 2026 sports betting analyst. You generate exactly 4 sharp, data-driven prop picks per match in valid JSON only. No preamble, no explanation outside the JSON.
+
+Rules:
+- Exactly 4 picks total across player/game/team categories
+- Odds range: -175 to +175 only
+- Confidence 4+ only
+- No goalscorer props
+- Only confirmed starters for player props
+- Cite specific stats in reasoning (2 sentences max)
+- Return ONLY valid JSON, no markdown fences`;
 
 async function generatePickForMatch(match, lineup) {
   const stadium = STADIUM_INFO[match.venue] || {outdoor:true, notes:"Open air"};
@@ -141,22 +151,33 @@ AWAY ${match.away} (${lineup.away.formation}): ${lineup.away.starters.join(", ")
 REFEREE: ${lineup.referee}`
     : `LINEUPS NOT CONFIRMED — search expected XI and injuries`;
 
-  const prompt = `WC 2026: ${match.home} vs ${match.away} | ${match.kickoff_et} ET | ${match.venue} (${stadium.outdoor?"OUTDOOR":"INDOOR"}: ${stadium.notes}) | ${match.stage}
+  const userPrompt = `WC 2026: ${match.home} vs ${match.away} | ${match.kickoff_et} ET | ${match.venue} (${stadium.outdoor?"OUTDOOR":"INDOOR"}: ${stadium.notes}) | ${match.stage}
 ${context}
 ${lineupText}
 
 Search for: 1) referee avg cards/game this tournament 2) group standings + who needs result 3) injury/lineup news 4) best odds FanDuel/DraftKings/BetMGM/Bet365/Fanatics 5) both teams last WC match stats
 
 Return ONLY this JSON:
-{"home":"${match.home}","away":"${match.away}","kickoff":"${match.kickoff_et} ET","venue":"${match.venue}","stage":"${match.stage}","picks":[{"category":"player|game|team","title":"pick description","line":"Over X -115","reasoning":"2 sentences: stat + edge","book":"fanduel|draftkings|betmgm|bet365|fanatics","edge":"+X% Edge","confidence":4}]}
-
-Rules: exactly 4 picks, odds -175 to +175 only, confidence 4+ only, no goalscorer props, only confirmed starters for player props, cite specific stats.`;
+{"home":"${match.home}","away":"${match.away}","kickoff":"${match.kickoff_et} ET","venue":"${match.venue}","stage":"${match.stage}","picks":[{"category":"player|game|team","title":"pick description","line":"Over X -115","reasoning":"2 sentences: stat + edge","book":"fanduel|draftkings|betmgm|bet365|fanatics","edge":"+X% Edge","confidence":4}]}`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 1500,
-    tools: [{type:"web_search_20250305", name:"web_search"}],
-    messages: [{role:"user", content:prompt}],
+    max_tokens: 800,
+    system: [
+      {
+        type: "text",
+        text: SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" }, // Cache the system prompt — only charged once per 5 mins
+      }
+    ],
+    tools: [
+      {
+        type: "web_search_20250305",
+        name: "web_search",
+        max_uses: 3, // Cap searches at 3 instead of unlimited
+      }
+    ],
+    messages: [{role:"user", content: userPrompt}],
   });
 
   const text = (response.content||[]).map(i=>i.type==="text"?i.text:"").join("");
