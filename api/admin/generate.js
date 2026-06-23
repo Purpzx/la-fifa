@@ -134,7 +134,7 @@ const SYSTEM_PROMPT = `You are an expert World Cup 2026 sports betting analyst. 
 
 Rules:
 - Exactly 4 picks total across player/game/team categories
-- Odds range: -175 to +175 only
+- Odds range: -150 to +150 only
 - Confidence 4+ only
 - No goalscorer props
 - Only confirmed starters for player props
