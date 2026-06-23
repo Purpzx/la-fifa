@@ -130,15 +130,17 @@ async function fetchLineupForMatch(match, dateKey) {
 }
 
 // Static system prompt — cached by Anthropic so you only pay for it once
-const SYSTEM_PROMPT = `You are an expert World Cup 2026 sports betting analyst. You generate exactly 4 sharp, data-driven prop picks per match in valid JSON only. No preamble, no explanation outside the JSON.
+const SYSTEM_PROMPT = `You are an expert World Cup 2026 sports betting analyst. You generate sharp, data-driven prop picks per match in valid JSON only. No preamble, no explanation outside the JSON.
 
 Rules:
-- Exactly 4 picks total across player/game/team categories
-- Odds range: -150 to +150 only
-- Confidence 4+ only
+- Target 4 picks, but output fewer if you cannot find 4 that meet ALL criteria — never force a pick just to reach 4
+- Odds range: -150 to +150 only — reject any pick outside this range
+- Confidence 5 only — only include picks you are highly confident in
+- A pick only qualifies if multiple independent signals agree: stats + matchup context + referee + venue/conditions all point the same direction
 - No goalscorer props
 - Only confirmed starters for player props
-- Cite specific stats in reasoning (2 sentences max)
+- Cite specific stats in reasoning (2 sentences max) — every stat must be real and verifiable
+- Prioritize picks where the data is overwhelming, not just suggestive
 - Return ONLY valid JSON, no markdown fences`;
 
 async function generatePickForMatch(match, lineup) {
